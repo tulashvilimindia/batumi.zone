@@ -3,6 +3,8 @@
  * REST API Endpoints for Batumi.zone Services
  *
  * @package Batumi_Zone_Core
+ * @since 0.5.0
+ * @updated 0.9.0-alpha - Added multilingual tag support
  */
 
 if (!defined('ABSPATH')) {
@@ -44,6 +46,9 @@ class Batumi_REST_API {
                 'area' => array(
                     'sanitize_callback' => 'sanitize_text_field',
                 ),
+                'stag' => array(
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
                 'price_min' => array(
                     'sanitize_callback' => 'floatval',
                 ),
@@ -55,6 +60,9 @@ class Batumi_REST_API {
                 ),
                 'sort' => array(
                     'default' => 'date',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+                'lang' => array(
                     'sanitize_callback' => 'sanitize_text_field',
                 ),
             ),
@@ -71,6 +79,9 @@ class Batumi_REST_API {
                         return is_numeric($param);
                     },
                 ),
+                'lang' => array(
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
             ),
         ));
 
@@ -79,6 +90,11 @@ class Batumi_REST_API {
             'methods' => 'GET',
             'callback' => array($this, 'get_service_categorys'),
             'permission_callback' => '__return_true',
+            'args' => array(
+                'lang' => array(
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+            ),
         ));
 
         // GET /taxonomies/coverage_area - Get all coverage areas
@@ -86,7 +102,69 @@ class Batumi_REST_API {
             'methods' => 'GET',
             'callback' => array($this, 'get_coverage_areas'),
             'permission_callback' => '__return_true',
+            'args' => array(
+                'lang' => array(
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+            ),
         ));
+
+        // GET /taxonomies/service_tag - Get all service tags
+        register_rest_route($this->namespace, '/taxonomies/service_tag', array(
+            'methods' => 'GET',
+            'callback' => array($this, 'get_service_tags'),
+            'permission_callback' => '__return_true',
+            'args' => array(
+                'lang' => array(
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+            ),
+        ));
+
+        // GET /tags/cloud - Get tag cloud data with counts
+        register_rest_route($this->namespace, '/tags/cloud', array(
+            'methods' => 'GET',
+            'callback' => array($this, 'get_tag_cloud'),
+            'permission_callback' => '__return_true',
+            'args' => array(
+                'limit' => array(
+                    'default' => 30,
+                    'sanitize_callback' => 'absint',
+                ),
+                'orderby' => array(
+                    'default' => 'count',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+                'order' => array(
+                    'default' => 'DESC',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+                'lang' => array(
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+            ),
+        ));
+    }
+
+    /**
+     * Get current language for API response
+     */
+    private function get_api_language($request) {
+        $lang = $request->get_param('lang');
+        if ($lang && in_array($lang, array('ka', 'ge', 'ru', 'en'))) {
+            // Normalize 'ge' to 'ka'
+            return ($lang === 'ge') ? 'ka' : $lang;
+        }
+
+        // Try Polylang
+        if (function_exists('pll_current_language')) {
+            $pll_lang = pll_current_language();
+            if ($pll_lang === 'ge') return 'ka';
+            if (in_array($pll_lang, array('ka', 'ru', 'en'))) return $pll_lang;
+        }
+
+        // Default to Georgian
+        return 'ka';
     }
 
     /**
@@ -97,10 +175,12 @@ class Batumi_REST_API {
         $per_page = min($request->get_param('per_page'), 100); // Max 100 per page
         $direction = $request->get_param('direction');
         $area = $request->get_param('area');
+        $tag = $request->get_param('stag'); // Use 'stag' to avoid WP reserved 'tag'
         $price_min = $request->get_param('price_min');
         $price_max = $request->get_param('price_max');
         $query = $request->get_param('query');
         $sort = $request->get_param('sort');
+        $lang = $this->get_api_language($request);
 
         $args = array(
             'post_type' => 'service_listing',
@@ -125,6 +205,14 @@ class Batumi_REST_API {
                 'taxonomy' => 'coverage_area',
                 'field' => 'slug',
                 'terms' => $area,
+            );
+        }
+
+        if (!empty($tag)) {
+            $tax_query[] = array(
+                'taxonomy' => 'service_tag',
+                'field' => 'slug',
+                'terms' => $tag,
             );
         }
 
@@ -167,8 +255,7 @@ class Batumi_REST_API {
             $args['meta_query'][] = $price_query;
         }
 
-        // Sorting: Apply user's sorting preference (without promotion priority)
-        // We'll sort by promotion priority manually after the query
+        // Sorting
         switch ($sort) {
             case 'price_asc':
                 $args['orderby'] = 'meta_value_num';
@@ -193,23 +280,19 @@ class Batumi_REST_API {
         if ($query_result->have_posts()) {
             while ($query_result->have_posts()) {
                 $query_result->the_post();
-                $services[] = $this->format_service(get_post());
+                $services[] = $this->format_service(get_post(), $lang);
             }
             wp_reset_postdata();
         }
 
-        // Manual sorting: Promoted services first, then by original order
-        // This fixes WP_Query's limitation with complex meta_query + multi-level orderby
+        // Manual sorting: Promoted services first
         usort($services, function($a, $b) {
             $priority_a = isset($a['promotion_priority']) ? (int)$a['promotion_priority'] : 0;
             $priority_b = isset($b['promotion_priority']) ? (int)$b['promotion_priority'] : 0;
 
-            // Higher priority comes first (DESC)
             if ($priority_a !== $priority_b) {
                 return $priority_b - $priority_a;
             }
-
-            // Same priority: maintain original order (already sorted by user's preference)
             return 0;
         });
 
@@ -221,6 +304,7 @@ class Batumi_REST_API {
                 'current_page' => $page,
                 'per_page' => $per_page,
             ),
+            'language' => $lang,
         ), 200);
     }
 
@@ -229,19 +313,22 @@ class Batumi_REST_API {
      */
     public function get_service($request) {
         $id = $request->get_param('id');
+        $lang = $this->get_api_language($request);
         $post = get_post($id);
 
         if (!$post || $post->post_type !== 'service_listing' || $post->post_status !== 'publish') {
             return new WP_Error('not_found', 'Service not found', array('status' => 404));
         }
 
-        return new WP_REST_Response($this->format_service($post), 200);
+        return new WP_REST_Response($this->format_service($post, $lang), 200);
     }
 
     /**
      * GET /taxonomies/service_category
      */
     public function get_service_categorys($request) {
+        $lang = $this->get_api_language($request);
+
         $terms = get_terms(array(
             'taxonomy' => 'service_category',
             'hide_empty' => false,
@@ -253,10 +340,13 @@ class Batumi_REST_API {
 
         $directions = array();
         foreach ($terms as $term) {
+            $translated_name = $this->get_translated_term_name($term->term_id, $lang, $term->name);
             $directions[] = array(
                 'id' => $term->term_id,
                 'slug' => $term->slug,
-                'name' => $term->name,
+                'name' => $translated_name,
+                'name_original' => $term->name,
+                'translations' => $this->get_term_translations($term->term_id),
                 'description' => $term->description,
                 'count' => $term->count,
                 'parent' => $term->parent,
@@ -270,6 +360,8 @@ class Batumi_REST_API {
      * GET /taxonomies/coverage_area
      */
     public function get_coverage_areas($request) {
+        $lang = $this->get_api_language($request);
+
         $terms = get_terms(array(
             'taxonomy' => 'coverage_area',
             'hide_empty' => false,
@@ -281,10 +373,13 @@ class Batumi_REST_API {
 
         $areas = array();
         foreach ($terms as $term) {
+            $translated_name = $this->get_translated_term_name($term->term_id, $lang, $term->name);
             $areas[] = array(
                 'id' => $term->term_id,
                 'slug' => $term->slug,
-                'name' => $term->name,
+                'name' => $translated_name,
+                'name_original' => $term->name,
+                'translations' => $this->get_term_translations($term->term_id),
                 'description' => $term->description,
                 'count' => $term->count,
                 'parent' => $term->parent,
@@ -295,14 +390,139 @@ class Batumi_REST_API {
     }
 
     /**
-     * Format service post for API response
+     * GET /taxonomies/service_tag - Get all service tags (multilingual)
      */
-    private function format_service($post) {
+    public function get_service_tags($request) {
+        $lang = $this->get_api_language($request);
+
+        $terms = get_terms(array(
+            'taxonomy' => 'service_tag',
+            'hide_empty' => false,
+        ));
+
+        if (is_wp_error($terms)) {
+            return new WP_Error('taxonomy_error', 'Failed to retrieve service tags', array('status' => 500));
+        }
+
+        $tags = array();
+        foreach ($terms as $term) {
+            $translated_name = $this->get_translated_term_name($term->term_id, $lang, $term->name);
+            $tags[] = array(
+                'id' => $term->term_id,
+                'slug' => $term->slug,
+                'name' => $translated_name,
+                'name_original' => $term->name,
+                'translations' => $this->get_term_translations($term->term_id),
+                'description' => $term->description,
+                'count' => $term->count,
+            );
+        }
+
+        return new WP_REST_Response($tags, 200);
+    }
+
+    /**
+     * GET /tags/cloud - Get tag cloud data with weighted sizes (multilingual)
+     */
+    public function get_tag_cloud($request) {
+        $limit = $request->get_param('limit');
+        $orderby = $request->get_param('orderby');
+        $order = $request->get_param('order');
+        $lang = $this->get_api_language($request);
+
+        $terms = get_terms(array(
+            'taxonomy' => 'service_tag',
+            'hide_empty' => true,
+            'number' => $limit,
+            'orderby' => $orderby,
+            'order' => $order,
+        ));
+
+        if (is_wp_error($terms)) {
+            return new WP_Error('taxonomy_error', 'Failed to retrieve tag cloud', array('status' => 500));
+        }
+
+        // Calculate min/max for sizing
+        $counts = array_map(function($t) { return $t->count; }, $terms);
+        $min_count = !empty($counts) ? min($counts) : 0;
+        $max_count = !empty($counts) ? max($counts) : 1;
+        $spread = $max_count - $min_count;
+        if ($spread == 0) $spread = 1;
+
+        $tags = array();
+        foreach ($terms as $term) {
+            // Calculate size weight (1-5 scale)
+            $weight = 1 + (4 * ($term->count - $min_count) / $spread);
+            $translated_name = $this->get_translated_term_name($term->term_id, $lang, $term->name);
+
+            $tags[] = array(
+                'id' => $term->term_id,
+                'slug' => $term->slug,
+                'name' => $translated_name,
+                'name_original' => $term->name,
+                'translations' => $this->get_term_translations($term->term_id),
+                'count' => $term->count,
+                'weight' => round($weight, 2),
+                'link' => home_url('/?stag=' . $term->slug),
+            );
+        }
+
+        return new WP_REST_Response(array(
+            'tags' => $tags,
+            'total' => count($tags),
+            'min_count' => $min_count,
+            'max_count' => $max_count,
+            'language' => $lang,
+        ), 200);
+    }
+
+    /**
+     * Get translated term name for a specific language
+     */
+    private function get_translated_term_name($term_id, $lang, $fallback = '') {
+        $translated_name = get_term_meta($term_id, 'name_' . $lang, true);
+        return !empty($translated_name) ? $translated_name : $fallback;
+    }
+
+    /**
+     * Get all translations for a term
+     */
+    private function get_term_translations($term_id) {
+        $term = get_term($term_id);
+        $default_name = $term ? $term->name : '';
+
+        return array(
+            'ka' => get_term_meta($term_id, 'name_ka', true) ?: $default_name,
+            'ru' => get_term_meta($term_id, 'name_ru', true) ?: $default_name,
+            'en' => get_term_meta($term_id, 'name_en', true) ?: $default_name,
+        );
+    }
+
+    /**
+     * Format service post for API response (with multilingual tag support)
+     */
+    private function format_service($post, $lang = 'ka') {
         $post_id = $post->ID;
 
         // Get taxonomies
         $directions = wp_get_post_terms($post_id, 'service_category', array('fields' => 'names'));
         $areas = wp_get_post_terms($post_id, 'coverage_area', array('fields' => 'names'));
+        $tags = wp_get_post_terms($post_id, 'service_tag', array('fields' => 'all'));
+
+        // Format tags with multilingual support
+        $formatted_tags = array();
+        if (!is_wp_error($tags)) {
+            foreach ($tags as $tag) {
+                $translated_name = $this->get_translated_term_name($tag->term_id, $lang, $tag->name);
+                $formatted_tags[] = array(
+                    'id' => $tag->term_id,
+                    'slug' => $tag->slug,
+                    'name' => $translated_name,
+                    'name_original' => $tag->name,
+                    'translations' => $this->get_term_translations($tag->term_id),
+                );
+            }
+        }
 
         // Get featured image
         $thumbnail_id = get_post_thumbnail_id($post_id);
@@ -330,6 +550,7 @@ class Batumi_REST_API {
             // Taxonomies
             'direction' => $directions,
             'coverage_area' => $areas,
+            'tags' => $formatted_tags,
 
             // Service details
             'price' => array(
@@ -355,33 +576,12 @@ class Batumi_REST_API {
             // Media
             'featured_image' => $thumbnail,
 
-            // Sponsored status (Phase 8)
+            // Sponsored status
             'is_promoted' => (bool) get_post_meta($post_id, '_is_promoted', true),
             'promotion_priority' => (int) get_post_meta($post_id, '_promotion_priority', true),
+
+            // Language info
+            'language' => $lang,
         );
-    }
-
-    /**
-     * Get gallery images for a service
-     */
-    private function get_gallery_images($post_id) {
-        $gallery_ids = get_post_meta($post_id, '_gallery_image_ids', true);
-        $gallery_ids = !empty($gallery_ids) ? explode(',', $gallery_ids) : array();
-
-        $images = array();
-        foreach ($gallery_ids as $attachment_id) {
-            $attachment_id = intval($attachment_id);
-            if ($attachment_id) {
-                $images[] = array(
-                    'id' => $attachment_id,
-                    'thumbnail' => wp_get_attachment_image_url($attachment_id, 'thumbnail'),
-                    'medium' => wp_get_attachment_image_url($attachment_id, 'medium'),
-                    'large' => wp_get_attachment_image_url($attachment_id, 'large'),
-                    'full' => wp_get_attachment_image_url($attachment_id, 'full'),
-                );
-            }
-        }
-
-        return $images;
     }
 }

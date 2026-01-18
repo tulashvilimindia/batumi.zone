@@ -78,80 +78,53 @@
                     </svg>
                 </button>
 
-                <!-- Language Switcher (Show Only Current Flag) -->
-                <?php if (function_exists('pll_the_languages')) :
+                <!-- Language Switcher -->
+                <?php if (function_exists('pll_the_languages')) : ?>
+                <div class="header-lang-switcher">
+                    <?php
                     $languages = pll_the_languages(array(
                         'show_flags' => 1,
-                        'show_names' => 0,
+                        'show_names' => 1,
                         'hide_if_empty' => 0,
                         'echo' => 0,
                         'raw' => 1
                     ));
-
-                    if (!empty($languages)) :
-                        $current_lang = null;
-                        $other_langs = [];
-
-                        foreach ($languages as $lang) {
-                            if ($lang['current_lang']) {
-                                $current_lang = $lang;
-                            } else {
-                                $other_langs[] = $lang;
-                            }
-                        }
-
-                        // Flag emoji mapping
-                        $flag_emojis = array(
-                            'ka' => '🇬🇪',
-                            'ge' => '🇬🇪',
-                            'ru' => '🇷🇺',
-                            'en' => '🇬🇧',
-                            'us' => '🇺🇸'
-                        );
+                    $current_lang = function_exists('pll_current_language') ? pll_current_language() : 'ka';
+                    $flag_emojis = array('ka' => '🇬🇪', 'ru' => '🇷🇺', 'en' => '🇬🇧');
+                    ?>
+                    <?php if (!empty($languages)) :
+                        $current = isset($languages[$current_lang]) ? $languages[$current_lang] : reset($languages);
+                    ?>
+                    <button class="lang-current-flag" aria-label="Language" title="<?php echo esc_attr($current['name']); ?>">
+                        <?php if (!empty($current['flag'])) : ?>
+                            <img src="<?php echo esc_url($current['flag']); ?>" alt="<?php echo esc_attr($current['name']); ?>"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <span class="flag-emoji" style="display: none;"><?php echo isset($flag_emojis[$current_lang]) ? $flag_emojis[$current_lang] : '🌐'; ?></span>
+                        <?php else : ?>
+                            <span class="flag-emoji"><?php echo isset($flag_emojis[$current_lang]) ? $flag_emojis[$current_lang] : '🌐'; ?></span>
+                        <?php endif; ?>
+                        <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                            <path d="M6 9L1 4h10z"/>
+                        </svg>
+                    </button>
+                    <div class="lang-dropdown">
+                        <?php foreach ($languages as $slug => $lang) :
+                            if ($slug === $current_lang) continue;
                         ?>
-                        <div class="header-lang-switcher">
-                            <button class="lang-current-flag" aria-label="Language" title="<?php echo esc_attr($current_lang['name']); ?>">
-                                <?php if (!empty($current_lang['flag'])) : ?>
-                                    <img src="<?php echo esc_url($current_lang['flag']); ?>"
-                                         alt="<?php echo esc_attr($current_lang['name']); ?>"
-                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                    <span class="flag-emoji" style="display: none;">
-                                        <?php echo isset($flag_emojis[$current_lang['slug']]) ? $flag_emojis[$current_lang['slug']] : '🌐'; ?>
-                                    </span>
-                                <?php else : ?>
-                                    <span class="flag-emoji">
-                                        <?php echo isset($flag_emojis[$current_lang['slug']]) ? $flag_emojis[$current_lang['slug']] : '🌐'; ?>
-                                    </span>
-                                <?php endif; ?>
-                                <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-                                    <path d="M6 9L1 4h10z"/>
-                                </svg>
-                            </button>
-
-                            <div class="lang-dropdown">
-                                <?php foreach ($other_langs as $lang) : ?>
-                                    <a href="<?php echo esc_url($lang['url']); ?>"
-                                       class="lang-dropdown-item"
-                                       hreflang="<?php echo esc_attr($lang['slug']); ?>"
-                                       title="<?php echo esc_attr($lang['name']); ?>">
-                                        <?php if (!empty($lang['flag'])) : ?>
-                                            <img src="<?php echo esc_url($lang['flag']); ?>"
-                                                 alt="<?php echo esc_attr($lang['name']); ?>"
-                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
-                                            <span class="flag-emoji" style="display: none;">
-                                                <?php echo isset($flag_emojis[$lang['slug']]) ? $flag_emojis[$lang['slug']] : '🌐'; ?>
-                                            </span>
-                                        <?php else : ?>
-                                            <span class="flag-emoji">
-                                                <?php echo isset($flag_emojis[$lang['slug']]) ? $flag_emojis[$lang['slug']] : '🌐'; ?>
-                                            </span>
-                                        <?php endif; ?>
-                                        <span class="lang-name"><?php echo esc_html($lang['name']); ?></span>
-                                    </a>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
+                        <a href="<?php echo esc_url($lang['url']); ?>" class="lang-dropdown-item" hreflang="<?php echo esc_attr($slug); ?>" title="<?php echo esc_attr($lang['name']); ?>">
+                            <?php if (!empty($lang['flag'])) : ?>
+                                <img src="<?php echo esc_url($lang['flag']); ?>" alt="<?php echo esc_attr($lang['name']); ?>"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                                <span class="flag-emoji" style="display: none;"><?php echo isset($flag_emojis[$slug]) ? $flag_emojis[$slug] : '🌐'; ?></span>
+                            <?php else : ?>
+                                <span class="flag-emoji"><?php echo isset($flag_emojis[$slug]) ? $flag_emojis[$slug] : '🌐'; ?></span>
+                            <?php endif; ?>
+                            <span class="lang-name"><?php echo esc_html($lang['name']); ?></span>
+                        </a>
+                        <?php endforeach; ?>
+                    </div>
                     <?php endif; ?>
+                </div>
                 <?php endif; ?>
 
                 <!-- User Menu (if logged in) -->
@@ -163,14 +136,28 @@
                             </svg>
                         </button>
                         <div class="user-dropdown">
-                            <a href="<?php echo esc_url(home_url('/profile/')); ?>"><?php _e('Profile', 'batumi-theme'); ?></a>
-                            <a href="<?php echo esc_url(home_url('/my-listings/')); ?>"><?php _e('My Listings', 'batumi-theme'); ?></a>
-                            <a href="<?php echo esc_url(home_url('/create-service/')); ?>"><?php _e('Add Listing', 'batumi-theme'); ?></a>
+                            <?php
+                            // Get language-aware page URLs using Polylang
+                            $profile_page = get_page_by_path('profile');
+                            $my_listings_page = get_page_by_path('my-listings');
+                            $create_service_page = get_page_by_path('create-service');
+
+                            $profile_url = $profile_page ? get_permalink($profile_page->ID) : home_url('/profile/');
+                            $my_listings_url = $my_listings_page ? get_permalink($my_listings_page->ID) : home_url('/my-listings/');
+                            $create_service_url = $create_service_page ? get_permalink($create_service_page->ID) : home_url('/create-service/');
+                            ?>
+                            <a href="<?php echo esc_url($profile_url); ?>"><?php _e('Profile', 'batumi-theme'); ?></a>
+                            <a href="<?php echo esc_url($my_listings_url); ?>"><?php _e('My Listings', 'batumi-theme'); ?></a>
+                            <a href="<?php echo esc_url($create_service_url); ?>"><?php _e('Add Listing', 'batumi-theme'); ?></a>
                             <a href="<?php echo wp_logout_url(home_url('/')); ?>"><?php _e('Logout', 'batumi-theme'); ?></a>
                         </div>
                     </div>
                 <?php else : ?>
-                    <a href="<?php echo esc_url(home_url('/login/')); ?>" class="header-action-btn" title="Login">
+                    <?php
+                    $login_page = get_page_by_path('login');
+                    $login_url = $login_page ? get_permalink($login_page->ID) : home_url('/login/');
+                    ?>
+                    <a href="<?php echo esc_url($login_url); ?>" class="header-action-btn" title="Login">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/>
                         </svg>

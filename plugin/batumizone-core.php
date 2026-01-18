@@ -27,6 +27,7 @@ require_once BATUMIZONE_PLUGIN_DIR . 'includes/class-sponsored-listings.php';
 require_once BATUMIZONE_PLUGIN_DIR . 'includes/class-promotion-admin.php';
 require_once BATUMIZONE_PLUGIN_DIR . 'includes/class-ad-system.php';
 require_once BATUMIZONE_PLUGIN_DIR . 'includes/class-ad-admin.php';
+require_once BATUMIZONE_PLUGIN_DIR . 'includes/class-webp-converter.php';
 
 class Batumi_Zone_Core {
     private static $instance = null;
@@ -69,7 +70,7 @@ class Batumi_Zone_Core {
 
     public function enqueue_frontend() {
         wp_enqueue_script('batumizone-ads-frontend', BATUMIZONE_PLUGIN_URL . 'assets/js/ads-frontend.js', array(), '1.0.0', true);
-        wp_enqueue_style('batumizone-ads-frontend', BATUMIZONE_PLUGIN_URL . 'assets/css/ads-frontend.css', array(), '1.0.0');
+        wp_enqueue_style('batumizone-ads-frontend', BATUMIZONE_PLUGIN_URL . 'assets/css/ads-frontend.css', array(), '1.2.0');
     }
 
     public function init() {

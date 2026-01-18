@@ -67,3 +67,52 @@
         width: 100%;
     }
 }
+
+/* Sidebar Ads - Fixed Position */
+.ad-container[data-placement="sidebar_left"],
+.ad-container[data-placement="sidebar_right"] {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 160px;
+    z-index: 100;
+    margin: 0;
+}
+
+.ad-container[data-placement="sidebar_left"] {
+    left: 10px;
+}
+
+.ad-container[data-placement="sidebar_right"] {
+    right: 10px;
+}
+
+.ad-container[data-placement="sidebar_left"] .ad-wrapper,
+.ad-container[data-placement="sidebar_right"] .ad-wrapper {
+    padding: 5px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.ad-container[data-placement="sidebar_left"] .ad-image,
+.ad-container[data-placement="sidebar_right"] .ad-image {
+    width: 160px;
+    height: auto;
+    max-height: 600px;
+}
+
+/* Hide sidebar ads on smaller screens */
+@media (max-width: 1200px) {
+    .ad-container[data-placement="sidebar_left"],
+    .ad-container[data-placement="sidebar_right"] {
+        display: none !important;
+    }
+}
+
+/* Show only on wide screens */
+@media (min-width: 1201px) {
+    .ad-container[data-placement="sidebar_left"],
+    .ad-container[data-placement="sidebar_right"] {
+        display: block;
+    }
+}
