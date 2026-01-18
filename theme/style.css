@@ -3272,16 +3272,19 @@ select[multiple].form-input {
     height: 18px;
     flex-shrink: 0;
     vertical-align: middle;
-    margin-right: 4px;
+    margin-right: 6px;
+    display: inline-block;
 }
 
-.btn .phone-icon {
-    stroke: currentColor;
+.btn-primary .phone-icon {
+    stroke: #ffffff !important;
 }
 
-.contact-btn .phone-icon {
+.contact-btn .phone-icon,
+.contact-phone .phone-icon {
     width: 24px;
     height: 24px;
+    stroke: #ffffff !important;
 }
 
 /* Favorite button */
