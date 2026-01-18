@@ -49,37 +49,27 @@ add_action('after_setup_theme', 'batumi_theme_setup');
 
 /**
  * Enqueue scripts and styles
+ * CONSOLIDATED: January 18, 2026 - All CSS merged into style-unified.css
  */
 function batumi_theme_scripts() {
-    // Main stylesheet
-    wp_enqueue_style('batumi-theme-style', get_stylesheet_uri(), array(), '0.3.0');
+    // === UNIFIED STYLESHEET (Consolidated from 8 files) ===
+    // Contains: style.css, dark-mode-complete.css, fancy-frontend-styles.css,
+    //           HEADER-FIXES.css, accessibility-fixes.css, report-modal.css,
+    //           poster-promotion.css, sponsored-badges.css
+    wp_enqueue_style('batumi-unified', get_template_directory_uri() . '/style-unified.css', array(), '1.0.0');
 
+    // === JAVASCRIPT FILES ===
     // Mobile menu script
     wp_enqueue_script('batumi-theme-navigation', get_template_directory_uri() . '/js/navigation.js', array(), '0.2.0', true);
 
     // Favorites system
     wp_enqueue_script('batumi-theme-favorites', get_template_directory_uri() . '/js/favorites.js', array('jquery'), '0.3.0', true);
 
-    // Fancy Frontend styles and scripts
-    wp_enqueue_style('batumi-fancy-styles', get_template_directory_uri() . '/fancy-frontend-styles.css', array(), '0.5.0');
-    wp_enqueue_style('batumi-header-fixes', get_template_directory_uri() . '/HEADER-FIXES.css', array('batumi-fancy-styles'), '1.1.0');
+    // Fancy Frontend JS
     wp_enqueue_script('batumi-fancy-frontend', get_template_directory_uri() . '/js/fancy-frontend.js', array('jquery'), '0.4.2', true);
 
-    // === BUG FIX CSS FILES (v0.3.0) ===
-    // Dark mode complete (V1-V16)
-    wp_enqueue_style('batumi-dark-mode', get_template_directory_uri() . '/dark-mode-complete.css', array('batumi-header-fixes'), '1.0.0');
-    // Accessibility fixes (V7, V8, V12, V17, V18)
-    wp_enqueue_style('batumi-accessibility', get_template_directory_uri() . '/accessibility-fixes.css', array('batumi-dark-mode'), '1.0.0');
-
-    // Report Modal (Phase 7)
-    wp_enqueue_style('batumi-report-modal', get_template_directory_uri() . '/report-modal.css', array(), '0.3.0');
+    // Report Modal JS (Phase 7)
     wp_enqueue_script('batumi-report-modal', get_template_directory_uri() . '/js/report-modal.js', array(), '0.3.0', true);
-
-    // Poster Promotion CSS (Phase 8.1 - Poster Dashboard)
-    wp_enqueue_style('batumi-poster-promotion', get_template_directory_uri() . '/assets/css/poster-promotion.css', array(), '1.0.0');
-
-    // Sponsored Badges CSS (Phase 8.1 - Frontend Labels)
-    wp_enqueue_style('batumi-sponsored-badges', get_template_directory_uri() . '/assets/css/sponsored-badges.css', array(), '1.0.0');
 }
 add_action('wp_enqueue_scripts', 'batumi_theme_scripts');
 
