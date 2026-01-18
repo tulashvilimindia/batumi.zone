@@ -1,0 +1,460 @@
+<?php
+/**
+ * Ad System - Campaign Management and Placement
+ * Phase 8.2 - Ads Placement System
+ *
+ * @package BatumiZone_Core
+ * @since 0.5.0
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+class Batumi_Ad_System {
+
+    private $campaigns_table;
+    private $placements_table;
+    private $stats_table;
+
+    /**
+     * Initialize Ad System
+     */
+    public function __construct() {
+        global $wpdb;
+        $this->campaigns_table = $wpdb->prefix . 'batumizone_ad_campaigns';
+        $this->placements_table = $wpdb->prefix . 'batumizone_ad_placements';
+        $this->stats_table = $wpdb->prefix . 'batumizone_ad_stats';
+
+        // Create database tables on activation
+        register_activation_hook(__FILE__, array($this, 'create_tables'));
+
+        // Register REST API endpoints
+        add_action('rest_api_init', array($this, 'register_routes'));
+    }
+
+    /**
+     * Create database tables for ads system
+     */
+    public function create_tables() {
+        global $wpdb;
+        $charset_collate = $wpdb->get_charset_collate();
+
+        // Campaigns table
+        $sql_campaigns = "CREATE TABLE IF NOT EXISTS {$this->campaigns_table} (
+            id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            title varchar(255) NOT NULL,
+            image_url varchar(500) NOT NULL,
+            link_url varchar(500) NOT NULL,
+            placement_type varchar(50) NOT NULL COMMENT 'home_top, results_after_n, detail_below_contact',
+            position_index int DEFAULT 0 COMMENT 'For results_after_n: which position',
+            start_date datetime NOT NULL,
+            end_date datetime NOT NULL,
+            status varchar(20) NOT NULL DEFAULT 'active' COMMENT 'active, paused, expired',
+            created_by bigint(20) UNSIGNED NOT NULL,
+            created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            KEY idx_status (status),
+            KEY idx_placement (placement_type),
+            KEY idx_dates (start_date, end_date)
+        ) $charset_collate;";
+
+        // Stats table for impressions and clicks
+        $sql_stats = "CREATE TABLE IF NOT EXISTS {$this->stats_table} (
+            id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            campaign_id bigint(20) UNSIGNED NOT NULL,
+            event_type varchar(20) NOT NULL COMMENT 'impression, click',
+            ip_address varchar(45) DEFAULT NULL,
+            user_agent varchar(500) DEFAULT NULL,
+            referrer varchar(500) DEFAULT NULL,
+            created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            KEY idx_campaign (campaign_id),
+            KEY idx_event (event_type),
+            KEY idx_created (created_at)
+        ) $charset_collate;";
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql_campaigns);
+        dbDelta($sql_stats);
+
+        // Log table creation
+        error_log('Batumi Ad System: Database tables created');
+    }
+
+    /**
+     * Register REST API routes
+     */
+    public function register_routes() {
+        $namespace = 'batumizone/v1';
+
+        // Admin: Get all campaigns
+        register_rest_route($namespace, '/admin/ads/campaigns', array(
+            'methods' => 'GET',
+            'callback' => array($this, 'get_campaigns'),
+            'permission_callback' => array($this, 'check_admin_permission'),
+        ));
+
+        // Admin: Create campaign
+        register_rest_route($namespace, '/admin/ads/campaigns', array(
+            'methods' => 'POST',
+            'callback' => array($this, 'create_campaign'),
+            'permission_callback' => array($this, 'check_admin_permission'),
+        ));
+
+        // Admin: Update campaign
+        register_rest_route($namespace, '/admin/ads/campaigns/(?P<id>\d+)', array(
+            'methods' => 'PUT',
+            'callback' => array($this, 'update_campaign'),
+            'permission_callback' => array($this, 'check_admin_permission'),
+        ));
+
+        // Admin: Delete campaign
+        register_rest_route($namespace, '/admin/ads/campaigns/(?P<id>\d+)', array(
+            'methods' => 'DELETE',
+            'callback' => array($this, 'delete_campaign'),
+            'permission_callback' => array($this, 'check_admin_permission'),
+        ));
+
+        // Admin: Get campaign stats
+        register_rest_route($namespace, '/admin/ads/campaigns/(?P<id>\d+)/stats', array(
+            'methods' => 'GET',
+            'callback' => array($this, 'get_campaign_stats'),
+            'permission_callback' => array($this, 'check_admin_permission'),
+        ));
+
+        // Public: Get active ads for placement
+        register_rest_route($namespace, '/ads/placement/(?P<type>[a-z_]+)', array(
+            'methods' => 'GET',
+            'callback' => array($this, 'get_ads_for_placement'),
+            'permission_callback' => '__return_true',
+        ));
+
+        // Public: Track impression
+        register_rest_route($namespace, '/ads/(?P<id>\d+)/impression', array(
+            'methods' => 'POST',
+            'callback' => array($this, 'track_impression'),
+            'permission_callback' => '__return_true',
+        ));
+
+        // Public: Track click
+        register_rest_route($namespace, '/ads/(?P<id>\d+)/click', array(
+            'methods' => 'POST',
+            'callback' => array($this, 'track_click'),
+            'permission_callback' => '__return_true',
+        ));
+    }
+
+    /**
+     * Check if user is admin
+     */
+    public function check_admin_permission() {
+        return current_user_can('manage_options');
+    }
+
+    /**
+     * Get all campaigns (admin)
+     */
+    public function get_campaigns($request) {
+        global $wpdb;
+
+        $status = $request->get_param('status');
+
+        $where = '';
+        if ($status && in_array($status, ['active', 'paused', 'expired'])) {
+            $where = $wpdb->prepare("WHERE status = %s", $status);
+        }
+
+        $campaigns = $wpdb->get_results("
+            SELECT c.*,
+                   u.display_name as created_by_name,
+                   (SELECT COUNT(*) FROM {$this->stats_table} WHERE campaign_id = c.id AND event_type = 'impression') as impressions,
+                   (SELECT COUNT(*) FROM {$this->stats_table} WHERE campaign_id = c.id AND event_type = 'click') as clicks
+            FROM {$this->campaigns_table} c
+            LEFT JOIN {$wpdb->users} u ON c.created_by = u.ID
+            $where
+            ORDER BY created_at DESC
+        ");
+
+        // Auto-expire campaigns
+        $this->auto_expire_campaigns();
+
+        return new WP_REST_Response($campaigns, 200);
+    }
+
+    /**
+     * Create campaign (admin)
+     */
+    public function create_campaign($request) {
+        global $wpdb;
+
+        $title = sanitize_text_field($request->get_param('title'));
+        $image_url = esc_url_raw($request->get_param('image_url'));
+        $link_url = esc_url_raw($request->get_param('link_url'));
+        $placement_type = sanitize_text_field($request->get_param('placement_type'));
+        $position_index = intval($request->get_param('position_index'));
+        $start_date = sanitize_text_field($request->get_param('start_date'));
+        $end_date = sanitize_text_field($request->get_param('end_date'));
+
+        // Validation
+        if (empty($title) || empty($image_url) || empty($link_url) || empty($placement_type)) {
+            return new WP_Error('missing_fields', 'Missing required fields', array('status' => 400));
+        }
+
+        if (!in_array($placement_type, ['home_top', 'results_after_n', 'detail_below_contact'])) {
+            return new WP_Error('invalid_placement', 'Invalid placement type', array('status' => 400));
+        }
+
+        // Insert campaign
+        $inserted = $wpdb->insert(
+            $this->campaigns_table,
+            array(
+                'title' => $title,
+                'image_url' => $image_url,
+                'link_url' => $link_url,
+                'placement_type' => $placement_type,
+                'position_index' => $position_index,
+                'start_date' => $start_date,
+                'end_date' => $end_date,
+                'status' => 'active',
+                'created_by' => get_current_user_id(),
+            ),
+            array('%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%d')
+        );
+
+        if ($inserted === false) {
+            return new WP_Error('insert_failed', 'Failed to create campaign', array('status' => 500));
+        }
+
+        $campaign_id = $wpdb->insert_id;
+
+        return new WP_REST_Response(array(
+            'message' => 'Campaign created successfully',
+            'campaign_id' => $campaign_id
+        ), 201);
+    }
+
+    /**
+     * Update campaign (admin)
+     */
+    public function update_campaign($request) {
+        global $wpdb;
+
+        $campaign_id = intval($request->get_param('id'));
+        $title = sanitize_text_field($request->get_param('title'));
+        $image_url = esc_url_raw($request->get_param('image_url'));
+        $link_url = esc_url_raw($request->get_param('link_url'));
+        $placement_type = sanitize_text_field($request->get_param('placement_type'));
+        $position_index = intval($request->get_param('position_index'));
+        $start_date = sanitize_text_field($request->get_param('start_date'));
+        $end_date = sanitize_text_field($request->get_param('end_date'));
+        $status = sanitize_text_field($request->get_param('status'));
+
+        // Check campaign exists
+        $exists = $wpdb->get_var($wpdb->prepare("SELECT id FROM {$this->campaigns_table} WHERE id = %d", $campaign_id));
+        if (!$exists) {
+            return new WP_Error('not_found', 'Campaign not found', array('status' => 404));
+        }
+
+        // Update campaign
+        $updated = $wpdb->update(
+            $this->campaigns_table,
+            array(
+                'title' => $title,
+                'image_url' => $image_url,
+                'link_url' => $link_url,
+                'placement_type' => $placement_type,
+                'position_index' => $position_index,
+                'start_date' => $start_date,
+                'end_date' => $end_date,
+                'status' => $status,
+            ),
+            array('id' => $campaign_id),
+            array('%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s'),
+            array('%d')
+        );
+
+        return new WP_REST_Response(array(
+            'message' => 'Campaign updated successfully'
+        ), 200);
+    }
+
+    /**
+     * Delete campaign (admin)
+     */
+    public function delete_campaign($request) {
+        global $wpdb;
+
+        $campaign_id = intval($request->get_param('id'));
+
+        // Delete campaign and related stats
+        $wpdb->delete($this->campaigns_table, array('id' => $campaign_id), array('%d'));
+        $wpdb->delete($this->stats_table, array('campaign_id' => $campaign_id), array('%d'));
+
+        return new WP_REST_Response(array(
+            'message' => 'Campaign deleted successfully'
+        ), 200);
+    }
+
+    /**
+     * Get campaign stats (admin)
+     */
+    public function get_campaign_stats($request) {
+        global $wpdb;
+
+        $campaign_id = intval($request->get_param('id'));
+
+        $stats = $wpdb->get_row($wpdb->prepare("
+            SELECT
+                COUNT(CASE WHEN event_type = 'impression' THEN 1 END) as impressions,
+                COUNT(CASE WHEN event_type = 'click' THEN 1 END) as clicks,
+                COUNT(CASE WHEN event_type = 'click' THEN 1 END) / NULLIF(COUNT(CASE WHEN event_type = 'impression' THEN 1 END), 0) * 100 as ctr
+            FROM {$this->stats_table}
+            WHERE campaign_id = %d
+        ", $campaign_id));
+
+        // Get daily stats for the last 30 days
+        $daily_stats = $wpdb->get_results($wpdb->prepare("
+            SELECT
+                DATE(created_at) as date,
+                COUNT(CASE WHEN event_type = 'impression' THEN 1 END) as impressions,
+                COUNT(CASE WHEN event_type = 'click' THEN 1 END) as clicks
+            FROM {$this->stats_table}
+            WHERE campaign_id = %d AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+            GROUP BY DATE(created_at)
+            ORDER BY date DESC
+        ", $campaign_id));
+
+        return new WP_REST_Response(array(
+            'totals' => $stats,
+            'daily' => $daily_stats
+        ), 200);
+    }
+
+    /**
+     * Get active ads for placement (public)
+     */
+    public function get_ads_for_placement($request) {
+        global $wpdb;
+
+        $placement_type = sanitize_text_field($request->get_param('type'));
+        $position = intval($request->get_param('position'));
+
+        $where = $wpdb->prepare("
+            WHERE placement_type = %s
+            AND status = 'active'
+            AND start_date <= NOW()
+            AND end_date >= NOW()
+        ", $placement_type);
+
+        if ($placement_type === 'results_after_n' && $position > 0) {
+            $where .= $wpdb->prepare(" AND position_index = %d", $position);
+        }
+
+        $ads = $wpdb->get_results("
+            SELECT id, title, image_url, link_url, placement_type, position_index
+            FROM {$this->campaigns_table}
+            $where
+            ORDER BY RAND()
+            LIMIT 1
+        ");
+
+        $response = new WP_REST_Response($ads, 200);
+        $response->header("Cache-Control", "no-cache, no-store, must-revalidate");
+        $response->header("Pragma", "no-cache");
+        $response->header("Expires", "0");
+        return $response;
+    }
+
+    /**
+     * Track impression (public)
+     */
+    public function track_impression($request) {
+        global $wpdb;
+
+        $campaign_id = intval($request->get_param('id'));
+
+        $wpdb->insert(
+            $this->stats_table,
+            array(
+                'campaign_id' => $campaign_id,
+                'event_type' => 'impression',
+                'ip_address' => $this->get_client_ip(),
+                'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null,
+                'referrer' => $_SERVER['HTTP_REFERER'] ?? null,
+            ),
+            array('%d', '%s', '%s', '%s', '%s')
+        );
+
+        return new WP_REST_Response(array('status' => 'tracked'), 200);
+    }
+
+    /**
+     * Track click (public)
+     */
+    public function track_click($request) {
+        global $wpdb;
+
+        $campaign_id = intval($request->get_param('id'));
+
+        $wpdb->insert(
+            $this->stats_table,
+            array(
+                'campaign_id' => $campaign_id,
+                'event_type' => 'click',
+                'ip_address' => $this->get_client_ip(),
+                'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null,
+                'referrer' => $_SERVER['HTTP_REFERER'] ?? null,
+            ),
+            array('%d', '%s', '%s', '%s', '%s')
+        );
+
+        return new WP_REST_Response(array('status' => 'tracked'), 200);
+    }
+
+    /**
+     * Auto-expire campaigns
+     */
+    private function auto_expire_campaigns() {
+        global $wpdb;
+
+        $wpdb->query("
+            UPDATE {$this->campaigns_table}
+            SET status = 'expired'
+            WHERE end_date < NOW()
+            AND status = 'active'
+        ");
+    }
+
+    /**
+     * Get client IP address
+     */
+    private function get_client_ip() {
+        $ip = null;
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } else {
+            $ip = $_SERVER['REMOTE_ADDR'] ?? null;
+        }
+        return filter_var($ip, FILTER_VALIDATE_IP) ? $ip : null;
+    }
+
+    /**
+     * Get ad HTML for frontend display
+     */
+    public static function render_ad($placement_type, $position = 0) {
+        $api_url = rest_url('batumizone/v1/ads/placement/' . $placement_type);
+        if ($position > 0) {
+            $api_url .= '?position=' . $position;
+        }
+
+        ?>
+        <div class="ad-container" data-placement="<?php echo esc_attr($placement_type); ?>" data-position="<?php echo esc_attr($position); ?>" data-api-url="<?php echo esc_url($api_url); ?>">
+            <div class="ad-loading">Loading...</div>
+        </div>
+        <?php
+    }
+}

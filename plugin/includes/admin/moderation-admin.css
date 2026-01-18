@@ -1,0 +1,401 @@
+/* ===========================
+   Moderation Admin Styles
+   =========================== */
+
+.batumi-moderation-page {
+    background: #fff;
+    padding: 20px;
+}
+
+/* Header */
+.wp-heading-inline {
+    margin-right: 10px;
+}
+
+.count-badge {
+    display: inline-block;
+    background: #2271b1;
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Status Tabs */
+.status-tabs {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+    border-bottom: 2px solid #e5e5e5;
+}
+
+.status-tab {
+    padding: 12px 20px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    transition: all 0.2s ease;
+}
+
+.status-tab:hover {
+    color: #2271b1;
+}
+
+.status-tab.active {
+    color: #2271b1;
+    border-bottom-color: #2271b1;
+}
+
+.status-tab .count {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.status-tab.active .count {
+    background: #2271b1;
+    color: #fff;
+}
+
+/* Table */
+.reports-container {
+    margin-top: 20px;
+}
+
+#reports-table {
+    background: #fff;
+}
+
+#reports-table thead th {
+    background: #f9f9f9;
+    font-weight: 600;
+}
+
+.column-id {
+    width: 60px;
+}
+
+.column-listing {
+    width: 200px;
+}
+
+.column-reason {
+    width: 120px;
+}
+
+.column-comment {
+    max-width: 300px;
+}
+
+.column-status {
+    width: 100px;
+}
+
+.column-date {
+    width: 150px;
+}
+
+.column-actions {
+    width: 100px;
+    text-align: center;
+}
+
+/* Badges */
+.reason-badge,
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.reason-badge {
+    background: #fef3cd;
+    color: #856404;
+}
+
+.reason-scam {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.reason-illegal {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.reason-offensive {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.reason-duplicate {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.reason-wrong_category {
+    background: #e7e8ea;
+    color: #383d41;
+}
+
+.status-badge {
+    background: #e2e3e5;
+    color: #383d41;
+}
+
+.status-new {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.status-in_review {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-resolved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-rejected {
+    background: #e2e3e5;
+    color: #383d41;
+}
+
+.listing-status {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    text-transform: uppercase;
+    background: #f0f0f0;
+    color: #666;
+}
+
+.listing-status.status-publish {
+    background: #d4edda;
+    color: #155724;
+}
+
+.listing-status.status-draft {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.listing-status.status-trash {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.comment-preview {
+    color: #666;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+/* Loading */
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.loading .spinner {
+    float: none;
+    margin: 0 auto 10px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+}
+
+.empty-state p {
+    font-size: 16px;
+}
+
+/* Moderation Modal */
+.moderation-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100000;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    position: relative;
+    max-width: 700px;
+    margin: 50px auto;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 30px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #999;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background: #f5f5f5;
+    color: #333;
+}
+
+.modal-body {
+    padding: 30px;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+
+.report-details {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 6px;
+    margin-bottom: 30px;
+}
+
+.detail-row {
+    margin-bottom: 15px;
+}
+
+.detail-row:last-child {
+    margin-bottom: 0;
+}
+
+.detail-row strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#modal-comment {
+    background: #fff;
+    padding: 10px;
+    border-radius: 4px;
+    font-style: italic;
+    color: #666;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #2271b1;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.form-actions .button {
+    flex: 1;
+}
+
+/* Modal Messages */
+.modal-message {
+    margin-top: 20px;
+    padding: 12px 15px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.modal-message.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.modal-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Pagination */
+#reports-pagination {
+    margin-top: 20px;
+}
+
+.pagination-btn {
+    min-width: 32px;
+}
+
+.current-page {
+    width: 60px;
+    text-align: center;
+}

@@ -1,0 +1,69 @@
+/**
+ * Ads Frontend Styles
+ * Phase 8.2 - Public Ad Display
+ */
+
+.ad-container {
+    margin: 20px 0;
+    padding: 0;
+}
+
+.ad-wrapper {
+    position: relative;
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+}
+
+.ad-label {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    z-index: 10;
+}
+
+.ad-link {
+    display: block;
+    text-decoration: none;
+}
+
+.ad-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+/* Home Top Banner */
+.ad-container[data-placement="home_top"] {
+    max-width: 728px;
+    margin: 20px auto;
+}
+
+/* Search Results After N */
+.ad-container[data-placement="results_after_n"] {
+    grid-column: 1 / -1;
+}
+
+/* Detail Below Contact */
+.ad-container[data-placement="detail_below_contact"] {
+    margin-top: 30px;
+}
+
+@media (max-width: 768px) {
+    .ad-container[data-placement="home_top"] {
+        max-width: 100%;
+    }
+
+    .ad-image {
+        width: 100%;
+    }
+}

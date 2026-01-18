@@ -1,0 +1,30 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+debug.log
+
+# Dependencies (if any)
+node_modules/
+vendor/
+
+# Build artifacts
+*.map
+
+# WordPress specific
+wp-config.php
+*.sql
+*.sql.gz
+
+# Sensitive files
+.env
+*.pem
+*.key

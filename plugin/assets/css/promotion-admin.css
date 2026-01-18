@@ -1,0 +1,303 @@
+/**
+ * Promotion Admin Page Styles
+ *
+ * @package Batumi_Zone_Core
+ */
+
+/* Main Container */
+.batumizone-promo-admin {
+    margin: 20px 20px 0 0;
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-badge.status-pending {
+    background: #f0f0f1;
+    color: #646970;
+}
+
+.status-badge.status-approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-badge.status-expired {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* Priority Badges */
+.priority-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-weight: 700;
+    min-width: 30px;
+    text-align: center;
+}
+
+.priority-badge.priority-1 {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.priority-badge.priority-2 {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.priority-badge.priority-3 {
+    background: #fce4ec;
+    color: #c2185b;
+}
+
+/* Actions Column */
+.actions-column {
+    white-space: nowrap;
+}
+
+.actions-column .button {
+    margin: 2px;
+    padding: 4px 12px;
+    height: auto;
+    line-height: 1.4;
+    font-size: 13px;
+}
+
+.btn-activate {
+    background: #2271b1;
+    border-color: #2271b1;
+    color: #fff;
+}
+
+.btn-activate:hover {
+    background: #135e96;
+    border-color: #135e96;
+}
+
+.btn-reject {
+    background: #f0f0f1;
+    border-color: #c3c4c7;
+    color: #2c3338;
+}
+
+.btn-reject:hover {
+    background: #dcdcde;
+    border-color: #b7b8bb;
+}
+
+.status-text {
+    color: #646970;
+    font-style: italic;
+}
+
+/* Table Enhancements */
+.wp-list-table td {
+    vertical-align: middle;
+}
+
+.wp-list-table td small {
+    color: #646970;
+    font-size: 12px;
+}
+
+.wp-list-table a {
+    text-decoration: none;
+}
+
+.wp-list-table a:hover {
+    text-decoration: underline;
+}
+
+/* Modal Styles */
+.promo-modal {
+    display: none;
+    position: fixed;
+    z-index: 100000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.promo-modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 30px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.promo-modal-close {
+    color: #999;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 20px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.promo-modal-close:hover,
+.promo-modal-close:focus {
+    color: #333;
+}
+
+#modal-title {
+    margin-top: 0;
+    font-size: 22px;
+    line-height: 1.3;
+}
+
+#modal-message {
+    font-size: 14px;
+    color: #646970;
+    margin-bottom: 20px;
+}
+
+.modal-form {
+    margin-bottom: 20px;
+}
+
+.modal-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.modal-form textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    resize: vertical;
+}
+
+.modal-form textarea:focus {
+    border-color: #2271b1;
+    outline: none;
+    box-shadow: 0 0 0 1px #2271b1;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.modal-actions .button {
+    padding: 8px 20px;
+    height: auto;
+}
+
+.modal-loading {
+    text-align: center;
+    padding: 20px;
+}
+
+.modal-loading .spinner {
+    float: none;
+    margin: 0 auto 10px;
+}
+
+.modal-loading p {
+    color: #646970;
+    margin: 0;
+}
+
+/* Status Filter Tabs */
+.subsubsub {
+    margin-bottom: 15px;
+}
+
+.subsubsub a {
+    text-decoration: none;
+}
+
+.subsubsub a.current {
+    font-weight: 600;
+    color: #000;
+}
+
+.subsubsub .count {
+    color: #646970;
+    font-weight: normal;
+}
+
+/* Responsive */
+@media screen and (max-width: 782px) {
+    .promo-modal-content {
+        width: 95%;
+        margin: 20% auto;
+        padding: 20px;
+    }
+
+    .actions-column .button {
+        display: block;
+        width: 100%;
+        margin: 4px 0;
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .modal-actions .button {
+        width: 100%;
+    }
+}
+
+/* Success/Error Messages */
+.promo-notice {
+    padding: 12px 15px;
+    margin: 15px 0;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.promo-notice.success {
+    background: #d4edda;
+    border-left: 4px solid #28a745;
+    color: #155724;
+}
+
+.promo-notice.error {
+    background: #f8d7da;
+    border-left: 4px solid #dc3545;
+    color: #721c24;
+}
+
+/* Loading State */
+.promo-request-row.loading {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Empty State */
+.wp-list-table td[colspan] em {
+    color: #646970;
+    font-size: 14px;
+}

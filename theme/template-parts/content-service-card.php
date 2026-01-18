@@ -1,0 +1,150 @@
+<?php
+/**
+ * Template part for displaying service cards
+ *
+ * @package Batumi_Theme
+ * @since 0.5.0
+ * @updated 0.9.0-alpha - Added multilingual tag support
+ */
+
+$current_lang = function_exists('pll_current_language') ? pll_current_language() : 'ge';
+$post_id = get_the_ID();
+
+// Normalize language code for meta lookup
+$lang_code = ($current_lang === 'ge') ? 'ka' : $current_lang;
+
+// Get multilingual title with fallback
+$title = get_field("title_{$current_lang}", $post_id);
+if (empty($title)) {
+    $title = get_field('title_en', $post_id) ?: get_field('title_ge', $post_id) ?: get_field('title_ru', $post_id);
+}
+
+// Get price information
+$price_model = get_field('price_model', $post_id);
+$price_value = get_field('price_value', $post_id);
+$currency = get_field('currency', $post_id) ?: 'GEL';
+
+// Get contact info
+$phone = get_field('phone', $post_id);
+
+// Check if service is promoted
+$is_promoted = get_post_meta($post_id, '_is_promoted', true);
+$promotion_priority = get_post_meta($post_id, '_promotion_priority', true);
+
+// Build CSS classes
+$card_classes = 'service-card';
+if ($is_promoted) {
+    $card_classes .= ' service-card-promoted';
+}
+?>
+
+<article id="post-<?php the_ID(); ?>" <?php post_class($card_classes); ?> style="position: relative;" <?php echo $is_promoted && $promotion_priority ? 'data-priority="' . esc_attr($promotion_priority) . '"' : ''; ?>>
+
+    <!-- Favorite Button - Always visible at top-right of card -->
+    <button
+        class="favorite-btn"
+        data-service-id="<?php echo esc_attr($post_id); ?>"
+        data-service-title="<?php echo esc_attr($title); ?>"
+        aria-label="Add to favorites"
+        title="Add to favorites"
+        style="position: absolute; top: 0.75rem; right: 0.75rem; z-index: 10;">
+        <svg class="heart-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+    </button>
+
+    <?php if (has_post_thumbnail()) : ?>
+        <div class="service-card-image-wrapper" style="position: relative;">
+            <a href="<?php the_permalink(); ?>" class="service-card-image-link">
+                <?php the_post_thumbnail('service-thumbnail', array('class' => 'service-card-image')); ?>
+            </a>
+            <?php if ($is_promoted) : ?>
+                <span class="sponsored-badge">Sponsored</span>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+
+    <div class="service-card-content">
+
+        <h3 class="service-card-title">
+            <a href="<?php the_permalink(); ?>"><?php echo esc_html($title); ?></a>
+        </h3>
+
+        <div class="service-card-meta">
+            <?php
+            // Display category
+            $directions = get_the_terms($post_id, 'service_category');
+            if ($directions && !is_wp_error($directions)) {
+                $direction = array_shift($directions);
+                echo '<span class="service-category">' . esc_html($direction->name) . '</span>';
+            }
+
+            // Display coverage area
+            $areas = get_the_terms($post_id, 'coverage_area');
+            if ($areas && !is_wp_error($areas)) {
+                $area = array_shift($areas);
+                echo '<span class="service-area">' . esc_html($area->name) . '</span>';
+            }
+
+            // Display service tags (with multilingual support)
+            $tags = get_the_terms($post_id, 'service_tag');
+            if ($tags && !is_wp_error($tags)) {
+                echo '<div class="service-tags">';
+                foreach (array_slice($tags, 0, 3) as $tag) {
+                    // Get translated tag name
+                    $translated_name = get_term_meta($tag->term_id, 'name_' . $lang_code, true);
+                    $display_name = !empty($translated_name) ? $translated_name : $tag->name;
+                    echo '<a href="' . esc_url(add_query_arg('stag', $tag->slug, home_url('/'))) . '" class="service-tag">' . esc_html($display_name) . '</a>';
+                }
+                if (count($tags) > 3) {
+                    echo '<span class="service-tag">+' . (count($tags) - 3) . '</span>';
+                }
+                echo '</div>';
+            }
+            ?>
+        </div>
+
+        <?php if ($price_model && $price_value) : ?>
+            <div class="service-card-price">
+                <?php
+                if (function_exists('batumi_format_price')) {
+                    echo batumi_format_price($price_model, $price_value, $currency);
+                } else {
+                    echo esc_html($price_value . ' ' . $currency);
+                }
+                ?>
+            </div>
+        <?php endif; ?>
+
+        <div class="service-card-footer">
+            <a href="<?php the_permalink(); ?>" class="btn btn-secondary btn-sm">
+                <?php
+                if ($current_lang === 'ru') {
+                    _e('Подробнее', 'batumi-theme');
+                } elseif ($current_lang === 'en') {
+                    _e('View Details', 'batumi-theme');
+                } else {
+                    _e('დეტალები', 'batumi-theme');
+                }
+                ?>
+            </a>
+
+            <?php if ($phone) : ?>
+                <a href="tel:<?php echo esc_attr($phone); ?>" class="btn btn-primary btn-sm">
+                    <span class="btn-icon">📞</span>
+                    <?php
+                    if ($current_lang === 'ru') {
+                        _e('Позвонить', 'batumi-theme');
+                    } elseif ($current_lang === 'en') {
+                        _e('Call', 'batumi-theme');
+                    } else {
+                        _e('დარეკვა', 'batumi-theme');
+                    }
+                    ?>
+                </a>
+            <?php endif; ?>
+        </div>
+
+    </div>
+
+</article>
