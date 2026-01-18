@@ -3156,13 +3156,13 @@ select[multiple].form-input {
 
 /* WhatsApp button - official green */
 .services-grid .service-card .btn-whatsapp {
-    background: #25D366;
-    color: white;
-    border: none;
+    background: #25D366 !important;
+    color: #ffffff !important;
+    border: none !important;
 }
 
 .services-grid .service-card .btn-whatsapp:hover {
-    background: #128C7E;
+    background: #1DA851 !important;
     box-shadow: 0 4px 15px rgba(37, 211, 102, 0.5);
     transform: translateY(-1px);
 }
