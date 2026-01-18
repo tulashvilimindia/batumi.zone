@@ -72,9 +72,9 @@
                     <span class="favorites-badge" style="display: none;">0</span>
                 </a>
 
-                <!-- Language Switcher - Inline Flags -->
+                <!-- Language Switcher - Dropdown with Flags -->
                 <?php if (function_exists('pll_the_languages')) : ?>
-                <div class="header-lang-switcher inline">
+                <div class="header-lang-switcher">
                     <?php
                     $languages = pll_the_languages(array(
                         'show_flags' => 1,
@@ -87,19 +87,36 @@
                     $flag_emojis = array('ka' => '🇬🇪', 'ru' => '🇷🇺', 'en' => '🇬🇧');
                     ?>
                     <?php if (!empty($languages)) :
-                        foreach ($languages as $slug => $lang) :
-                            $class = ($slug === $current_lang) ? 'current-lang' : '';
+                        $current = isset($languages[$current_lang]) ? $languages[$current_lang] : reset($languages);
                     ?>
-                    <a href="<?php echo esc_url($lang['url']); ?>" class="lang-flag <?php echo esc_attr($class); ?>" hreflang="<?php echo esc_attr($slug); ?>" title="<?php echo esc_attr($lang['name']); ?>">
-                        <?php if (!empty($lang['flag'])) : ?>
-                            <img src="<?php echo esc_url($lang['flag']); ?>" alt="<?php echo esc_attr($lang['name']); ?>"
+                    <button class="lang-current-flag" aria-label="Language" title="<?php echo esc_attr($current['name']); ?>">
+                        <?php if (!empty($current['flag'])) : ?>
+                            <img src="<?php echo esc_url($current['flag']); ?>" alt="<?php echo esc_attr($current['name']); ?>"
                                  onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
-                            <span class="flag-emoji" style="display: none;"><?php echo isset($flag_emojis[$slug]) ? $flag_emojis[$slug] : '🌐'; ?></span>
+                            <span class="flag-emoji" style="display: none;"><?php echo isset($flag_emojis[$current_lang]) ? $flag_emojis[$current_lang] : '🌐'; ?></span>
                         <?php else : ?>
-                            <span class="flag-emoji"><?php echo isset($flag_emojis[$slug]) ? $flag_emojis[$slug] : '🌐'; ?></span>
+                            <span class="flag-emoji"><?php echo isset($flag_emojis[$current_lang]) ? $flag_emojis[$current_lang] : '🌐'; ?></span>
                         <?php endif; ?>
-                    </a>
-                    <?php endforeach; endif; ?>
+                        <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                            <path d="M6 9L1 4h10z"/>
+                        </svg>
+                    </button>
+                    <div class="lang-dropdown">
+                        <?php foreach ($languages as $slug => $lang) :
+                            if ($slug === $current_lang) continue;
+                        ?>
+                        <a href="<?php echo esc_url($lang['url']); ?>" class="lang-dropdown-item" hreflang="<?php echo esc_attr($slug); ?>" title="<?php echo esc_attr($lang['name']); ?>">
+                            <?php if (!empty($lang['flag'])) : ?>
+                                <img src="<?php echo esc_url($lang['flag']); ?>" alt="<?php echo esc_attr($lang['name']); ?>"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                                <span class="flag-emoji" style="display: none;"><?php echo isset($flag_emojis[$slug]) ? $flag_emojis[$slug] : '🌐'; ?></span>
+                            <?php else : ?>
+                                <span class="flag-emoji"><?php echo isset($flag_emojis[$slug]) ? $flag_emojis[$slug] : '🌐'; ?></span>
+                            <?php endif; ?>
+                        </a>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
                 </div>
                 <?php endif; ?>
 

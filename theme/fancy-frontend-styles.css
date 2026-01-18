@@ -307,31 +307,34 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.25rem;
-    width: 48px;
-    height: 40px;
-    border: none;
-    border-radius: 10px;
-    background: var(--bg-secondary);
+    gap: 0.375rem;
+    padding: 0.5rem 0.625rem;
+    border: 1px solid rgba(138, 92, 246, 0.2);
+    border-radius: 8px;
+    background: rgba(26, 26, 53, 0.8);
     cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
+    transition: all 0.2s ease;
+    color: #e8e8e8;
 }
 
-.lang-current-flag img,
-.lang-current-flag .flag-emoji {
-    width: 24px;
-    height: 24px;
+.lang-current-flag img {
+    width: 28px;
+    height: 20px;
     object-fit: cover;
-    border-radius: 4px;
-    font-size: 20px;
-    line-height: 24px;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.lang-current-flag .flag-emoji {
+    font-size: 22px;
+    line-height: 1;
 }
 
 .lang-current-flag .dropdown-arrow {
     width: 10px;
     height: 10px;
     transition: transform 0.3s ease;
+    opacity: 0.7;
 }
 
 .lang-current-flag.active .dropdown-arrow {
@@ -339,26 +342,26 @@ body {
 }
 
 .lang-current-flag:hover {
-    background: rgba(102, 126, 234, 0.1);
+    background: rgba(138, 92, 246, 0.15);
+    border-color: rgba(138, 92, 246, 0.4);
 }
 
 .lang-dropdown {
     position: absolute;
     top: calc(100% + 8px);
     right: 0;
-    min-width: 150px;
-    max-width: calc(100vw - 1rem); /* FIXED: prevent off-screen overflow */
+    min-width: auto;
     background: var(--bg-primary);
     backdrop-filter: blur(20px);
-    border-radius: 12px;
+    border-radius: 10px;
     box-shadow: var(--shadow-md);
-    border: 1px solid var(--border-color); /* FIXED: add border for visibility */
-    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    padding: 0.375rem;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
     transition: all 0.3s ease;
-    z-index: 9999; /* FIXED: was 100 - too low */
+    z-index: 9999;
 }
 
 .lang-dropdown.active {
@@ -370,28 +373,29 @@ body {
 .lang-dropdown-item {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.625rem 0.875rem;
-    color: var(--text-primary);
+    justify-content: center;
+    padding: 0.5rem;
     text-decoration: none;
-    border-radius: 8px;
+    border-radius: 6px;
     transition: all 0.2s ease;
-    font-size: 0.875rem;
 }
 
-.lang-dropdown-item img,
-.lang-dropdown-item .flag-emoji {
-    width: 20px;
+.lang-dropdown-item img {
+    width: 28px;
     height: 20px;
     object-fit: cover;
-    border-radius: 4px;
-    font-size: 16px;
-    line-height: 20px;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.lang-dropdown-item .flag-emoji {
+    font-size: 22px;
+    line-height: 1;
 }
 
 .lang-dropdown-item:hover {
-    background: rgba(102, 126, 234, 0.1);
-    color: #667eea;
+    background: rgba(138, 92, 246, 0.15);
+    transform: scale(1.05);
 }
 
 /* User Dropdown */
