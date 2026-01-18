@@ -1818,17 +1818,17 @@
 }
 
 /* ============================================
-   HOME TOP AD BANNER - Full width
+   HOME TOP AD BANNER - Match content grid width
    ============================================ */
-/* Make home_top ad container span full width */
+/* Make home_top ad container match the cards grid width */
 .ad-container[data-placement="home_top"] {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 1.5rem 0 !important;
-    padding: 0 !important;
+    max-width: 1400px !important;
+    margin: 1.5rem auto !important;
+    padding: 0 1.5rem !important;
     border: none !important;
     background: transparent !important;
-    border-radius: 0 !important;
+    position: relative !important;
+    box-sizing: border-box !important;
 }
 
 .ad-container[data-placement="home_top"] img,
@@ -1841,9 +1841,10 @@
 }
 
 .ad-container[data-placement="home_top"] img {
+    width: 100% !important;
     object-fit: cover !important;
-    min-height: 120px !important;
-    max-height: 250px !important;
+    min-height: 100px !important;
+    max-height: 200px !important;
     border-radius: 12px !important;
 }
 
@@ -1851,7 +1852,7 @@
 .ad-container[data-placement="home_top"] .ad-label {
     position: absolute !important;
     top: 8px !important;
-    left: 8px !important;
+    left: calc(1.5rem + 8px) !important;
     background: rgba(0, 0, 0, 0.6) !important;
     color: #fff !important;
     padding: 4px 10px !important;
@@ -1862,9 +1863,23 @@
     z-index: 5 !important;
 }
 
-/* Make container relative for label positioning */
-.ad-container[data-placement="home_top"] {
-    position: relative !important;
+/* Responsive - match services-grid breakpoints */
+@media (max-width: 768px) {
+    .ad-container[data-placement="home_top"] {
+        padding: 0 1rem !important;
+    }
+    .ad-container[data-placement="home_top"] .ad-label {
+        left: calc(1rem + 8px) !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .ad-container[data-placement="home_top"] {
+        padding: 0 0.75rem !important;
+    }
+    .ad-container[data-placement="home_top"] .ad-label {
+        left: calc(0.75rem + 8px) !important;
+    }
 }
 
 /* Dark mode adjustments */
