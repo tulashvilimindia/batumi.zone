@@ -3106,13 +3106,19 @@ select[multiple].form-input {
 }
 
 /* Service tags - HIDDEN for cleaner cards */
-.services-grid .service-card .service-tags {
-    display: none;
+.services-grid .service-card .service-tags,
+.services-grid .service-card .service-tag {
+    display: none !important;
+    visibility: hidden !important;
 }
 
 /* Service area/location - HIDDEN for cleaner cards */
-.services-grid .service-card .service-area {
-    display: none;
+.services-grid .service-card .service-area,
+.services-grid .service-card .service-location,
+.services-grid .service-card [class*="area"],
+.services-grid .service-card [class*="location"] {
+    display: none !important;
+    visibility: hidden !important;
 }
 
 /* Card price */
