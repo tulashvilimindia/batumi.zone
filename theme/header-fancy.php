@@ -24,14 +24,21 @@
                 </a>
             </div>
 
+            <!-- Header Ad Space -->
+            <div class="header-ad-space">
+                <div class="ad-container" data-placement="header_banner" data-api-url="/wp-json/batumizone/v1/ads/placement/header_banner">
+                    <!-- Ad will be loaded via JavaScript -->
+                </div>
+            </div>
+
             <!-- Search Bar -->
             <div class="header-search">
                 <form role="search" method="get" class="search-form" action="<?php echo esc_url(home_url('/services/')); ?>">
                     <input type="search"
                            class="search-input"
                            placeholder="<?php esc_attr_e('Search services...', 'batumi-theme'); ?>"
-                           value="<?php echo get_search_query(); ?>"
-                           name="s" />
+                           value="<?php echo isset($_GET['query']) ? esc_attr($_GET['query']) : ''; ?>"
+                           name="query" />
                     <button type="submit" class="search-button">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                             <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM19 19l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>

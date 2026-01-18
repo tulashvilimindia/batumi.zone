@@ -1730,5 +1730,93 @@
 }
 
 /* ============================================
+   HEADER AD SPACE - Full width responsive
+   ============================================ */
+.header-ad-space {
+    flex: 1;
+    min-width: 200px;
+    max-width: 728px;
+    margin: 0 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-ad-space .ad-container {
+    width: 100%;
+    min-height: 60px;
+    max-height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(138, 92, 246, 0.05);
+    border-radius: 8px;
+    border: 1px dashed rgba(138, 92, 246, 0.2);
+}
+
+[data-theme="dark"] .header-ad-space .ad-container {
+    background: rgba(138, 92, 246, 0.08);
+    border-color: rgba(138, 92, 246, 0.25);
+}
+
+/* Responsive: Hide ad on small screens */
+@media (max-width: 768px) {
+    .header-ad-space {
+        display: none;
+    }
+}
+
+/* ============================================
+   FILTER DROPDOWNS - Fix triangle patterns
+   ============================================ */
+/* Override any conflicting background patterns on select dropdowns */
+[data-theme="dark"] .filter-select,
+[data-theme="dark"] .filters-panel .filter-select,
+[data-theme="dark"] .filters-grid select,
+[data-theme="dark"] .filter-group select {
+    background-color: var(--bg-input, rgba(26, 26, 53, 0.8)) !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23b0b0b0' d='M6 8L1 3h10z'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 12px center !important;
+    background-size: 12px !important;
+    border: 1px solid rgba(138, 92, 246, 0.3) !important;
+    color: var(--text-primary, #e8e8e8) !important;
+}
+
+[data-theme="dark"] .filter-select:focus,
+[data-theme="dark"] .filters-panel .filter-select:focus,
+[data-theme="dark"] .filter-group select:focus {
+    border-color: rgba(138, 92, 246, 0.6) !important;
+    box-shadow: 0 0 0 3px rgba(138, 92, 246, 0.15) !important;
+}
+
+/* Filter panel styling */
+[data-theme="dark"] .filters-panel {
+    background: rgba(10, 10, 26, 0.98) !important;
+    border-color: rgba(138, 92, 246, 0.2) !important;
+}
+
+[data-theme="dark"] .filters-panel-inner {
+    background: transparent !important;
+}
+
+[data-theme="dark"] .filter-group label {
+    color: var(--text-secondary, #a0a0a0) !important;
+}
+
+/* Filter inputs */
+[data-theme="dark"] .filter-input,
+[data-theme="dark"] .filters-panel .filter-input {
+    background-color: var(--bg-input, rgba(26, 26, 53, 0.8)) !important;
+    border: 1px solid rgba(138, 92, 246, 0.3) !important;
+    color: var(--text-primary, #e8e8e8) !important;
+}
+
+[data-theme="dark"] .filter-input:focus {
+    border-color: rgba(138, 92, 246, 0.6) !important;
+    box-shadow: 0 0 0 3px rgba(138, 92, 246, 0.15) !important;
+}
+
+/* ============================================
    END OF DARK MODE COMPLETE STYLESHEET
    ============================================ */

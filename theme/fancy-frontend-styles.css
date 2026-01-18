@@ -110,11 +110,40 @@ body {
     opacity: 0.8;
 }
 
+/* Header Ad Space */
+.header-ad-space {
+    flex: 1 1 auto;
+    min-width: 200px;
+    max-width: 728px;
+    margin: 0 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-ad-space .ad-container {
+    width: 100%;
+    min-height: 50px;
+    max-height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Hide ad space on tablets and mobile */
+@media (max-width: 1024px) {
+    .header-ad-space {
+        display: none;
+    }
+}
+
 /* Search Bar */
 .header-search {
-    flex: 1;
-    max-width: 500px;
-    min-width: 0; /* Important for flex shrinking */
+    flex: 0 1 320px;
+    max-width: 400px;
+    min-width: 200px;
 }
 
 .search-form {
