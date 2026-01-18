@@ -2880,3 +2880,171 @@ select[multiple].form-input {
     font-size: 14px;
     padding: 20px;
 }
+
+/* ========================================
+   CSS FIXES - January 18, 2026
+   Archive Page Layout & Dark Mode Fixes
+   ======================================== */
+
+/* --- FILTER SIDEBAR DARK MODE FIXES --- */
+[data-theme="dark"] #filters-panel {
+    background-color: #1e1e3f !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .filters-toggle {
+    background-color: #252545 !important;
+    color: #e8e8e8 !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+[data-theme="dark"] .filters-toggle:hover {
+    background-color: #2a2a4a !important;
+}
+
+[data-theme="dark"] .filter-label {
+    color: #e8e8e8 !important;
+}
+
+[data-theme="dark"] .filter-select,
+[data-theme="dark"] .price-input {
+    background-color: #252545 !important;
+    color: #e8e8e8 !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+[data-theme="dark"] .filter-select:focus,
+[data-theme="dark"] .price-input:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.35) !important;
+}
+
+[data-theme="dark"] .filter-select option {
+    background-color: #1e1e3f;
+    color: #e8e8e8;
+}
+
+[data-theme="dark"] .price-separator {
+    color: #b0b0b0 !important;
+}
+
+/* --- SERVICES GRID LAYOUT FIXES --- */
+
+/* Ensure all grid items have consistent sizing */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    align-items: start; /* Prevent stretching */
+}
+
+/* Ensure service cards don't break the grid */
+.services-grid .service-card {
+    max-width: 100%;
+    min-width: 0; /* Prevent overflow */
+    height: auto;
+}
+
+/* Ad containers within grid - make them span full row */
+.services-grid .ad-container {
+    grid-column: 1 / -1;
+    margin: 1rem 0;
+    padding: 1rem;
+    text-align: center;
+}
+
+/* Fix nested ad containers */
+.services-grid .ad-container .ad-container {
+    grid-column: auto;
+    margin: 0.5rem 0;
+}
+
+/* --- PAGINATION WITH INFINITE SCROLL --- */
+
+/* Hide pagination when infinite scroll sentinel exists */
+.infinite-scroll-active .pagination-nav,
+.services-page:has(.infinite-scroll-sentinel) .pagination-nav {
+    display: none;
+}
+
+/* Fallback for browsers without :has() support */
+.pagination-nav.hidden-by-scroll {
+    display: none;
+}
+
+/* --- AD CONTAINER FIXES --- */
+.ad-container {
+    overflow: hidden;
+    min-height: 0;
+}
+
+.ad-container:empty {
+    display: none;
+}
+
+.ad-container .ad-loading {
+    text-align: center;
+    padding: 1rem;
+}
+
+[data-theme="dark"] .ad-container {
+    background-color: #1e1e3f;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .ad-container .ad-label {
+    color: #999;
+}
+
+[data-theme="dark"] .ad-container .ad-loading {
+    color: #b0b0b0;
+}
+
+/* --- SERVICES PAGE HEADER DARK MODE --- */
+[data-theme="dark"] .page-title {
+    color: #e8e8e8;
+}
+
+[data-theme="dark"] .results-count {
+    color: #b0b0b0;
+}
+
+[data-theme="dark"] .no-results {
+    background-color: #1e1e3f;
+}
+
+[data-theme="dark"] .no-results-text {
+    color: #b0b0b0;
+}
+
+/* --- PAGINATION DARK MODE --- */
+[data-theme="dark"] .pagination-nav a,
+[data-theme="dark"] .pagination-nav span {
+    background-color: #1e1e3f;
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #e8e8e8;
+}
+
+[data-theme="dark"] .pagination-nav a:hover {
+    background-color: #667eea;
+    border-color: #667eea;
+    color: white;
+}
+
+[data-theme="dark"] .pagination-nav .current {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: transparent;
+    color: white;
+}
+
+/* --- RESPONSIVE FIXES --- */
+@media (max-width: 768px) {
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .services-grid .ad-container {
+        padding: 0.75rem;
+    }
+}

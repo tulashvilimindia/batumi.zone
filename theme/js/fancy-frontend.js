@@ -239,6 +239,17 @@
             this.sentinel.className = 'infinite-scroll-sentinel';
             this.container.parentElement.appendChild(this.sentinel);
 
+            // Hide pagination when infinite scroll is active (CSS fallback for :has())
+            const pagination = document.querySelector('.pagination-nav');
+            if (pagination) {
+                pagination.classList.add('hidden-by-scroll');
+            }
+            // Also add class to parent for CSS :has() fallback
+            const servicesPage = document.querySelector('.services-page');
+            if (servicesPage) {
+                servicesPage.classList.add('infinite-scroll-active');
+            }
+
             // Intersection Observer
             this.observer = new IntersectionObserver(
                 (entries) => {

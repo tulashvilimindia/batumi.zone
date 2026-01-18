@@ -16,8 +16,8 @@
 | 10 | Infinite scroll never stops - loading spinner forever on error | `js/fancy-frontend.js:314-323` | [x] Fixed | [ ] |
 | 11 | Missing CSRF nonce in report form | `js/report-modal.js:179-196` | [x] Fixed | [ ] |
 
-**Phase 1 Deployment:** [ ] Not Deployed
-**Phase 1 Verified:** [ ] Not Verified
+**Phase 1 Deployment:** [x] Deployed to dev.batumi.zone - 2026-01-18 12:19
+**Phase 1 Verified:** [ ] Awaiting user verification
 
 ---
 
@@ -83,6 +83,24 @@
 **js/report-modal.js:**
 - Bug #11: Added X-WP-Nonce header for CSRF protection (lines 179-196)
 - Added `credentials: 'same-origin'` for cookie authentication
+
+### CSS Layout Fixes (2026-01-18)
+
+**theme/style.css:**
+- Added dark mode fixes for filter sidebar (#filters-panel, .filter-select, .price-input)
+- Fixed services-grid layout with `align-items: start` to prevent card stretching
+- Ad containers now span full grid row (`grid-column: 1 / -1`)
+- Added pagination hiding when infinite scroll is active
+- Added dark mode styles for pagination, page titles, and no-results messages
+
+**theme/js/fancy-frontend.js:**
+- Added pagination hiding logic when infinite scroll initializes
+- Adds `.hidden-by-scroll` class to pagination
+- Adds `.infinite-scroll-active` class to services-page container
+
+**theme/archive-service_listing.php:**
+- Fixed broken nested ad container HTML structure (was improperly nested)
+- Cleaned up ad container markup
 
 ### Phase 2 Changes
 *(To be filled after fixes)*

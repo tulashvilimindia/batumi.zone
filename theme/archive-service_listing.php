@@ -313,12 +313,8 @@ $services_query = new WP_Query($args);
                             if ($result_count === 5) {
                                 ?>
                                 <div class="ad-container" data-placement="results_after_n" data-position="5" data-api-url="/wp-json/batumizone/v1/ads/placement/results_after_n?position=5">
-                                    <div class="ad-loading">Loading...</div>
-                                <!-- Mobile inline ad #2 -->
-                                <div class="ad-container" data-placement="inline_mobile_2" data-api-url="/wp-json/batumizone/v1/ads/placement/inline_mobile_2">
                                     <div class="ad-label">Advertisement</div>
                                     <div class="ad-loading">Loading...</div>
-                                </div>
                                 </div>
                                 <?php
                             }
