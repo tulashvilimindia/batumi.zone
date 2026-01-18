@@ -448,11 +448,6 @@ class Batumi_Poster_API {
             );
         }
 
-        // Set first image as featured image if none exists
-        if (!has_post_thumbnail($service_id)) {
-            set_post_thumbnail($service_id, $attachment_id);
-        }
-
         // Add to gallery
         $current_ids[] = $attachment_id;
         update_post_meta($service_id, '_gallery_image_ids', implode(',', $current_ids));
@@ -706,9 +701,6 @@ class Batumi_Poster_API {
                 'email'    => get_field('email', $post_id),
             ),
             'can_publish'       => $validation_result['valid'],
-            'gallery'           => $this->get_gallery_images($post_id),
-            'service_category'  => $this->get_service_taxonomy($post_id, 'service_category'),
-            'coverage_area'     => $this->get_service_taxonomy($post_id, 'coverage_area'),
             'validation_errors' => $validation_result['errors'],
         );
     }
@@ -757,54 +749,6 @@ class Batumi_Poster_API {
      */
     public function is_authenticated() {
         return is_user_logged_in();
-    }
-
-
-    /**
-     * Get gallery images for a service
-     */
-    private function get_gallery_images($post_id) {
-        $gallery_ids = get_post_meta($post_id, '_gallery_image_ids', true);
-        if (empty($gallery_ids)) {
-            return array();
-        }
-
-        $ids = explode(',', $gallery_ids);
-        $images = array();
-
-        foreach ($ids as $id) {
-            $id = intval(trim($id));
-            if ($id > 0) {
-                $images[] = array(
-                    'id'        => $id,
-                    'thumbnail' => wp_get_attachment_image_url($id, 'thumbnail'),
-                    'medium'    => wp_get_attachment_image_url($id, 'medium'),
-                    'full'      => wp_get_attachment_image_url($id, 'full'),
-                );
-            }
-        }
-
-        return $images;
-    }
-
-    /**
-     * Get taxonomy terms for a service
-     */
-    private function get_service_taxonomy($post_id, $taxonomy) {
-        $terms = wp_get_post_terms($post_id, $taxonomy);
-        if (is_wp_error($terms) || empty($terms)) {
-            return array();
-        }
-
-        $result = array();
-        foreach ($terms as $term) {
-            $result[] = array(
-                'term_id' => $term->term_id,
-                'name'    => $term->name,
-                'slug'    => $term->slug,
-            );
-        }
-        return $result;
     }
 
     /**

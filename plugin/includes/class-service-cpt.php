@@ -131,5 +131,39 @@ class Batumi_Service_CPT {
         );
 
         register_taxonomy('coverage_area', array('service_listing'), $area_args);
+
+        // Service Tags taxonomy (non-hierarchical, like WordPress tags)
+        $tag_labels = array(
+            'name'                       => _x('Service Tags', 'taxonomy general name', 'batumizone'),
+            'singular_name'              => _x('Service Tag', 'taxonomy singular name', 'batumizone'),
+            'search_items'               => __('Search Tags', 'batumizone'),
+            'popular_items'              => __('Popular Tags', 'batumizone'),
+            'all_items'                  => __('All Tags', 'batumizone'),
+            'parent_item'                => null,
+            'parent_item_colon'          => null,
+            'edit_item'                  => __('Edit Tag', 'batumizone'),
+            'update_item'                => __('Update Tag', 'batumizone'),
+            'add_new_item'               => __('Add New Tag', 'batumizone'),
+            'new_item_name'              => __('New Tag Name', 'batumizone'),
+            'separate_items_with_commas' => __('Separate tags with commas', 'batumizone'),
+            'add_or_remove_items'        => __('Add or remove tags', 'batumizone'),
+            'choose_from_most_used'      => __('Choose from the most used tags', 'batumizone'),
+            'not_found'                  => __('No tags found.', 'batumizone'),
+            'menu_name'                  => __('Tags', 'batumizone'),
+        );
+
+        $tag_args = array(
+            'hierarchical'          => false,
+            'labels'                => $tag_labels,
+            'show_ui'               => true,
+            'show_admin_column'     => true,
+            'update_count_callback' => '_update_post_term_count',
+            'query_var'             => true,
+            'rewrite'               => array('slug' => 'service-tag'),
+            'show_in_rest'          => true,
+            'rest_base'             => 'service_tags',
+        );
+
+        register_taxonomy('service_tag', array('service_listing'), $tag_args);
     }
 }

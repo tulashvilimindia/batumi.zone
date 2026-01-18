@@ -197,17 +197,18 @@
     color: #9ca3af;
 }
 
-/* Select dropdowns */
+/* Select dropdowns - use !important to override any conflicting styles */
 select.form-input {
     cursor: pointer;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-    background-position: right 0.75rem center;
-    background-repeat: no-repeat;
-    background-size: 1.5em 1.5em;
-    padding-right: 2.5rem;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+    background-color: white !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
+    background-position: right 0.75rem center !important;
+    background-repeat: no-repeat !important;
+    background-size: 1.5em 1.5em !important;
+    padding-right: 2.5rem !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
 }
 
 select.form-input option {
@@ -434,6 +435,7 @@ textarea.form-input {
    ============================================ */
 
 .image-upload-zone {
+    display: block;
     border: 2px dashed #d0d5dd;
     border-radius: 12px;
     padding: 3rem 2rem;
@@ -441,6 +443,14 @@ textarea.form-input {
     cursor: pointer;
     transition: all 0.3s ease;
     background: #fafbfc;
+    position: relative;
+}
+
+/* Ensure the label is fully clickable */
+label.image-upload-zone {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .image-upload-zone:hover {
@@ -776,7 +786,11 @@ textarea.form-input {
 }
 
 [data-theme="dark"] select.form-input {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-color: #252538 !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
+    background-position: right 0.75rem center !important;
+    background-repeat: no-repeat !important;
+    background-size: 1.5em 1.5em !important;
 }
 
 [data-theme="dark"] select.form-input option {

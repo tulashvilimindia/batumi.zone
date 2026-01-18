@@ -1095,8 +1095,3 @@ add_action('wp_footer', function() {
     </script>
     <?php
 }, 20);
-
-/**
- * Hide WordPress admin bar on frontend for all users
- */
-add_filter("show_admin_bar", "__return_false");
