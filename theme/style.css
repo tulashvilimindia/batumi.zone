@@ -2976,7 +2976,7 @@ select[multiple].form-input {
 
 .services-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.25rem;
     align-items: stretch;
 }
@@ -3090,6 +3090,11 @@ select[multiple].form-input {
     display: none;
 }
 
+/* Service area/location - HIDDEN for cleaner cards */
+.services-grid .service-card .service-area {
+    display: none;
+}
+
 /* Card price */
 .services-grid .service-card .service-card-price {
     font-size: 1.125rem;
@@ -3177,12 +3182,6 @@ select[multiple].form-input {
 }
 
 /* Responsive grid */
-@media (max-width: 1400px) {
-    .services-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
 @media (max-width: 1024px) {
     .services-grid {
         grid-template-columns: repeat(2, 1fr);
