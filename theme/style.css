@@ -2,6 +2,33 @@
 Theme Name: Batumi.zone Theme
 Theme URI: https://batumi.zone
 Author: Batumi.zone Team
+Description: Unified dark theme for Batumi.zone - Mobile-first, multilingual (GE/RU/EN)
+Version: 1.0.2
+Requires at least: 6.0
+Tested up to: 6.9
+Requires PHP: 8.0
+License: GPL v2 or later
+Text Domain: batumi-theme
+
+CONSOLIDATED CSS - January 18, 2026
+=======================================
+ALL source files merged in correct cascade order:
+1. style.css - Base WordPress theme styles
+2. fancy-frontend-styles.css - Glassmorphism header, layout
+3. HEADER-FIXES.css - Header bug fixes V1-V20, language flags
+4. dark-mode-complete.css - Complete dark mode styling
+5. accessibility-fixes.css - WCAG accessibility compliance
+6. report-modal.css - Report modal styles
+7. poster-promotion.css - Promotion badges and modals
+8. sponsored-badges.css - Sponsored service badges
+9. service-form-styles.css - Create/edit service form styles
+=======================================
+*/
+
+/*
+Theme Name: Batumi.zone Theme
+Theme URI: https://batumi.zone
+Author: Batumi.zone Team
 Author URI: https://batumi.zone
 Description: Custom theme for Batumi.zone Services MVP - Mobile-first, multilingual (GE/RU/EN)
 Version: 0.2.0
@@ -3395,5 +3422,6953 @@ select[multiple].form-input {
 
     .services-grid .ad-container {
         padding: 0.75rem;
+    }
+}
+/* ========================================
+   FANCY FRONTEND - Glassmorphism Header & Infinite Scroll
+   Version: 0.5.0 - Header Visual Bugs Fixed
+   Updated: January 17, 2026
+   Fixes: Dropdown clipping, header overflow, mobile sizing
+   ======================================== */
+
+/* ========================================
+   0. RESET & ROOT VARIABLES
+   ======================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --header-height: 70px;
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --bg-primary: rgba(255, 255, 255, 0.85);
+    --bg-secondary: rgba(255, 255, 255, 0.6);
+    --text-primary: #1a1a1a;
+    --text-secondary: #666;
+    --border-color: rgba(102, 126, 234, 0.2);
+    --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 12px 32px rgba(102, 126, 234, 0.15);
+}
+
+[data-theme="dark"] {
+    --bg-primary: rgba(26, 26, 26, 0.85);
+    --bg-secondary: rgba(255, 255, 255, 0.1);
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --border-color: rgba(255, 255, 255, 0.2);
+    --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
+}
+
+/* Mobile viewport fix */
+html {
+    overflow-x: hidden;
+    width: 100%;
+}
+
+body {
+    overflow-x: hidden;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.fancy-layout {
+    min-height: calc(var(--vh, 1vh) * 100 - var(--header-height));
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+/* ========================================
+   1. GLASSMORPHISM HEADER
+   ======================================== */
+
+.fancy-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    max-width: 100vw;
+    overflow: visible; /* FIXED: was overflow-x: hidden - clipped dropdown */
+    background: var(--bg-primary);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+}
+
+.fancy-header-inner {
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    box-sizing: border-box;
+}
+
+/* Logo/Brand */
+.header-logo {
+    flex-shrink: 0;
+}
+
+.header-logo a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+.header-logo-img {
+    height: 45px;
+    width: auto;
+    object-fit: contain;
+}
+
+.header-logo a:hover {
+    opacity: 0.8;
+}
+
+/* Header Ad Space */
+.header-ad-space {
+    flex: 1 1 auto;
+    min-width: 200px;
+    max-width: 728px;
+    margin: 0 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-ad-space .ad-container {
+    width: 100%;
+    min-height: 50px;
+    max-height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Hide ad space on tablets and mobile */
+@media (max-width: 1024px) {
+    .header-ad-space {
+        display: none;
+    }
+}
+
+/* Search Bar */
+.header-search {
+    flex: 0 1 320px;
+    max-width: 400px;
+    min-width: 200px;
+}
+
+.search-form {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    width: 100%;
+    height: 44px;
+    padding: 0 3.5rem 0 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 22px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: #667eea;
+    background: var(--bg-primary);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.search-input::placeholder {
+    color: var(--text-secondary);
+}
+
+.search-button {
+    position: absolute;
+    right: 4px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 18px;
+    background: var(--primary-gradient);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.search-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Header Actions */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+    flex-wrap: nowrap; /* FIXED: prevent wrapping */
+    min-width: 0; /* FIXED: allow shrinking */
+}
+
+.header-action-btn {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 10px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.header-action-btn:hover {
+    background: rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+.header-action-btn.active {
+    background: var(--primary-gradient);
+    color: white;
+}
+
+.header-action-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Favorites Badge */
+.header-action-btn .favorites-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    background: #dc3545;
+    color: white;
+    border-radius: 9px;
+    font-size: 0.625rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Language Switcher */
+.header-lang-switcher {
+    position: relative;
+}
+
+/* Inline Flags Version */
+.header-lang-switcher.inline {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.header-lang-switcher.inline .lang-flag {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    opacity: 0.7;
+}
+
+.header-lang-switcher.inline .lang-flag:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.header-lang-switcher.inline .lang-flag.current-lang {
+    opacity: 1;
+    background: rgba(138, 92, 246, 0.2);
+    border: 1px solid rgba(138, 92, 246, 0.4);
+}
+
+.header-lang-switcher.inline .lang-flag img {
+    width: 24px;
+    height: 18px;
+    object-fit: cover;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.header-lang-switcher.inline .lang-flag .flag-emoji {
+    font-size: 20px;
+    line-height: 1;
+}
+
+.lang-current-flag {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    padding: 0.5rem 0.625rem;
+    border: 1px solid rgba(138, 92, 246, 0.2);
+    border-radius: 8px;
+    background: rgba(26, 26, 53, 0.8);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #e8e8e8;
+}
+
+.lang-current-flag img {
+    width: 28px;
+    height: 20px;
+    object-fit: cover;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.lang-current-flag .flag-emoji {
+    font-size: 22px;
+    line-height: 1;
+}
+
+.lang-current-flag .dropdown-arrow {
+    width: 10px;
+    height: 10px;
+    transition: transform 0.3s ease;
+    opacity: 0.7;
+}
+
+.lang-current-flag.active .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.lang-current-flag:hover {
+    background: rgba(138, 92, 246, 0.15);
+    border-color: rgba(138, 92, 246, 0.4);
+}
+
+.lang-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: auto;
+    background: var(--bg-primary);
+    backdrop-filter: blur(20px);
+    border-radius: 10px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    padding: 0.375rem;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 9999;
+}
+
+.lang-dropdown.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.lang-dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.lang-dropdown-item img {
+    width: 28px;
+    height: 20px;
+    object-fit: cover;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.lang-dropdown-item .flag-emoji {
+    font-size: 22px;
+    line-height: 1;
+}
+
+.lang-dropdown-item:hover {
+    background: rgba(138, 92, 246, 0.15);
+    transform: scale(1.05);
+}
+
+/* Hide text names - flags only */
+.lang-dropdown-item .lang-name,
+.lang-dropdown .lang-name {
+    display: none !important;
+}
+
+/* User Dropdown */
+.header-user-menu {
+    position: relative;
+}
+
+.user-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 180px;
+    background: var(--bg-primary);
+    backdrop-filter: blur(20px);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    padding: 0.5rem;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+}
+
+.user-dropdown.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.user-dropdown a {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+}
+
+.user-dropdown a:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+}
+
+/* ========================================
+   2. FILTERS PANEL
+   ======================================== */
+
+.filters-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--bg-primary);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.filters-panel.active {
+    box-shadow: var(--shadow-sm);
+}
+
+.filters-panel-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-group label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.filter-select,
+.filter-input {
+    height: 44px;
+    padding: 0 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.filter-select:focus,
+.filter-input:focus {
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.filters-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+/* ========================================
+   3. FANCY LAYOUT & CARDS
+   ======================================== */
+
+.fancy-layout {
+    padding: 2rem 0;
+    background: linear-gradient(180deg, #f8f9ff 0%, #ffffff 100%);
+    min-height: 100vh;
+}
+
+[data-theme="dark"] .fancy-layout {
+    background: linear-gradient(180deg, #1a1a1a 0%, #0f0f0f 100%);
+}
+
+#services-grid {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Enhanced Service Cards */
+.service-card {
+    background: var(--bg-primary);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.service-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+}
+
+.service-card-image-wrapper {
+    position: relative;
+    padding-top: 66.67%; /* 3:2 aspect ratio */
+    overflow: hidden;
+    background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+}
+
+.service-card-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.service-card:hover .service-card-image {
+    transform: scale(1.05);
+}
+
+.service-card-content {
+    padding: 1.25rem;
+}
+
+.service-card-title a {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-decoration: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
+    transition: color 0.3s ease;
+}
+
+.service-card-title a:hover {
+    color: #667eea;
+}
+
+.service-card-meta {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.75rem;
+}
+
+.service-category,
+.service-area {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 6px;
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    font-weight: 500;
+}
+
+.service-card-price {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #28a745;
+    margin-top: 0.75rem;
+}
+
+.service-card-footer {
+    display: flex;
+    gap: 0.625rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+/* ========================================
+   4. LOADING INDICATOR
+   ======================================== */
+
+#loading-indicator {
+    display: none;
+    text-align: center;
+    padding: 2.5rem;
+    color: var(--text-secondary);
+}
+
+.loading-spinner {
+    width: 44px;
+    height: 44px;
+    margin: 0 auto;
+    border: 4px solid rgba(102, 126, 234, 0.2);
+    border-top-color: #667eea;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ========================================
+   5. RESPONSIVE DESIGN
+   ======================================== */
+
+/* Tablet and below */
+@media (max-width: 1024px) {
+    .header-search {
+        max-width: 300px;
+    }
+}
+
+/* Mobile - 2 row header layout */
+@media (max-width: 768px) {
+    :root {
+        --header-height: 112px;
+    }
+
+    .fancy-header-inner {
+        padding: 0.5rem 0.75rem;
+        height: 112px;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-content: space-between;
+    }
+
+    .header-logo {
+        order: 1;
+        flex: 0 0 auto;
+    }
+
+    .header-logo a {
+        font-size: 1rem;
+        white-space: nowrap;
+    }
+
+    .header-logo-img {
+        height: 32px;
+        width: auto;
+    }
+
+    /* Header actions in first row */
+    .header-actions {
+        order: 2;
+        gap: 0.25rem;
+        flex: 1;
+        justify-content: flex-end;
+        min-width: 0; /* Allow shrinking */
+        flex-shrink: 1;
+    }
+
+    /* Search bar takes full width in second row */
+    .header-search {
+        order: 3;
+        width: 100%;
+        max-width: 100%;
+        flex: 0 0 100%;
+        margin: 0;
+    }
+
+    .search-input {
+        height: 42px;
+        font-size: 0.875rem;
+        padding: 0 3rem 0 1rem;
+    }
+
+    .search-button {
+        width: 34px;
+        height: 34px;
+    }
+
+    .search-button svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .header-action-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+    }
+
+    .header-action-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .favorites-badge {
+        font-size: 0.625rem;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 4px;
+    }
+
+    /* Language switcher compact */
+    .lang-current-flag {
+        width: 36px !important;
+        height: 36px !important;
+        padding: 0 !important;
+    }
+
+    .lang-current-flag img,
+    .lang-current-flag .flag-emoji {
+        width: 20px !important;
+        height: 20px !important;
+    }
+
+    .lang-current-flag .dropdown-arrow {
+        display: none;
+    }
+
+    .lang-dropdown {
+        min-width: 140px;
+        font-size: 0.875rem;
+    }
+
+    .lang-dropdown-item {
+        padding: 0.625rem !important;
+        font-size: 0.875rem;
+    }
+
+    /* Filters panel */
+    .filters-panel-inner {
+        padding: 1rem;
+    }
+
+    .filters-grid {
+        grid-template-columns: 1fr;
+        gap: 0.875rem;
+    }
+
+    .filters-actions {
+        flex-direction: column;
+    }
+
+    .filters-actions button {
+        width: 100%;
+    }
+
+    /* Services grid */
+    #services-grid {
+        grid-template-columns: 1fr;
+        padding: 0 1rem;
+        gap: 1.25rem;
+    }
+
+    .fancy-layout {
+        padding: 1.5rem 0;
+    }
+
+    .service-card-content {
+        padding: 1rem;
+    }
+
+    /* Dropdowns align left on mobile */
+    .lang-dropdown,
+    .user-dropdown {
+        right: 0;
+        left: auto;
+    }
+}
+
+/* Very small mobile */
+@media (max-width: 480px) {
+    :root {
+        --header-height: 106px;
+    }
+
+    .fancy-header-inner {
+        padding: 0.5rem 0.5rem;
+        height: 106px;
+        gap: 0.375rem;
+    }
+
+    .header-logo a {
+        font-size: 0.9375rem;
+    }
+
+    .header-logo-img {
+        height: 28px;
+        width: auto;
+    }
+
+    .header-actions {
+        gap: 0.125rem; /* FIXED: smaller gap for small screens */
+    }
+
+    .search-input {
+        height: 40px;
+        font-size: 0.8125rem;
+    }
+
+    .search-button {
+        width: 32px;
+        height: 32px;
+    }
+
+    .search-button svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .header-action-btn {
+        width: 34px;
+        height: 34px;
+    }
+
+    .header-action-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .lang-current-flag {
+        width: 34px !important;
+        height: 34px !important;
+    }
+
+    .lang-current-flag img,
+    .lang-current-flag .flag-emoji {
+        width: 18px !important;
+        height: 18px !important;
+    }
+
+    /* FIXED: Language dropdown positioning for small screens */
+    .lang-dropdown {
+        right: -0.25rem;
+        min-width: 130px;
+    }
+
+    #services-grid {
+        padding: 0 0.75rem;
+    }
+
+    .fancy-layout {
+        padding: 1rem 0;
+    }
+}
+
+/* Extra small mobile - FIXED: added for very small screens */
+@media (max-width: 360px) {
+    .fancy-header-inner {
+        padding: 0.375rem 0.375rem;
+        gap: 0.25rem;
+    }
+
+    .header-logo a {
+        font-size: 0.875rem;
+    }
+
+    .header-actions {
+        gap: 0.0625rem;
+    }
+
+    .header-action-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+    }
+
+    .header-action-btn svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .lang-current-flag {
+        width: 30px !important;
+        height: 30px !important;
+    }
+
+    .lang-current-flag img,
+    .lang-current-flag .flag-emoji {
+        width: 16px !important;
+        height: 16px !important;
+    }
+
+    .lang-dropdown {
+        right: -0.5rem;
+        min-width: 120px;
+    }
+}
+
+/* Landscape mobile - keep 2 row layout */
+@media (max-width: 768px) and (orientation: landscape) {
+    :root {
+        --header-height: 100px;
+    }
+
+    .fancy-header-inner {
+        height: 100px;
+        padding: 0.375rem 0.75rem;
+    }
+
+    .search-input {
+        height: 38px;
+    }
+
+    .header-action-btn {
+        width: 34px;
+        height: 34px;
+    }
+}
+
+/* ========================================
+   6. UTILITY CLASSES
+   ======================================== */
+
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-secondary);
+}
+
+.no-results h2 {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.no-results p {
+    font-size: 0.9375rem;
+    margin-bottom: 1.5rem;
+}
+
+/* ========================================
+   7. DARK MODE SPECIFIC ADJUSTMENTS
+   ======================================== */
+
+[data-theme="dark"] .service-card {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .search-input,
+[data-theme="dark"] .filter-select,
+[data-theme="dark"] .filter-input {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .service-category,
+[data-theme="dark"] .service-area {
+    background: rgba(102, 126, 234, 0.2);
+    color: #a8b5ff;
+}
+
+/* ========================================
+   PHASE 2 HIGH PRIORITY FIXES - LM-04 to LM-07
+   January 17, 2026
+   ======================================== */
+
+/* LM-04: Increase card shadow definition in light mode */
+.service-card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(102, 126, 234, 0.08);
+}
+
+.service-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 12px 32px rgba(102, 126, 234, 0.15);
+}
+
+/* LM-05: Add 2px border to header search input */
+.search-input {
+    border: 2px solid rgba(102, 126, 234, 0.25);
+}
+
+.search-input:focus {
+    border: 2px solid #667eea;
+}
+
+/* LM-06: Add subtle border to tags in light mode */
+.tag-cloud a,
+.tag-link,
+.service-tags .service-tag {
+    border: 1px solid #e0e0e0;
+}
+
+.tag-cloud a:hover,
+.tag-link:hover,
+.service-tags .service-tag:hover {
+    border-color: #667eea;
+}
+
+/* LM-07: Adjust skeleton loading gradient for better visibility */
+.skeleton,
+.skeleton-loader,
+.loading-skeleton,
+.service-card-skeleton .skeleton-image,
+.service-card-skeleton .skeleton-title,
+.service-card-skeleton .skeleton-text,
+.service-card-skeleton .skeleton-price {
+    background: linear-gradient(90deg, #e8e8e8 25%, #d0d0d0 50%, #e8e8e8 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ========================================
+   PHASE 3: MEDIUM PRIORITY FIXES - LM-08 to LM-13
+   January 17, 2026
+   ======================================== */
+
+/* LM-08: Category Card Border - Add visible border */
+.category-card {
+    border: 1px solid #eee;
+    transition: all 0.3s ease;
+}
+
+.category-card:hover {
+    border-color: #667eea;
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+}
+
+[data-theme="dark"] .category-card {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .category-card:hover {
+    border-color: #667eea;
+}
+
+/* LM-09: Filter Select Arrow - Ensure SVG arrow is visible */
+.filter-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+}
+
+[data-theme="dark"] .filter-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23b0b0b0' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+}
+
+/* LM-10: Toast Success Green - Adjusted for better readability */
+.toast-success {
+    background-color: #e8f5e9;
+    border-left: 4px solid #2e7d32;
+    color: #1b5e20;
+}
+
+.toast-success .toast-icon {
+    color: #2e7d32;
+}
+
+/* LM-11: Form Help Text - Already compliant, adding explicit styles */
+.form-help,
+.help-text,
+.field-help {
+    color: #666666;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* LM-12: Pagination Current Page - Ensure white text on gradient */
+.page-numbers.current,
+.pagination .current {
+    background: var(--primary-gradient, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
+    color: #ffffff !important;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* LM-13: Ad Label Text - Improved visibility */
+.ad-label,
+.ad-container .ad-label {
+    color: #888888;
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+[data-theme="dark"] .ad-label,
+[data-theme="dark"] .ad-container .ad-label {
+    color: #999999;
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* ========================================
+   PHASE 4: LOW PRIORITY FIXES - LM-14, LM-15, P3-05, P3-10
+   January 17, 2026
+   ======================================== */
+
+/* LM-14: Footer Links - Add underline on hover */
+.site-footer a,
+.footer-navigation a,
+.footer-links a,
+footer a:not(.btn) {
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.site-footer a:hover,
+.footer-navigation a:hover,
+.footer-links a:hover,
+footer a:not(.btn):hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+[data-theme="dark"] .site-footer a:hover,
+[data-theme="dark"] .footer-navigation a:hover {
+    color: var(--text-link-hover, #90caf9);
+}
+
+/* LM-15: Breadcrumb Separator - Add padding for better spacing */
+.breadcrumb-separator,
+.breadcrumbs span.separator,
+.breadcrumb > span:not(:last-child)::after {
+    padding: 0 0.5rem;
+    color: #999;
+}
+
+.breadcrumbs > *:not(:last-child)::after {
+    content: "/";
+    padding: 0 0.5rem;
+    color: #999;
+}
+
+[data-theme="dark"] .breadcrumb-separator,
+[data-theme="dark"] .breadcrumbs span.separator {
+    color: var(--text-muted, #808080);
+}
+
+/* P3-05: Samsung Browser Gradient Text Fallback */
+.header-logo a {
+    /* Fallback for browsers that don't support background-clip: text */
+    color: #667eea;
+}
+
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+    .header-logo a {
+        background: var(--primary-gradient, linear-gradient(135deg, #667eea 0%, #764ba2 100%));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+    }
+}
+
+/* Fallback for gradient buttons */
+.btn-gradient-text {
+    color: #667eea;
+}
+
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+    .btn-gradient-text {
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+}
+
+/* P3-10: Scroll Position - Prevent jump when toggling theme */
+html.theme-transitioning {
+    scroll-behavior: auto !important;
+}
+
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+    transition-duration: 0s !important;
+    animation-duration: 0s !important;
+}
+
+/* Smooth theme transition (when not transitioning) */
+html:not(.theme-transitioning) {
+    scroll-behavior: smooth;
+}
+
+/* Theme transition overlay to prevent flash */
+.theme-transition-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--bg-primary, #fff);
+    z-index: 999999;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.theme-transition-overlay.active {
+    opacity: 1;
+}
+
+[data-theme="dark"] .theme-transition-overlay {
+    background-color: var(--bg-primary, #1a1a2e);
+}
+
+/* P3-03: Focus visible for light mode as well */
+*:focus:not(:focus-visible) {
+    outline: none;
+}
+
+*:focus-visible {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+}
+/* ========================================
+   HEADER VISUAL BUGS FIXES
+   Version: 1.0.0
+   Date: January 17, 2026
+
+   Fixes 10 identified visual bugs in header
+   Add this AFTER fancy-frontend-styles.css
+   ======================================== */
+
+/* ========================================
+   BUG #1: Language Dropdown Clipping
+   ISSUE: .fancy-header has overflow-x: hidden which clips dropdown
+   FIX: Remove overflow from header, add to inner container only
+   ======================================== */
+
+.fancy-header {
+    overflow: visible !important;
+    overflow-x: visible !important;
+}
+
+.fancy-header-inner {
+    overflow: visible !important;
+}
+
+/* ========================================
+   BUG #2: Header Horizontal Scroll
+   ISSUE: Content width exceeds container causing scroll
+   FIX: Ensure proper width constraints and flex behavior
+   ======================================== */
+
+.fancy-header {
+    width: 100%;
+    max-width: 100%;
+}
+
+.fancy-header-inner {
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* Prevent body scroll caused by header */
+html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+/* ========================================
+   BUG #3: Header Actions Overflow on Mobile
+   ISSUE: Too many action buttons don't fit in row
+   FIX: Allow flex wrap and adjust sizing
+   ======================================== */
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    flex-shrink: 1;
+    flex-wrap: nowrap;
+    min-width: 0;
+}
+
+@media (max-width: 768px) {
+    .header-actions {
+        gap: 0.25rem;
+        flex-shrink: 1;
+    }
+
+    /* Smaller buttons on mobile to fit all */
+    .header-action-btn {
+        width: 34px !important;
+        height: 34px !important;
+        min-width: 34px;
+        flex-shrink: 0;
+    }
+
+    .header-action-btn svg {
+        width: 16px !important;
+        height: 16px !important;
+    }
+}
+
+@media (max-width: 400px) {
+    .header-actions {
+        gap: 0.125rem;
+    }
+
+    .header-action-btn {
+        width: 32px !important;
+        height: 32px !important;
+        min-width: 32px;
+        border-radius: 6px !important;
+    }
+
+    .header-action-btn svg {
+        width: 14px !important;
+        height: 14px !important;
+    }
+}
+
+/* ========================================
+   BUG #4: Language Dropdown Z-Index Too Low
+   ISSUE: z-index: 100 may be behind modals/overlays
+   FIX: Increase z-index for dropdown
+   ======================================== */
+
+.lang-dropdown {
+    z-index: 10000 !important;
+}
+
+.lang-dropdown.active {
+    z-index: 10000 !important;
+}
+
+/* Ensure header lang switcher is positioned correctly */
+.header-lang-switcher {
+    position: relative;
+    z-index: 1001;
+}
+
+/* ========================================
+   BUG #5: Dropdown Positioning on Mobile
+   ISSUE: right: 0 can push dropdown off-screen
+   FIX: Adjust positioning for mobile viewports
+   ======================================== */
+
+.lang-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 150px;
+    max-width: calc(100vw - 1rem);
+}
+
+@media (max-width: 480px) {
+    .lang-dropdown {
+        right: -0.5rem;
+        min-width: 140px;
+    }
+}
+
+@media (max-width: 360px) {
+    .lang-dropdown {
+        right: -1rem;
+        min-width: 130px;
+    }
+}
+
+/* ========================================
+   BUG #6: Header Height Constraints
+   ISSUE: Height varies unpredictably across viewports
+   FIX: Explicit min-height and proper flex alignment
+   ======================================== */
+
+.fancy-header-inner {
+    min-height: var(--header-height);
+    height: auto;
+    align-items: center;
+    align-content: center;
+}
+
+@media (max-width: 768px) {
+    .fancy-header-inner {
+        min-height: 100px;
+        height: auto;
+        max-height: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .fancy-header-inner {
+        min-height: 96px;
+        max-height: 114px;
+    }
+}
+
+/* ========================================
+   BUG #7: Box-Sizing Inheritance
+   ISSUE: Not all elements inherit box-sizing properly
+   FIX: Ensure all header elements use border-box
+   ======================================== */
+
+.fancy-header *,
+.fancy-header *::before,
+.fancy-header *::after {
+    box-sizing: border-box;
+}
+
+/* ========================================
+   BUG #8: Dropdown Arrow Visibility
+   ISSUE: SVG arrow may not display correctly
+   FIX: Proper SVG styling and fallback
+   ======================================== */
+
+.lang-current-flag .dropdown-arrow {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+    color: var(--text-secondary);
+    fill: currentColor;
+}
+
+.lang-current-flag.active .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+/* Ensure dropdown arrow visible in button */
+.lang-current-flag {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.25rem !important;
+}
+
+@media (max-width: 768px) {
+    /* Hide arrow on mobile - just show flag */
+    .lang-current-flag .dropdown-arrow {
+        display: none !important;
+    }
+}
+
+/* ========================================
+   BUG #9: Flag Emoji Display Issues
+   ISSUE: Font-size and line-height not matching
+   FIX: Consistent emoji sizing and alignment
+   ======================================== */
+
+.lang-current-flag .flag-emoji,
+.lang-dropdown-item .flag-emoji {
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    font-style: normal;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.lang-current-flag .flag-emoji {
+    font-size: 20px !important;
+    width: 24px !important;
+    height: 24px !important;
+    line-height: 1 !important;
+}
+
+.lang-dropdown-item .flag-emoji {
+    font-size: 16px !important;
+    width: 20px !important;
+    height: 20px !important;
+    line-height: 1 !important;
+}
+
+@media (max-width: 768px) {
+    .lang-current-flag .flag-emoji {
+        font-size: 18px !important;
+        width: 20px !important;
+        height: 20px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .lang-current-flag .flag-emoji {
+        font-size: 16px !important;
+        width: 18px !important;
+        height: 18px !important;
+    }
+}
+
+/* ========================================
+   BUG #10: Border Radius Inconsistency
+   ISSUE: Different border-radius sizes on mobile
+   FIX: Consistent border-radius across all buttons
+   ======================================== */
+
+.header-action-btn,
+.lang-current-flag,
+.search-button {
+    border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+    .header-action-btn,
+    .lang-current-flag,
+    .search-button {
+        border-radius: 8px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-action-btn,
+    .lang-current-flag,
+    .search-button {
+        border-radius: 6px !important;
+    }
+}
+
+/* ========================================
+   ADDITIONAL FIXES: Language Dropdown Items
+   Ensure all language options are visible
+   ======================================== */
+
+.lang-dropdown {
+    /* Ensure dropdown shows all items */
+    max-height: none !important;
+    overflow: visible !important;
+}
+
+.lang-dropdown-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    padding: 0.625rem 0.75rem !important;
+    white-space: nowrap;
+}
+
+.lang-dropdown-item .lang-name {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Language flag images */
+.lang-dropdown-item img,
+.lang-current-flag img {
+    width: 20px;
+    height: 15px;
+    object-fit: cover;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.lang-current-flag img {
+    width: 24px;
+    height: 18px;
+}
+
+@media (max-width: 768px) {
+    .lang-current-flag img {
+        width: 20px !important;
+        height: 15px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .lang-current-flag img {
+        width: 18px !important;
+        height: 14px !important;
+    }
+}
+
+/* ========================================
+   BONUS: Improved Dropdown Animation
+   ======================================== */
+
+.lang-dropdown {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px) scale(0.95);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: top right;
+}
+
+.lang-dropdown.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+/* ========================================
+   BONUS: Prevent Text Selection in Header
+   ======================================== */
+
+.fancy-header {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.fancy-header input,
+.fancy-header textarea {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+/* ========================================
+   FIX: Tag Cloud Alignment
+   ISSUE: Tag cloud not aligned with services grid
+   FIX: Match container styling from #services-grid
+   ======================================== */
+
+.tag-cloud-widget {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1.5rem 1.5rem;
+    box-sizing: border-box;
+}
+
+.tag-cloud-widget .widget-title {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary, #1a1a1a);
+}
+
+.tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .tag-cloud-widget {
+        padding: 1rem 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .tag-cloud-widget {
+        padding: 1rem 0.75rem;
+    }
+}
+
+/* ========================================
+   V19: EXTRA SMALL SCREEN (320px) BREAKPOINT
+   ======================================== */
+
+@media (max-width: 320px) {
+    .fancy-header-inner {
+        padding: 0 0.5rem;
+        min-height: 90px;
+    }
+
+    .header-logo {
+        font-size: 0.9rem;
+    }
+
+    .header-logo a {
+        max-width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .header-actions {
+        gap: 0.125rem;
+    }
+
+    .header-action-btn {
+        width: 28px !important;
+        height: 28px !important;
+        min-width: 28px;
+        border-radius: 4px !important;
+    }
+
+    .header-action-btn svg {
+        width: 12px !important;
+        height: 12px !important;
+    }
+
+    .search-input {
+        font-size: 14px;
+        padding: 0.375rem 0.5rem;
+        min-width: 0;
+    }
+
+    .search-button {
+        width: 32px !important;
+        height: 32px !important;
+        min-width: 32px;
+    }
+
+    .lang-current-flag {
+        width: 28px !important;
+        height: 28px !important;
+        min-width: 28px;
+    }
+
+    .lang-current-flag .flag-emoji {
+        font-size: 14px !important;
+    }
+
+    .lang-dropdown {
+        min-width: 110px;
+        right: -0.75rem;
+    }
+
+    .services-grid {
+        padding: 0 0.5rem;
+    }
+
+    .service-card {
+        margin-bottom: 0.75rem;
+    }
+}
+
+/* ========================================
+   V20: FAVICON DARK MODE SUPPORT
+   (CSS cannot change favicon, but we can
+   prepare for SVG favicon with media query)
+   ======================================== */
+
+/* This is informational - actual fix requires
+   adding SVG favicon in header.php:
+   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+   SVG should include:
+   <style>
+     @media (prefers-color-scheme: dark) {
+       .icon-bg { fill: #1a1a2e; }
+       .icon-fg { fill: #ffffff; }
+     }
+   </style>
+*/
+
+/* ========================================
+   ADDITIONAL RESPONSIVE IMPROVEMENTS
+   ======================================== */
+
+/* Ensure touch targets are large enough */
+@media (max-width: 768px) {
+    .header-action-btn,
+    .lang-current-flag,
+    .search-button,
+    .favorite-btn,
+    .btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .lang-dropdown-item {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+}
+
+/* Fix iOS zoom on input focus */
+@media (max-width: 768px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="search"],
+    input[type="password"],
+    input[type="number"],
+    textarea,
+    select {
+        font-size: 16px !important; /* Prevents iOS zoom */
+    }
+}
+
+/* Safe area insets for notched devices */
+@supports (padding: max(0px)) {
+    .fancy-header {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+    }
+
+    .site-footer {
+        padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+}
+
+/* ========================================
+   V3 FIX: Service Card Hover Jumpy
+   ISSUE: transform: translateY causes layout shift
+   FIX: Add will-change and backface-visibility
+   ======================================== */
+
+.service-card {
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform: translateZ(0); /* Force GPU acceleration */
+}
+
+.service-card:hover {
+    transform: translateY(-8px) translateZ(0);
+}
+
+/* ========================================
+   V5 FIX: Search Input White in Dark Mode
+   ISSUE: Header search input has white background in dark mode
+   FIX: Add dark mode styles for search input
+   ======================================== */
+
+[data-theme="dark"] .header-search input,
+[data-theme="dark"] .search-form input[type="search"],
+[data-theme="dark"] .search-form input[type="text"],
+[data-theme="dark"] .fancy-header input[type="search"],
+[data-theme="dark"] .fancy-header input[type="text"],
+[data-theme="dark"] .header-search-input {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #e8e8e8 !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+[data-theme="dark"] .header-search input::placeholder,
+[data-theme="dark"] .search-form input::placeholder,
+[data-theme="dark"] .fancy-header input::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+[data-theme="dark"] .header-search input:focus,
+[data-theme="dark"] .search-form input:focus,
+[data-theme="dark"] .fancy-header input:focus {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border-color: #667eea !important;
+    outline: none;
+}
+
+/* ========================================
+   V6 FIX: Language Dropdown Clips on 320px
+   ISSUE: On 320px screens, dropdown gets cut off
+   FIX: Adjust dropdown position and width for tiny screens
+   ======================================== */
+
+@media (max-width: 320px) {
+    .language-dropdown,
+    .lang-dropdown,
+    .language-switcher-dropdown {
+        position: fixed !important;
+        left: 10px !important;
+        right: 10px !important;
+        width: calc(100% - 20px) !important;
+        max-width: none !important;
+        transform: none !important;
+    }
+
+    .language-switcher,
+    .lang-switcher {
+        position: static !important;
+    }
+}
+
+/* ========================================
+   V7 FIX: Focus Outline Invisible on Blue Buttons
+   ISSUE: Blue focus outline invisible on blue buttons
+   FIX: Use white/offset outline on dark/blue backgrounds
+   ======================================== */
+
+.btn-primary:focus-visible,
+.btn-cta:focus-visible,
+button[type="submit"]:focus-visible,
+.submit-btn:focus-visible,
+a.btn-primary:focus-visible {
+    outline: 3px solid #ffffff !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 6px rgba(102, 126, 234, 0.3) !important;
+}
+
+[data-theme="dark"] *:focus-visible {
+    outline-color: #ffffff !important;
+}
+
+/* Ensure all interactive elements have visible focus */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+    outline: 3px solid #667eea !important;
+    outline-offset: 2px !important;
+}
+
+/* ========================================
+   V8 FIX: Toast Notifications Z-Index Issue
+   ISSUE: Toasts appear behind modals
+   FIX: Increase toast z-index above modal
+   ======================================== */
+
+.toast,
+.toast-container,
+.notification-toast,
+.alert-toast,
+#toast-container,
+.toasts-wrapper {
+    z-index: 999999 !important;
+    position: fixed !important;
+}
+
+/* Ensure modals have lower z-index than toasts */
+.modal,
+.modal-backdrop,
+.modal-overlay,
+.report-modal {
+    z-index: 99999 !important;
+}
+
+.modal.show,
+.modal.active {
+    z-index: 99999 !important;
+}
+
+/* ========================================
+   V9 FIX: Skeleton Loading State
+   ISSUE: No loading skeleton when fetching services
+   FIX: Add skeleton loading CSS with animation
+   ======================================== */
+
+/* Skeleton base styles */
+.skeleton,
+.skeleton-loader,
+.loading-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Dark mode skeleton */
+[data-theme="dark"] .skeleton,
+[data-theme="dark"] .skeleton-loader,
+[data-theme="dark"] .loading-skeleton {
+    background: linear-gradient(90deg, #2a2a4a 25%, #3a3a5a 50%, #2a2a4a 75%);
+    background-size: 200% 100%;
+}
+
+/* Service card skeleton */
+.service-card-skeleton {
+    background: var(--bg-primary, #fff);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.service-card-skeleton .skeleton-image {
+    width: 100%;
+    padding-top: 66.67%;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+}
+
+.service-card-skeleton .skeleton-content {
+    padding: 16px;
+}
+
+.service-card-skeleton .skeleton-title {
+    height: 20px;
+    width: 80%;
+    margin-bottom: 12px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 4px;
+}
+
+.service-card-skeleton .skeleton-text {
+    height: 14px;
+    width: 60%;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 4px;
+}
+
+.service-card-skeleton .skeleton-price {
+    height: 24px;
+    width: 40%;
+    margin-top: 12px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 4px;
+}
+
+/* Dark mode service card skeleton */
+[data-theme="dark"] .service-card-skeleton {
+    background: #1e1e3f;
+}
+
+[data-theme="dark"] .service-card-skeleton .skeleton-image,
+[data-theme="dark"] .service-card-skeleton .skeleton-title,
+[data-theme="dark"] .service-card-skeleton .skeleton-text,
+[data-theme="dark"] .service-card-skeleton .skeleton-price {
+    background: linear-gradient(90deg, #2a2a4a 25%, #3a3a5a 50%, #2a2a4a 75%);
+    background-size: 200% 100%;
+}
+
+/* Loading spinner fallback */
+.loading-spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(102, 126, 234, 0.2);
+    border-radius: 50%;
+    border-top-color: #667eea;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ========================================
+   V10 FIX: Print Stylesheet Complete
+   ISSUE: Print view shows header gradients
+   FIX: Comprehensive print styles
+   ======================================== */
+
+@media print {
+    /* Hide non-essential elements */
+    .fancy-header,
+    .site-header,
+    .site-footer,
+    .mobile-menu,
+    .mobile-nav,
+    nav,
+    .sidebar,
+    .ad-container,
+    .toast-container,
+    .modal,
+    .share-buttons,
+    .related-services,
+    .comments-area,
+    button,
+    .btn,
+    .search-form {
+        display: none !important;
+    }
+
+    /* Reset backgrounds and colors */
+    body,
+    .site-content,
+    .service-card,
+    .main-content,
+    article {
+        background: white !important;
+        color: black !important;
+        box-shadow: none !important;
+    }
+
+    /* Ensure text is readable */
+    * {
+        color: black !important;
+        background: transparent !important;
+    }
+
+    /* Show URLs after links */
+    a[href]:after {
+        content: " (" attr(href) ")";
+        font-size: 0.8em;
+        color: #666 !important;
+    }
+
+    a[href^="#"]:after,
+    a[href^="javascript"]:after {
+        content: "";
+    }
+
+    /* Page break handling */
+    h1, h2, h3, h4 {
+        page-break-after: avoid;
+    }
+
+    img, .service-card {
+        page-break-inside: avoid;
+    }
+
+    /* Ensure full width */
+    .container,
+    .site-content,
+    .main-content {
+        width: 100% !important;
+        max-width: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+}
+
+/* ========================================
+   V11 FIX: Gallery Lightbox Styles
+   ISSUE: Clicking gallery image does nothing
+   FIX: Add lightbox-ready styles
+   ======================================== */
+
+.gallery-lightbox,
+.service-gallery-lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.gallery-lightbox.active,
+.service-gallery-lightbox.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.gallery-lightbox img {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+}
+
+.gallery-lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gallery-lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Make gallery images clickable */
+.service-gallery img,
+.gallery-item img {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.service-gallery img:hover,
+.gallery-item img:hover {
+    transform: scale(1.02);
+}
+
+/* ========================================
+   V12 FIX: Form Validation Styled
+   ISSUE: Browser default validation popups
+   FIX: Custom validation styles
+   ======================================== */
+
+/* Invalid state */
+input:invalid:not(:placeholder-shown),
+select:invalid:not(:placeholder-shown),
+textarea:invalid:not(:placeholder-shown) {
+    border-color: #e74c3c !important;
+    background-color: rgba(231, 76, 60, 0.05);
+}
+
+/* Valid state */
+input:valid:not(:placeholder-shown),
+select:valid:not(:placeholder-shown),
+textarea:valid:not(:placeholder-shown) {
+    border-color: #27ae60;
+}
+
+/* Custom validation message */
+.validation-message,
+.field-error {
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 4px;
+    display: block;
+}
+
+/* Dark mode validation */
+[data-theme="dark"] input:invalid:not(:placeholder-shown),
+[data-theme="dark"] select:invalid:not(:placeholder-shown),
+[data-theme="dark"] textarea:invalid:not(:placeholder-shown) {
+    border-color: #ff6b6b !important;
+    background-color: rgba(255, 107, 107, 0.1);
+}
+
+[data-theme="dark"] .validation-message,
+[data-theme="dark"] .field-error {
+    color: #ff6b6b;
+}
+
+/* ========================================
+   V13 FIX: Empty State Icon Larger
+   ISSUE: "No results" icon is 64px, should be larger
+   FIX: Increase empty state icon size
+   ======================================== */
+
+.empty-state-icon,
+.no-results-icon,
+.empty-icon {
+    width: 120px !important;
+    height: 120px !important;
+    margin: 0 auto 24px;
+    opacity: 0.6;
+}
+
+.empty-state-icon svg,
+.no-results-icon svg,
+.empty-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.empty-state,
+.no-results {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-state h3,
+.no-results h3 {
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+}
+
+.empty-state p,
+.no-results p {
+    color: #666;
+    font-size: 1rem;
+}
+
+[data-theme="dark"] .empty-state p,
+[data-theme="dark"] .no-results p {
+    color: #aaa;
+}
+
+/* ========================================
+   V14 FIX: Category Cards Count Badge
+   ISSUE: Homepage categories don't show service count
+   FIX: Style count badges on category cards
+   ======================================== */
+
+.category-card {
+    position: relative;
+}
+
+.category-count,
+.service-count-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(102, 126, 234, 0.9);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    min-width: 28px;
+    text-align: center;
+}
+
+[data-theme="dark"] .category-count,
+[data-theme="dark"] .service-count-badge {
+    background: rgba(102, 126, 234, 0.8);
+}
+
+/* ========================================
+   V15 FIX: Pagination Dark Mode Styled
+   ISSUE: Pagination buttons white in dark mode
+   FIX: Dark mode pagination styles
+   ======================================== */
+
+[data-theme="dark"] .pagination,
+[data-theme="dark"] .nav-links,
+[data-theme="dark"] .page-numbers {
+    background-color: transparent;
+}
+
+[data-theme="dark"] .page-numbers,
+[data-theme="dark"] .pagination a,
+[data-theme="dark"] .pagination span {
+    background-color: #2a2a4a !important;
+    color: #e8e8e8 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="dark"] .page-numbers:hover,
+[data-theme="dark"] .pagination a:hover {
+    background-color: #3a3a5a !important;
+    color: #fff !important;
+}
+
+[data-theme="dark"] .page-numbers.current,
+[data-theme="dark"] .pagination .current {
+    background-color: #667eea !important;
+    color: #fff !important;
+    border-color: #667eea !important;
+}
+
+/* ========================================
+   V16 FIX: Contact Buttons Full Width Mobile
+   ISSUE: Call/WhatsApp buttons don't span full width
+   FIX: Full width contact buttons on mobile
+   ======================================== */
+
+@media (max-width: 480px) {
+    .contact-buttons,
+    .service-contact-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .contact-buttons a,
+    .contact-buttons button,
+    .service-contact-buttons a,
+    .service-contact-buttons button,
+    .btn-call,
+    .btn-whatsapp,
+    .btn-message {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: center;
+        align-items: center;
+        padding: 14px 20px !important;
+        font-size: 1rem;
+    }
+}
+
+/* ========================================
+   V17 FIX: Tag Cloud Hover Consistent
+   ISSUE: Some tags have hover effect, others don't
+   FIX: Consistent tag hover styles
+   ======================================== */
+
+.tag-cloud a,
+.service-tags a,
+.tags a,
+.tag-link {
+    display: inline-block;
+    padding: 6px 14px;
+    margin: 4px;
+    background: #f0f0f0;
+    border-radius: 20px;
+    color: #333;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.tag-cloud a:hover,
+.service-tags a:hover,
+.tags a:hover,
+.tag-link:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+}
+
+[data-theme="dark"] .tag-cloud a,
+[data-theme="dark"] .service-tags a,
+[data-theme="dark"] .tags a,
+[data-theme="dark"] .tag-link {
+    background: #2a2a4a;
+    color: #e8e8e8;
+}
+
+[data-theme="dark"] .tag-cloud a:hover,
+[data-theme="dark"] .service-tags a:hover,
+[data-theme="dark"] .tags a:hover,
+[data-theme="dark"] .tag-link:hover {
+    background: #667eea;
+    color: white;
+}
+
+/* ========================================
+   V18 FIX: Dark Mode Aware Favicon (CSS approach)
+   ISSUE: Same favicon in both modes
+   FIX: Use CSS to swap favicon based on color scheme
+   NOTE: Full implementation requires SVG favicon with embedded media query
+   ======================================== */
+
+/* This provides guidance - actual favicon should be SVG with:
+   <svg>
+     <style>
+       @media (prefers-color-scheme: dark) {
+         .icon-bg { fill: #1a1a2e; }
+         .icon-fg { fill: #667eea; }
+       }
+     </style>
+   </svg>
+*/
+
+/* Hide light favicon in dark mode if both exist */
+@media (prefers-color-scheme: dark) {
+    link[rel="icon"][data-mode="light"] {
+        display: none;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    link[rel="icon"][data-mode="dark"] {
+        display: none;
+    }
+}
+
+/* ========================================
+   V19 FIX: Firefox Scrollbar Styling
+   ISSUE: Custom scrollbar only works in Chrome/Safari
+   FIX: Add Firefox-specific scrollbar styles
+   ======================================== */
+
+/* Firefox scrollbar */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #667eea #f0f0f0;
+}
+
+[data-theme="dark"] * {
+    scrollbar-color: #667eea #1a1a2e;
+}
+
+/* WebKit scrollbar (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #5a6fd6;
+}
+
+/* Dark mode scrollbar */
+[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: #1a1a2e;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: #667eea;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background: #7b8ff0;
+}
+
+/* ========================================
+   V20 FIX: Safari Line Clamp
+   ISSUE: Service descriptions overflow instead of truncating
+   FIX: Add Safari-compatible line clamp
+   ======================================== */
+
+/* Standard line clamp with Safari fallback */
+.line-clamp-2,
+.service-card-description,
+.service-excerpt {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* Fallback for older browsers */
+    max-height: 3em;
+    line-height: 1.5em;
+}
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 4.5em;
+    line-height: 1.5em;
+}
+
+.line-clamp-4 {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 6em;
+    line-height: 1.5em;
+}
+
+/* Safari-specific fix using @supports */
+@supports (-webkit-touch-callout: none) {
+    .line-clamp-2,
+    .service-card-description,
+    .service-excerpt {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .line-clamp-3 {
+        -webkit-line-clamp: 3;
+    }
+
+    .line-clamp-4 {
+        -webkit-line-clamp: 4;
+    }
+}
+
+/* Ensure text doesn't break words awkwardly */
+.service-card-description,
+.service-excerpt,
+[class*="line-clamp"] {
+    word-break: break-word;
+    hyphens: auto;
+}
+
+/* ========================================
+   LANGUAGE SWITCHER - FLAGS ONLY (NO TEXT)
+   ======================================== */
+
+.lang-dropdown-item .lang-name,
+.lang-dropdown .lang-name,
+.header-lang-switcher .lang-name {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
+.lang-dropdown-item {
+    justify-content: center !important;
+    padding: 0.5rem !important;
+    min-width: auto !important;
+}
+
+.lang-dropdown {
+    min-width: auto !important;
+    padding: 0.375rem !important;
+}
+
+/* ========================================
+   END OF HEADER FIXES
+   ======================================== */
+/* ============================================
+   DARK MODE COMPLETE STYLESHEET
+   Version: 1.0.0
+   Date: January 17, 2026
+
+   Comprehensive dark mode fixes for Batumi.zone
+   Fixes bugs V1, V2, V3, V4, V5, V6, V9, V10, V11, V13, V15, V16
+   ============================================ */
+
+/* ============================================
+   CSS VARIABLES FOR DARK MODE
+   ============================================ */
+
+[data-theme="dark"] {
+    /* Background colors - Updated January 18, 2026 */
+    --bg-primary: #0a0a1a;
+    --bg-secondary: #0d0d1f;
+    --bg-tertiary: #12122a;
+    --bg-card: #141428;
+    --bg-input: #1a1a35;
+    --bg-hover: #1e1e40;
+
+    /* Text colors */
+    --text-primary: #e8e8e8;
+    --text-secondary: #a0a0b0;
+    --text-muted: #808090;
+    --text-link: #a78bfa;
+    --text-link-hover: #c4b5fd;
+
+    /* Border colors */
+    --border-color: rgba(138, 92, 246, 0.25);
+    --border-light: rgba(138, 92, 246, 0.15);
+    --border-focus: #8b5cf6;
+
+    /* Brand colors - Purple/Violet theme */
+    --brand-primary: #8b5cf6;
+    --brand-secondary: #a855f7;
+    --brand-gradient: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+    --brand-cyan: #06b6d4;
+
+    /* Status colors */
+    --success: #10b981;
+    --success-text: #34d399;
+    --warning: #f59e0b;
+    --warning-text: #fbbf24;
+    --error: #ef4444;
+    --error-text: #f87171;
+    --info: #06b6d4;
+
+    /* Price color */
+    --price-color: #10b981;
+
+    /* Favorite heart color */
+    --heart-color: #f472b6;
+
+    /* Shadow - with purple glow */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+    --shadow-glow: 0 0 20px rgba(138, 92, 246, 0.15);
+}
+
+/* ============================================
+   V1 & V2: BODY AND MAIN CONTAINERS
+   ============================================ */
+
+[data-theme="dark"] body {
+    background-color: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .site {
+    background-color: var(--bg-primary);
+}
+
+[data-theme="dark"] .site-main,
+[data-theme="dark"] main,
+[data-theme="dark"] #main {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+/* ============================================
+   V1: SEARCH RESULTS PAGE
+   ============================================ */
+
+[data-theme="dark"] .search-results,
+[data-theme="dark"] .search-no-results,
+[data-theme="dark"] body.search {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .search-results .page-title,
+[data-theme="dark"] .search-results h1,
+[data-theme="dark"] .search-no-results h1 {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .search-results .search-term {
+    color: var(--brand-primary);
+}
+
+[data-theme="dark"] .no-results-message,
+[data-theme="dark"] .search-no-results p {
+    color: var(--text-secondary);
+}
+
+/* ============================================
+   V3: SERVICE CARDS
+   ============================================ */
+
+[data-theme="dark"] .service-card {
+    background-color: var(--bg-card);
+    border-color: var(--border-color);
+    box-shadow: var(--shadow-md);
+}
+
+[data-theme="dark"] .service-card:hover {
+    background-color: var(--bg-hover);
+    box-shadow: var(--shadow-lg);
+}
+
+[data-theme="dark"] .service-card-title,
+[data-theme="dark"] .service-card-title a {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .service-card-title a:hover {
+    color: var(--text-link-hover) !important;
+}
+
+[data-theme="dark"] .service-description {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .service-meta,
+[data-theme="dark"] .service-card-meta {
+    color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .service-price {
+    color: var(--success);
+    font-weight: 600;
+}
+
+[data-theme="dark"] .service-category,
+[data-theme="dark"] .service-area {
+    background-color: rgba(102, 126, 234, 0.3) !important; /* Fixed: was 0.2, now 0.3 for better visibility (DM-06) */
+    color: var(--brand-primary) !important;
+    border-color: var(--brand-primary) !important;
+}
+
+[data-theme="dark"] .service-card-content {
+    background-color: var(--bg-card);
+}
+
+/* Service tags */
+[data-theme="dark"] .service-tags .service-tag {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .service-tags .service-tag:hover {
+    background-color: rgba(102, 126, 234, 0.2);
+    color: var(--brand-primary);
+}
+
+/* ============================================
+   V4: FOOTER
+   ============================================ */
+
+[data-theme="dark"] .site-footer,
+[data-theme="dark"] footer {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary);
+    border-top-color: var(--border-color);
+}
+
+[data-theme="dark"] .footer-navigation a,
+[data-theme="dark"] .site-footer a {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .footer-navigation a:hover,
+[data-theme="dark"] .site-footer a:hover {
+    color: var(--text-link-hover);
+}
+
+[data-theme="dark"] .site-info {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .footer-widgets {
+    background-color: var(--bg-secondary);
+}
+
+[data-theme="dark"] .widget-title {
+    color: var(--text-primary);
+}
+
+/* ============================================
+   V5: FORM INPUTS
+   ============================================ */
+
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="email"],
+[data-theme="dark"] input[type="tel"],
+[data-theme="dark"] input[type="password"],
+[data-theme="dark"] input[type="search"],
+[data-theme="dark"] input[type="number"],
+[data-theme="dark"] input[type="url"],
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+    background-color: var(--bg-input) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+    color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] input:focus,
+[data-theme="dark"] textarea:focus,
+[data-theme="dark"] select:focus {
+    border-color: var(--border-focus) !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.35) !important; /* Fixed: was 0.2, now 0.35 for better visibility (DM-12) */
+}
+
+[data-theme="dark"] .search-input,
+[data-theme="dark"] .filter-input,
+[data-theme="dark"] .filter-select {
+    background-color: var(--bg-input) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* Select dropdowns */
+[data-theme="dark"] select option {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+/* ============================================
+   V6: DROPDOWN MENUS
+   ============================================ */
+
+[data-theme="dark"] .lang-dropdown,
+[data-theme="dark"] .dropdown-menu,
+[data-theme="dark"] .filter-dropdown {
+    background-color: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+    box-shadow: var(--shadow-lg) !important;
+}
+
+[data-theme="dark"] .lang-dropdown-item,
+[data-theme="dark"] .dropdown-item {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .lang-dropdown-item:hover,
+[data-theme="dark"] .dropdown-item:hover {
+    background-color: var(--bg-hover) !important;
+    color: var(--text-link) !important;
+}
+
+[data-theme="dark"] .lang-dropdown-item.active,
+[data-theme="dark"] .dropdown-item.active {
+    background-color: rgba(102, 126, 234, 0.2) !important;
+    color: var(--brand-primary) !important;
+}
+
+/* ============================================
+   V9: MODALS
+   ============================================ */
+
+[data-theme="dark"] .modal-overlay,
+[data-theme="dark"] .report-modal-overlay {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+[data-theme="dark"] .modal-content,
+[data-theme="dark"] .report-modal {
+    background-color: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+    box-shadow: var(--shadow-lg);
+}
+
+[data-theme="dark"] .modal-header,
+[data-theme="dark"] .report-modal-header {
+    border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .modal-title,
+[data-theme="dark"] .report-modal-title {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .modal-close,
+[data-theme="dark"] .report-modal-close {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .modal-close:hover,
+[data-theme="dark"] .report-modal-close:hover {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .modal-body,
+[data-theme="dark"] .report-modal-body {
+    color: var(--text-secondary);
+}
+
+/* Report modal specific */
+[data-theme="dark"] .report-reason-option {
+    background-color: var(--bg-input);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .report-reason-option:hover {
+    background-color: var(--bg-hover);
+    border-color: var(--brand-primary);
+}
+
+[data-theme="dark"] .report-reason-option.selected {
+    background-color: rgba(102, 126, 234, 0.2);
+    border-color: var(--brand-primary);
+}
+
+/* ============================================
+   V10: TOAST NOTIFICATIONS
+   ============================================ */
+
+[data-theme="dark"] .toast {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+    box-shadow: var(--shadow-lg);
+}
+
+[data-theme="dark"] .toast-success {
+    background-color: rgba(76, 175, 80, 0.2);
+    border-color: var(--success);
+    color: #a5d6a7;
+}
+
+[data-theme="dark"] .toast-error {
+    background-color: rgba(244, 67, 54, 0.2);
+    border-color: var(--error);
+    color: #ef9a9a;
+}
+
+[data-theme="dark"] .toast-warning {
+    background-color: rgba(255, 152, 0, 0.2);
+    border-color: var(--warning);
+    color: #ffcc80;
+}
+
+[data-theme="dark"] .toast-info {
+    background-color: rgba(33, 150, 243, 0.2);
+    border-color: var(--info);
+    color: #90caf9;
+}
+
+/* ============================================
+   V11: LOADING STATES
+   ============================================ */
+
+[data-theme="dark"] .loading,
+[data-theme="dark"] .spinner,
+[data-theme="dark"] .loader {
+    border-color: var(--border-color);
+    border-top-color: var(--brand-primary);
+}
+
+[data-theme="dark"] .skeleton,
+[data-theme="dark"] .loading-placeholder {
+    background: linear-gradient(
+        90deg,
+        var(--bg-input) 25%,
+        var(--bg-hover) 50%,
+        var(--bg-input) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+[data-theme="dark"] .ad-loading {
+    color: var(--text-muted);
+}
+
+/* ============================================
+   V13: AD CONTAINERS
+   ============================================ */
+
+[data-theme="dark"] .ad-container {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .ad-label {
+    color: var(--text-muted) !important;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .ad-container:hover {
+    border-color: var(--border-light);
+}
+
+/* ============================================
+   V15: SERVICE CARD HOVER STATES
+   ============================================ */
+
+[data-theme="dark"] .service-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    border-color: var(--brand-primary);
+}
+
+[data-theme="dark"] .service-card-image-wrapper:hover img {
+    opacity: 0.9;
+}
+
+/* Favorite button on cards */
+[data-theme="dark"] .favorite-btn {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .favorite-btn:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+[data-theme="dark"] .favorite-btn.is-favorited {
+    color: #dc3545;
+}
+
+/* ============================================
+   V16: SCROLLBAR STYLING
+   ============================================ */
+
+[data-theme="dark"] ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: var(--bg-tertiary);
+    border-radius: 5px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background: var(--brand-primary);
+}
+
+/* Firefox */
+[data-theme="dark"] * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bg-tertiary) var(--bg-secondary);
+}
+
+/* ============================================
+   HEADER DARK MODE
+   ============================================ */
+
+[data-theme="dark"] .fancy-header,
+[data-theme="dark"] .site-header {
+    background-color: rgba(26, 26, 46, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .header-logo a {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .header-action-btn {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .header-action-btn:hover {
+    background-color: var(--bg-hover);
+    border-color: var(--brand-primary);
+}
+
+[data-theme="dark"] .lang-current-flag {
+    background-color: var(--bg-input);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .search-button {
+    background-color: var(--brand-primary);
+    color: white;
+}
+
+/* ============================================
+   BUTTONS DARK MODE
+   ============================================ */
+
+[data-theme="dark"] .btn,
+[data-theme="dark"] button:not(.header-action-btn) {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .btn:hover,
+[data-theme="dark"] button:not(.header-action-btn):hover {
+    background-color: var(--bg-hover);
+    border-color: var(--brand-primary);
+}
+
+[data-theme="dark"] .btn-primary {
+    background: var(--brand-gradient) !important;
+    color: white !important;
+    border: none !important;
+}
+
+[data-theme="dark"] .btn-success,
+[data-theme="dark"] .btn-call {
+    background-color: var(--success) !important;
+    color: white !important;
+}
+
+[data-theme="dark"] .btn-danger {
+    background-color: var(--error) !important;
+    color: white !important;
+}
+
+[data-theme="dark"] .btn-warning {
+    background-color: var(--warning) !important;
+    color: #1a1a1a !important;
+}
+
+/* ============================================
+   LINKS DARK MODE
+   ============================================ */
+
+[data-theme="dark"] a {
+    color: var(--text-link);
+}
+
+[data-theme="dark"] a:hover {
+    color: var(--text-link-hover);
+}
+
+/* ============================================
+   PAGINATION DARK MODE
+   ============================================ */
+
+[data-theme="dark"] .pagination,
+[data-theme="dark"] .page-numbers {
+    background-color: var(--bg-card);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .page-numbers {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .page-numbers:hover {
+    background-color: var(--bg-hover);
+}
+
+[data-theme="dark"] .page-numbers.current {
+    background: var(--brand-gradient);
+    color: white;
+    border-color: transparent;
+}
+
+/* ============================================
+   BREADCRUMBS DARK MODE
+   ============================================ */
+
+[data-theme="dark"] .breadcrumbs,
+[data-theme="dark"] .breadcrumb {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .breadcrumbs a,
+[data-theme="dark"] .breadcrumb a {
+    color: var(--text-link); /* Fixed: was --text-secondary, now uses link color for better visibility (DM-11) */
+}
+
+[data-theme="dark"] .breadcrumbs a:hover,
+[data-theme="dark"] .breadcrumb a:hover {
+    color: var(--text-link);
+}
+
+[data-theme="dark"] .breadcrumb-separator {
+    color: var(--text-muted);
+}
+
+/* ============================================
+   SINGLE SERVICE PAGE DARK MODE
+   ============================================ */
+
+[data-theme="dark"] .service-detail,
+[data-theme="dark"] .single-service_listing {
+    background-color: var(--bg-primary);
+}
+
+[data-theme="dark"] .service-detail-main,
+[data-theme="dark"] .service-content {
+    background-color: var(--bg-card);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .service-title {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .service-detail-sidebar,
+[data-theme="dark"] .contact-card {
+    background-color: var(--bg-card);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .contact-card-title {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .trust-badges .badge {
+    background-color: rgba(102, 126, 234, 0.2);
+    color: var(--brand-primary);
+}
+
+[data-theme="dark"] .safety-notice {
+    background-color: rgba(255, 152, 0, 0.15);
+    border-color: rgba(255, 152, 0, 0.3);
+    color: #ffd54f; /* Fixed: was #ffcc80, now brighter for better contrast (DM-09) */
+}
+
+/* Gallery */
+[data-theme="dark"] .gallery-thumbnail {
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .gallery-thumbnail:hover,
+[data-theme="dark"] .gallery-thumbnail.active {
+    border-color: var(--brand-primary);
+}
+
+/* ============================================
+   FILTERS SIDEBAR DARK MODE
+   ============================================ */
+
+[data-theme="dark"] .filters-sidebar,
+[data-theme="dark"] .filter-panel {
+    background-color: var(--bg-card);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .filter-group-title,
+[data-theme="dark"] .filter-label {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .filter-toggle {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+/* ============================================
+   TAG CLOUD DARK MODE
+   ============================================ */
+
+[data-theme="dark"] .tag-cloud-widget {
+    background-color: transparent;
+}
+
+[data-theme="dark"] .tag-cloud-widget .widget-title {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .tag-cloud-item {
+    background-color: var(--bg-input);
+    color: var(--text-secondary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .tag-cloud-item:hover {
+    background: var(--brand-gradient);
+    color: white;
+    border-color: transparent;
+}
+
+/* ============================================
+   CATEGORIES GRID DARK MODE
+   ============================================ */
+
+[data-theme="dark"] .category-card {
+    background-color: var(--bg-card);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .category-card:hover {
+    background-color: var(--bg-hover);
+    border-color: var(--brand-primary);
+    transform: translateY(-4px);
+}
+
+[data-theme="dark"] .category-name {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .category-count {
+    color: var(--text-muted);
+}
+
+/* ============================================
+   HERO SECTION DARK MODE
+   ============================================ */
+
+[data-theme="dark"] .hero-section {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+}
+
+[data-theme="dark"] .hero-title {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .hero-subtitle {
+    color: var(--text-secondary);
+}
+
+/* ============================================
+   EMPTY STATES DARK MODE
+   ============================================ */
+
+[data-theme="dark"] .empty-state {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .empty-state-icon {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .empty-state-title {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .empty-state-text {
+    color: var(--text-secondary);
+}
+
+/* ============================================
+   FAVORITES PAGE DARK MODE
+   ============================================ */
+
+[data-theme="dark"] .favorites-page {
+    background-color: var(--bg-primary);
+}
+
+[data-theme="dark"] .favorites-header {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .clear-favorites-btn {
+    background-color: var(--bg-input);
+    color: var(--text-secondary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .clear-favorites-btn:hover {
+    background-color: rgba(244, 67, 54, 0.2);
+    color: var(--error);
+    border-color: var(--error);
+}
+
+/* ============================================
+   AUTH PAGES DARK MODE
+   ============================================ */
+
+[data-theme="dark"] .auth-page {
+    background-color: var(--bg-primary);
+}
+
+[data-theme="dark"] .auth-card {
+    background-color: var(--bg-card);
+    border-color: var(--border-color);
+    box-shadow: var(--shadow-lg);
+}
+
+[data-theme="dark"] .auth-title {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .auth-subtitle {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .form-label {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .form-help {
+    color: var(--text-muted);
+}
+
+/* ============================================
+   DASHBOARD DARK MODE
+   ============================================ */
+
+[data-theme="dark"] .dashboard-page {
+    background-color: var(--bg-primary);
+}
+
+[data-theme="dark"] .dashboard-header {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .dashboard-tabs {
+    border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .dashboard-tab {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .dashboard-tab:hover {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .dashboard-tab.active {
+    color: var(--brand-primary);
+    border-bottom-color: var(--brand-primary);
+}
+
+[data-theme="dark"] .listing-card {
+    background-color: var(--bg-card);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .listing-card:hover {
+    border-color: var(--brand-primary);
+}
+
+[data-theme="dark"] .listing-title {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .listing-meta {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .listing-status {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+}
+
+[data-theme="dark"] .listing-status.published {
+    background-color: rgba(76, 175, 80, 0.2);
+    color: #81c784;
+}
+
+[data-theme="dark"] .listing-status.draft {
+    background-color: rgba(244, 67, 54, 0.2);
+    color: #ff8a80; /* Fixed: was #ef9a9a, now brighter for better visibility (DM-10) */
+}
+
+[data-theme="dark"] .listing-status.paused {
+    background-color: rgba(255, 152, 0, 0.2);
+    color: #ffb74d;
+}
+
+/* ============================================
+   PROFILE PAGE DARK MODE
+   ============================================ */
+
+[data-theme="dark"] .profile-page {
+    background-color: var(--bg-primary);
+}
+
+[data-theme="dark"] .profile-card {
+    background-color: var(--bg-card);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .profile-card-header {
+    border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .profile-card-title {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .stat-card {
+    background-color: var(--bg-input);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .stat-value {
+    color: var(--brand-primary);
+}
+
+[data-theme="dark"] .stat-label {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .danger-zone {
+    background-color: rgba(244, 67, 54, 0.1);
+    border-color: rgba(244, 67, 54, 0.3);
+}
+
+/* ============================================
+   CREATE/EDIT SERVICE FORM DARK MODE
+   ============================================ */
+
+[data-theme="dark"] .service-form-page {
+    background-color: var(--bg-primary);
+}
+
+[data-theme="dark"] .form-section {
+    background-color: var(--bg-card);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .form-section-title {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .language-tabs {
+    border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .language-tab {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .language-tab:hover {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .language-tab.active {
+    color: var(--brand-primary);
+    border-bottom-color: var(--brand-primary);
+}
+
+[data-theme="dark"] .char-count {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .image-upload-zone {
+    background-color: var(--bg-input);
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .image-upload-zone:hover,
+[data-theme="dark"] .image-upload-zone.drag-over {
+    border-color: var(--brand-primary);
+    background-color: rgba(102, 126, 234, 0.1);
+}
+
+[data-theme="dark"] .gallery-item {
+    background-color: var(--bg-input);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .validation-summary {
+    background-color: rgba(244, 67, 54, 0.15);
+    border-color: var(--error);
+    color: #ef9a9a;
+}
+
+[data-theme="dark"] .auto-save-status {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .auto-save-status.saving {
+    color: var(--warning);
+}
+
+[data-theme="dark"] .auto-save-status.saved {
+    color: var(--success);
+}
+
+[data-theme="dark"] .auto-save-status.error {
+    color: var(--error);
+}
+
+/* Map bounds warning */
+[data-theme="dark"] .bounds-warning {
+    background-color: rgba(255, 152, 0, 0.15);
+    border-color: rgba(255, 152, 0, 0.3);
+    color: #ffcc80;
+}
+
+/* ============================================
+   MISCELLANEOUS DARK MODE
+   ============================================ */
+
+/* Tables */
+[data-theme="dark"] table {
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] th,
+[data-theme="dark"] td {
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] th {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+[data-theme="dark"] tr:hover {
+    background-color: var(--bg-hover);
+}
+
+/* Blockquotes */
+[data-theme="dark"] blockquote {
+    border-left-color: var(--brand-primary);
+    background-color: var(--bg-input);
+    color: var(--text-secondary);
+}
+
+/* Code blocks */
+[data-theme="dark"] code,
+[data-theme="dark"] pre {
+    background-color: var(--bg-secondary);
+    color: #e8e8e8;
+    border-color: var(--border-color);
+}
+
+/* Horizontal rules */
+[data-theme="dark"] hr {
+    border-color: var(--border-color);
+}
+
+/* Text selection */
+[data-theme="dark"] ::selection {
+    background-color: rgba(102, 126, 234, 0.4);
+    color: white;
+}
+
+/* ============================================
+   CRITICAL FIXES - January 17, 2026
+   DM-02, DM-04, P2-01, LM-02
+   ============================================ */
+
+/* DM-02: Service Price - Green color matching design */
+[data-theme="dark"] .service-card-price,
+[data-theme="dark"] .service-price,
+[data-theme="dark"] .price-display {
+    color: var(--price-color) !important; /* #10b981 - teal/emerald green */
+}
+
+/* DM-04: Error Messages - Visible in Dark Mode */
+[data-theme="dark"] .error-message,
+[data-theme="dark"] .field-error,
+[data-theme="dark"] .validation-error,
+[data-theme="dark"] .form-error,
+[data-theme="dark"] .input-error {
+    color: var(--error-text) !important;
+    background-color: rgba(255, 107, 107, 0.15);
+    border-color: rgba(255, 107, 107, 0.3);
+}
+
+[data-theme="dark"] .message-error,
+[data-theme="dark"] .alert-error,
+[data-theme="dark"] .notice-error {
+    background-color: rgba(255, 107, 107, 0.15) !important;
+    color: var(--error-text) !important;
+    border: 1px solid rgba(255, 107, 107, 0.3) !important;
+}
+
+[data-theme="dark"] .message-success,
+[data-theme="dark"] .alert-success,
+[data-theme="dark"] .notice-success {
+    background-color: rgba(102, 187, 106, 0.15) !important;
+    color: var(--success-text) !important;
+    border: 1px solid rgba(102, 187, 106, 0.3) !important;
+}
+
+[data-theme="dark"] .message-warning,
+[data-theme="dark"] .alert-warning,
+[data-theme="dark"] .notice-warning {
+    background-color: rgba(255, 183, 77, 0.15) !important;
+    color: var(--warning-text) !important;
+    border: 1px solid rgba(255, 183, 77, 0.3) !important;
+}
+
+/* P2-01: Mobile Menu Overlay - Dark Mode */
+[data-theme="dark"] .mobile-menu-overlay,
+[data-theme="dark"] .mobile-nav-overlay,
+[data-theme="dark"] .menu-overlay,
+[data-theme="dark"] .nav-overlay {
+    background-color: rgba(0, 0, 0, 0.85) !important;
+}
+
+[data-theme="dark"] .mobile-menu,
+[data-theme="dark"] .mobile-nav,
+[data-theme="dark"] .off-canvas-menu {
+    background-color: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .mobile-menu a,
+[data-theme="dark"] .mobile-nav a {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .mobile-menu a:hover,
+[data-theme="dark"] .mobile-nav a:hover {
+    background-color: var(--bg-hover) !important;
+    color: var(--brand-primary) !important;
+}
+
+/* LM-02: Glassmorphism Fallback for Older Browsers */
+@supports not (backdrop-filter: blur(20px)) {
+    .fancy-header {
+        background: rgba(255, 255, 255, 0.98) !important;
+    }
+
+    [data-theme="dark"] .fancy-header {
+        background: rgba(26, 26, 46, 0.98) !important;
+    }
+
+    .filters-panel {
+        background: rgba(255, 255, 255, 0.98) !important;
+    }
+
+    [data-theme="dark"] .filters-panel {
+        background: rgba(26, 26, 46, 0.98) !important;
+    }
+
+    .lang-dropdown,
+    .user-dropdown {
+        background: rgba(255, 255, 255, 0.98) !important;
+    }
+
+    [data-theme="dark"] .lang-dropdown,
+    [data-theme="dark"] .user-dropdown {
+        background: rgba(30, 30, 63, 0.98) !important;
+    }
+}
+
+/* ============================================
+   PHASE 3: MEDIUM PRIORITY FIXES - January 17, 2026
+   DM-13 to DM-20, P2-07 to P2-10
+   ============================================ */
+
+/* DM-13: Table Row Hover - More Contrast */
+[data-theme="dark"] tr:hover {
+    background-color: rgba(102, 126, 234, 0.15) !important; /* Was var(--bg-hover), now more visible */
+}
+
+[data-theme="dark"] tbody tr:hover td {
+    background-color: rgba(102, 126, 234, 0.15) !important;
+}
+
+/* DM-14: Blockquote Left Border - 4px Width */
+[data-theme="dark"] blockquote {
+    border-left: 4px solid var(--brand-primary) !important; /* Added explicit 4px width */
+    padding-left: 1rem;
+}
+
+/* DM-15: Code Block Background - Darker for distinction */
+[data-theme="dark"] code,
+[data-theme="dark"] pre {
+    background-color: #0d1117 !important; /* GitHub-style dark code bg */
+    color: #e6edf3;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] pre code {
+    background-color: transparent !important;
+    border: none;
+}
+
+/* DM-16: Toast Info Icon - Better Visibility */
+[data-theme="dark"] .toast-info .toast-icon,
+[data-theme="dark"] .toast-info svg,
+[data-theme="dark"] .toast-info i {
+    color: #64b5f6 !important;
+    filter: drop-shadow(0 0 4px rgba(100, 181, 246, 0.5));
+}
+
+[data-theme="dark"] .toast-success .toast-icon,
+[data-theme="dark"] .toast-success svg,
+[data-theme="dark"] .toast-success i {
+    color: #81c784 !important;
+    filter: drop-shadow(0 0 4px rgba(129, 199, 132, 0.5));
+}
+
+[data-theme="dark"] .toast-error .toast-icon,
+[data-theme="dark"] .toast-error svg,
+[data-theme="dark"] .toast-error i {
+    color: #ff8a80 !important;
+    filter: drop-shadow(0 0 4px rgba(255, 138, 128, 0.5));
+}
+
+[data-theme="dark"] .toast-warning .toast-icon,
+[data-theme="dark"] .toast-warning svg,
+[data-theme="dark"] .toast-warning i {
+    color: #ffd54f !important;
+    filter: drop-shadow(0 0 4px rgba(255, 213, 79, 0.5));
+}
+
+/* DM-17: Language Dropdown Active State - Border Indicator */
+[data-theme="dark"] .lang-dropdown-item.active,
+[data-theme="dark"] .lang-dropdown-item.current,
+[data-theme="dark"] .dropdown-item.active {
+    background-color: rgba(102, 126, 234, 0.2) !important;
+    border-left: 3px solid var(--brand-primary) !important;
+    padding-left: calc(0.875rem - 3px);
+}
+
+/* DM-18: Profile Stat Card - Increased Border Visibility */
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .profile-stat,
+[data-theme="dark"] .stats-card {
+    border: 1px solid rgba(255, 255, 255, 0.2) !important; /* Increased from 0.1 */
+    background-color: var(--bg-input);
+}
+
+[data-theme="dark"] .stat-card:hover,
+[data-theme="dark"] .profile-stat:hover {
+    border-color: var(--brand-primary) !important;
+}
+
+/* DM-19: Dashboard Tab Inactive - Lighter Gray */
+[data-theme="dark"] .dashboard-tab,
+[data-theme="dark"] .nav-tab,
+[data-theme="dark"] .tab-item {
+    color: #b0b0b0 !important; /* Was var(--text-secondary), now lighter */
+}
+
+[data-theme="dark"] .dashboard-tab:hover,
+[data-theme="dark"] .nav-tab:hover,
+[data-theme="dark"] .tab-item:hover {
+    color: #e8e8e8 !important;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .dashboard-tab.active,
+[data-theme="dark"] .nav-tab.active,
+[data-theme="dark"] .tab-item.active {
+    color: var(--brand-primary) !important;
+    border-bottom-color: var(--brand-primary) !important;
+}
+
+/* DM-20: Auto-save Status - Brighter Yellow */
+[data-theme="dark"] .auto-save-status.saving,
+[data-theme="dark"] .autosave-indicator.saving,
+[data-theme="dark"] .save-status.saving {
+    color: #ffd54f !important; /* Was var(--warning), now brighter */
+}
+
+[data-theme="dark"] .auto-save-status.saving::before,
+[data-theme="dark"] .autosave-indicator.saving::before {
+    background-color: #ffd54f;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* P2-07: Date Picker Widget - Dark Mode Support */
+[data-theme="dark"] .datepicker,
+[data-theme="dark"] .ui-datepicker,
+[data-theme="dark"] .flatpickr-calendar,
+[data-theme="dark"] .date-picker-popup {
+    background-color: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+    box-shadow: var(--shadow-lg);
+}
+
+[data-theme="dark"] .datepicker-days td,
+[data-theme="dark"] .ui-datepicker td,
+[data-theme="dark"] .flatpickr-day {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .datepicker-days td:hover,
+[data-theme="dark"] .ui-datepicker td:hover a,
+[data-theme="dark"] .flatpickr-day:hover {
+    background-color: var(--bg-hover) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .datepicker-days .active,
+[data-theme="dark"] .ui-datepicker .ui-state-active,
+[data-theme="dark"] .flatpickr-day.selected {
+    background-color: var(--brand-primary) !important;
+    color: white !important;
+}
+
+[data-theme="dark"] .datepicker-switch,
+[data-theme="dark"] .ui-datepicker-title,
+[data-theme="dark"] .flatpickr-current-month {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .datepicker th,
+[data-theme="dark"] .ui-datepicker th,
+[data-theme="dark"] .flatpickr-weekday {
+    color: var(--text-muted) !important;
+}
+
+/* P2-08: Select2 Dropdown - Dark Mode Support */
+[data-theme="dark"] .select2-container--default .select2-selection--single,
+[data-theme="dark"] .select2-container--default .select2-selection--multiple {
+    background-color: var(--bg-input) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .select2-dropdown {
+    background-color: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .select2-container--default .select2-results__option {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: var(--brand-primary) !important;
+    color: white !important;
+}
+
+[data-theme="dark"] .select2-container--default .select2-search--dropdown .select2-search__field {
+    background-color: var(--bg-input) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+/* P2-09: Google Maps Info Windows - Dark Mode Support */
+[data-theme="dark"] .gm-style .gm-style-iw-c,
+[data-theme="dark"] .gm-style .gm-style-iw-d {
+    background-color: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .gm-style .gm-style-iw-tc::after {
+    background: var(--bg-card) !important;
+}
+
+[data-theme="dark"] .gm-style .gm-style-iw button[aria-label="Close"] {
+    filter: invert(1);
+}
+
+[data-theme="dark"] .map-info-window,
+[data-theme="dark"] .info-window-content {
+    background-color: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .map-info-window h3,
+[data-theme="dark"] .map-info-window h4 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .map-info-window p {
+    color: var(--text-secondary) !important;
+}
+
+/* P2-10: Rich Text Editor (TinyMCE/WP Editor) - Dark Mode Support */
+[data-theme="dark"] .mce-container,
+[data-theme="dark"] .mce-panel,
+[data-theme="dark"] .wp-editor-container {
+    background-color: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .mce-toolbar,
+[data-theme="dark"] .mce-toolbar-grp,
+[data-theme="dark"] .quicktags-toolbar {
+    background-color: var(--bg-secondary) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .mce-btn,
+[data-theme="dark"] .ed_button {
+    background-color: var(--bg-input) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .mce-btn:hover,
+[data-theme="dark"] .ed_button:hover {
+    background-color: var(--bg-hover) !important;
+}
+
+[data-theme="dark"] .mce-edit-area iframe {
+    background-color: var(--bg-input) !important;
+}
+
+[data-theme="dark"] .mce-content-body {
+    background-color: var(--bg-input) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .mce-menu,
+[data-theme="dark"] .mce-floatpanel {
+    background-color: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .mce-menu-item {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .mce-menu-item:hover {
+    background-color: var(--bg-hover) !important;
+}
+
+/* ============================================
+   PHASE 4: LOW PRIORITY FIXES - January 17, 2026
+   DM-21 to DM-24, P3-03, P3-05, P3-10, P3-11
+   ============================================ */
+
+/* DM-21: HR Element - Double Opacity for Visibility */
+[data-theme="dark"] hr {
+    border-color: rgba(255, 255, 255, 0.3) !important; /* Doubled from 0.15 */
+    border-width: 1px 0 0 0;
+    border-style: solid;
+    opacity: 1;
+}
+
+/* DM-22: Scrollbar Track - Darker Background */
+[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: #0f0f1a !important; /* Darker than var(--bg-secondary) */
+}
+
+[data-theme="dark"] * {
+    scrollbar-color: var(--bg-tertiary) #0f0f1a;
+}
+
+/* DM-23: Selection Highlight - More Prominent */
+[data-theme="dark"] ::selection {
+    background-color: rgba(102, 126, 234, 0.5) !important; /* Increased from 0.4 */
+    color: white !important;
+}
+
+[data-theme="dark"] ::-moz-selection {
+    background-color: rgba(102, 126, 234, 0.5) !important;
+    color: white !important;
+}
+
+/* DM-24: Image Upload Zone Border - Thicker and More Visible */
+[data-theme="dark"] .image-upload-zone,
+[data-theme="dark"] .upload-dropzone,
+[data-theme="dark"] .file-upload-area,
+[data-theme="dark"] .dropzone {
+    border: 2px dashed rgba(255, 255, 255, 0.3) !important; /* Doubled width and opacity */
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+[data-theme="dark"] .image-upload-zone:hover,
+[data-theme="dark"] .upload-dropzone:hover,
+[data-theme="dark"] .file-upload-area:hover,
+[data-theme="dark"] .dropzone:hover {
+    border-color: var(--brand-primary) !important;
+    background-color: rgba(102, 126, 234, 0.1);
+}
+
+[data-theme="dark"] .image-upload-zone.drag-over,
+[data-theme="dark"] .upload-dropzone.drag-over,
+[data-theme="dark"] .dropzone.dz-drag-hover {
+    border-color: var(--brand-primary) !important;
+    border-style: solid !important;
+    background-color: rgba(102, 126, 234, 0.15);
+}
+
+/* P3-03: Edge Focus Outline - Use :focus-visible to prevent double outline */
+[data-theme="dark"] *:focus:not(:focus-visible) {
+    outline: none !important;
+}
+
+[data-theme="dark"] *:focus-visible {
+    outline: 2px solid var(--brand-primary) !important;
+    outline-offset: 2px !important;
+}
+
+/* Ensure buttons and inputs have proper focus */
+[data-theme="dark"] button:focus-visible,
+[data-theme="dark"] input:focus-visible,
+[data-theme="dark"] select:focus-visible,
+[data-theme="dark"] textarea:focus-visible,
+[data-theme="dark"] a:focus-visible {
+    outline: 2px solid var(--brand-primary) !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2) !important;
+}
+
+/* P3-11: Image Brightness - Slightly reduce in dark mode */
+[data-theme="dark"] .service-card-image,
+[data-theme="dark"] .gallery-image,
+[data-theme="dark"] .featured-image,
+[data-theme="dark"] .thumbnail-image,
+[data-theme="dark"] article img:not(.logo):not(.icon):not(.emoji) {
+    filter: brightness(0.92);
+    transition: filter 0.3s ease;
+}
+
+[data-theme="dark"] .service-card:hover .service-card-image,
+[data-theme="dark"] .gallery-image:hover {
+    filter: brightness(1); /* Restore full brightness on hover */
+}
+
+/* Don't affect UI icons, logos, or SVGs */
+[data-theme="dark"] .icon,
+[data-theme="dark"] .logo,
+[data-theme="dark"] svg,
+[data-theme="dark"] .emoji,
+[data-theme="dark"] .flag-emoji {
+    filter: none !important;
+}
+
+/* ============================================
+   WHATSAPP BUTTON - MOBILE ONLY, GREEN COLOR
+   ============================================ */
+
+/* DESKTOP: Hide WhatsApp button completely */
+[data-theme="dark"] .services-grid .service-card .btn-whatsapp,
+[data-theme="dark"] .services-grid .btn-whatsapp,
+[data-theme="dark"] .btn-whatsapp {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* MOBILE: Show WhatsApp with green color */
+@media screen and (max-width: 767px) {
+    [data-theme="dark"] .services-grid .service-card .btn-whatsapp,
+    [data-theme="dark"] .services-grid .btn-whatsapp {
+        display: flex !important;
+        visibility: visible !important;
+        background: #25D366 !important;
+        background-color: #25D366 !important;
+        color: #fff !important;
+        border: none !important;
+    }
+
+    [data-theme="dark"] .services-grid .service-card .btn-whatsapp:hover,
+    [data-theme="dark"] .services-grid .btn-whatsapp:hover {
+        background: #1ebe5d !important;
+        background-color: #1ebe5d !important;
+    }
+}
+
+/* ============================================
+   NEW DESIGN - January 18, 2026
+   Green Search Bar, Updated Cards, Pink Hearts
+   ============================================ */
+
+/* --- GREEN PILL SEARCH BAR --- */
+[data-theme="dark"] .header-search .search-form,
+[data-theme="dark"] .search-form {
+    background: #10b981;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+[data-theme="dark"] .header-search .search-input,
+[data-theme="dark"] .search-input {
+    background: transparent !important;
+    border: none !important;
+    color: #ffffff !important;
+    padding-left: 1rem;
+}
+
+[data-theme="dark"] .header-search .search-input::placeholder,
+[data-theme="dark"] .search-input::placeholder {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+[data-theme="dark"] .header-search .search-input:focus,
+[data-theme="dark"] .search-input:focus {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+[data-theme="dark"] .header-search .search-button,
+[data-theme="dark"] .search-button {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .header-search .search-button:hover,
+[data-theme="dark"] .search-button:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Search icon color */
+[data-theme="dark"] .search-button svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+}
+
+/* --- FAVORITE BUTTON - PINK HEART --- */
+[data-theme="dark"] .favorite-btn {
+    background: rgba(0, 0, 0, 0.5) !important;
+    border: none !important;
+}
+
+[data-theme="dark"] .favorite-btn:hover {
+    background: rgba(0, 0, 0, 0.7) !important;
+}
+
+[data-theme="dark"] .favorite-btn .heart-icon {
+    color: #f472b6 !important;
+    stroke: #f472b6 !important;
+}
+
+[data-theme="dark"] .favorite-btn.is-favorited .heart-icon {
+    fill: #f472b6 !important;
+    color: #f472b6 !important;
+    stroke: #f472b6 !important;
+}
+
+/* --- UPDATED SERVICE CARDS --- */
+[data-theme="dark"] .services-grid .service-card {
+    background: linear-gradient(145deg, #141428 0%, #1a1a35 100%) !important;
+    border: 1px solid rgba(138, 92, 246, 0.2) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), var(--shadow-glow) !important;
+}
+
+[data-theme="dark"] .services-grid .service-card:hover {
+    border-color: rgba(138, 92, 246, 0.4) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 30px rgba(138, 92, 246, 0.2) !important;
+}
+
+/* Card title */
+[data-theme="dark"] .services-grid .service-card .service-card-title a {
+    color: #e8e8e8 !important;
+}
+
+[data-theme="dark"] .services-grid .service-card .service-card-title a:hover {
+    color: #c4b5fd !important;
+}
+
+/* Card category/meta tags */
+[data-theme="dark"] .services-grid .service-card .service-category {
+    background: rgba(138, 92, 246, 0.15) !important;
+    color: #c4b5fd !important;
+    border: 1px solid rgba(138, 92, 246, 0.25) !important;
+}
+
+/* Card price */
+[data-theme="dark"] .services-grid .service-card .service-card-price {
+    color: #10b981 !important;
+}
+
+/* Card buttons - Call button with purple gradient */
+[data-theme="dark"] .services-grid .service-card .btn-primary {
+    background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+[data-theme="dark"] .services-grid .service-card .btn-primary:hover {
+    box-shadow: 0 4px 15px rgba(138, 92, 246, 0.4) !important;
+}
+
+/* Card secondary button */
+[data-theme="dark"] .services-grid .service-card .btn-secondary {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #e8e8e8 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+[data-theme="dark"] .services-grid .service-card .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* --- HEADER DARK MODE UPDATE --- */
+[data-theme="dark"] .fancy-header {
+    background: rgba(10, 10, 26, 0.95) !important;
+    border-bottom-color: rgba(138, 92, 246, 0.2) !important;
+}
+
+[data-theme="dark"] .header-action-btn {
+    background: rgba(26, 26, 53, 0.8) !important;
+    color: #e8e8e8 !important;
+    border: 1px solid rgba(138, 92, 246, 0.2) !important;
+}
+
+[data-theme="dark"] .header-action-btn:hover {
+    background: rgba(138, 92, 246, 0.15) !important;
+    border-color: rgba(138, 92, 246, 0.4) !important;
+}
+
+/* --- BODY BACKGROUND --- */
+[data-theme="dark"] body {
+    background: #0a0a1a !important;
+}
+
+[data-theme="dark"] .site-main,
+[data-theme="dark"] main,
+[data-theme="dark"] #main,
+[data-theme="dark"] .services-archive,
+[data-theme="dark"] .services-page {
+    background: #0a0a1a !important;
+}
+
+/* ============================================
+   HEADER AD SPACE - Full width responsive
+   ============================================ */
+.header-ad-space {
+    flex: 1;
+    min-width: 200px;
+    max-width: 728px;
+    margin: 0 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-ad-space .ad-container {
+    width: 100%;
+    min-height: 60px;
+    max-height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(138, 92, 246, 0.05);
+    border-radius: 8px;
+    border: 1px dashed rgba(138, 92, 246, 0.2);
+}
+
+[data-theme="dark"] .header-ad-space .ad-container {
+    background: rgba(138, 92, 246, 0.08);
+    border-color: rgba(138, 92, 246, 0.25);
+}
+
+/* Responsive: Hide ad on small screens */
+@media (max-width: 768px) {
+    .header-ad-space {
+        display: none;
+    }
+}
+
+/* ============================================
+   FILTER DROPDOWNS - Fix triangle patterns
+   ============================================ */
+/* Override any conflicting background patterns on select dropdowns */
+[data-theme="dark"] .filter-select,
+[data-theme="dark"] .filters-panel .filter-select,
+[data-theme="dark"] .filters-grid select,
+[data-theme="dark"] .filter-group select {
+    background-color: var(--bg-input, rgba(26, 26, 53, 0.8)) !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23b0b0b0' d='M6 8L1 3h10z'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 12px center !important;
+    background-size: 12px !important;
+    border: 1px solid rgba(138, 92, 246, 0.3) !important;
+    color: var(--text-primary, #e8e8e8) !important;
+}
+
+[data-theme="dark"] .filter-select:focus,
+[data-theme="dark"] .filters-panel .filter-select:focus,
+[data-theme="dark"] .filter-group select:focus {
+    border-color: rgba(138, 92, 246, 0.6) !important;
+    box-shadow: 0 0 0 3px rgba(138, 92, 246, 0.15) !important;
+}
+
+/* Filter panel styling */
+[data-theme="dark"] .filters-panel {
+    background: rgba(10, 10, 26, 0.98) !important;
+    border-color: rgba(138, 92, 246, 0.2) !important;
+}
+
+[data-theme="dark"] .filters-panel-inner {
+    background: transparent !important;
+}
+
+[data-theme="dark"] .filter-group label {
+    color: var(--text-secondary, #a0a0a0) !important;
+}
+
+/* Filter inputs */
+[data-theme="dark"] .filter-input,
+[data-theme="dark"] .filters-panel .filter-input {
+    background-color: var(--bg-input, rgba(26, 26, 53, 0.8)) !important;
+    border: 1px solid rgba(138, 92, 246, 0.3) !important;
+    color: var(--text-primary, #e8e8e8) !important;
+}
+
+[data-theme="dark"] .filter-input:focus {
+    border-color: rgba(138, 92, 246, 0.6) !important;
+    box-shadow: 0 0 0 3px rgba(138, 92, 246, 0.15) !important;
+}
+
+/* ============================================
+   HOME TOP AD BANNER - Match content grid width
+   ============================================ */
+/* Make home_top ad container match the cards grid width */
+.ad-container[data-placement="home_top"] {
+    max-width: 1400px !important;
+    margin: 1.5rem auto !important;
+    padding: 0 1.5rem !important;
+    border: none !important;
+    background: transparent !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+}
+
+.ad-container[data-placement="home_top"] img,
+.ad-container[data-placement="home_top"] a,
+.ad-container[data-placement="home_top"] .ad-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    display: block !important;
+}
+
+.ad-container[data-placement="home_top"] img {
+    width: 100% !important;
+    object-fit: cover !important;
+    min-height: 100px !important;
+    max-height: 200px !important;
+    border-radius: 12px !important;
+}
+
+/* Ad label styling for home_top */
+.ad-container[data-placement="home_top"] .ad-label {
+    position: absolute !important;
+    top: 8px !important;
+    left: calc(1.5rem + 8px) !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    color: #fff !important;
+    padding: 4px 10px !important;
+    border-radius: 4px !important;
+    font-size: 10px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    z-index: 5 !important;
+}
+
+/* Responsive - match services-grid breakpoints */
+@media (max-width: 768px) {
+    .ad-container[data-placement="home_top"] {
+        padding: 0 1rem !important;
+    }
+    .ad-container[data-placement="home_top"] .ad-label {
+        left: calc(1rem + 8px) !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .ad-container[data-placement="home_top"] {
+        padding: 0 0.75rem !important;
+    }
+    .ad-container[data-placement="home_top"] .ad-label {
+        left: calc(0.75rem + 8px) !important;
+    }
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .ad-container[data-placement="home_top"] {
+    background: transparent !important;
+}
+
+[data-theme="dark"] .ad-container[data-placement="home_top"] .ad-label {
+    background: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* ============================================
+   SINGLE SERVICE PAGE - Dark mode blocks
+   ============================================ */
+/* Service content sections */
+[data-theme="dark"] .service-description,
+[data-theme="dark"] .service-pricing,
+[data-theme="dark"] .service-location {
+    background: var(--bg-card, rgba(26, 26, 53, 0.8)) !important;
+    border: 1px solid rgba(138, 92, 246, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .service-description h2,
+[data-theme="dark"] .service-pricing h2,
+[data-theme="dark"] .service-location h2 {
+    color: var(--text-primary, #e8e8e8) !important;
+}
+
+[data-theme="dark"] .service-description .description-content,
+[data-theme="dark"] .service-description p {
+    color: var(--text-secondary, #b0b0b0) !important;
+}
+
+[data-theme="dark"] .service-pricing .price-display,
+[data-theme="dark"] .service-pricing .price-value {
+    color: var(--text-primary, #e8e8e8) !important;
+}
+
+/* Contact block sidebar */
+[data-theme="dark"] .service-contact-block {
+    background: var(--bg-card, rgba(26, 26, 53, 0.8)) !important;
+    border: 1px solid rgba(138, 92, 246, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .service-contact-block h2 {
+    color: var(--text-primary, #e8e8e8) !important;
+}
+
+/* Contact buttons - keep original colors, enhance for dark mode */
+[data-theme="dark"] .contact-btn.contact-phone {
+    background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%) !important;
+    border: none !important;
+    color: #fff !important;
+}
+
+[data-theme="dark"] .contact-btn.contact-phone:hover {
+    background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%) !important;
+}
+
+[data-theme="dark"] .contact-btn.contact-whatsapp {
+    background: linear-gradient(135deg, #25d366 0%, #128c7e 100%) !important;
+    border: none !important;
+    color: #fff !important;
+}
+
+[data-theme="dark"] .contact-btn.contact-whatsapp:hover {
+    background: linear-gradient(135deg, #2edc70 0%, #1da587 100%) !important;
+}
+
+[data-theme="dark"] .contact-btn.contact-email {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border: none !important;
+    color: #fff !important;
+}
+
+[data-theme="dark"] .contact-btn.contact-email:hover {
+    background: linear-gradient(135deg, #7c93ed 0%, #8b5fb5 100%) !important;
+}
+
+/* Contact button icon */
+[data-theme="dark"] .contact-btn .btn-icon {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 8px !important;
+    padding: 0.5rem !important;
+}
+
+/* Report button - matching contact button style */
+[data-theme="dark"] .report-btn {
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.8) 0%, rgba(185, 43, 57, 0.9) 100%) !important;
+    border: none !important;
+    color: #fff !important;
+}
+
+[data-theme="dark"] .report-btn:hover {
+    background: linear-gradient(135deg, rgba(235, 68, 84, 0.9) 0%, rgba(200, 53, 67, 1) 100%) !important;
+}
+
+[data-theme="dark"] .report-btn .btn-icon {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 8px !important;
+    padding: 0.5rem !important;
+}
+
+/* Back to services button */
+[data-theme="dark"] .service-contact-block .btn-secondary,
+[data-theme="dark"] .service-contact-block .btn.btn-secondary {
+    background: rgba(138, 92, 246, 0.15) !important;
+    border: 1px solid rgba(138, 92, 246, 0.3) !important;
+    color: var(--text-primary, #e8e8e8) !important;
+}
+
+[data-theme="dark"] .service-contact-block .btn-secondary:hover,
+[data-theme="dark"] .service-contact-block .btn.btn-secondary:hover {
+    background: rgba(138, 92, 246, 0.25) !important;
+    border-color: rgba(138, 92, 246, 0.5) !important;
+}
+
+/* Back to services link */
+[data-theme="dark"] .back-link,
+[data-theme="dark"] .service-back-link {
+    color: var(--text-link, #667eea) !important;
+}
+
+[data-theme="dark"] .back-link:hover,
+[data-theme="dark"] .service-back-link:hover {
+    color: var(--text-link-hover, #8b9ef0) !important;
+}
+
+/* Service detail wrapper */
+[data-theme="dark"] .service-detail-wrapper {
+    background: transparent !important;
+}
+
+[data-theme="dark"] .service-detail {
+    background: transparent !important;
+}
+
+/* Service gallery */
+[data-theme="dark"] .service-gallery {
+    background: var(--bg-card, rgba(26, 26, 53, 0.8)) !important;
+    border: 1px solid rgba(138, 92, 246, 0.2) !important;
+    border-radius: 8px !important;
+}
+
+[data-theme="dark"] .gallery-placeholder {
+    background: rgba(26, 26, 53, 0.5) !important;
+    color: var(--text-muted, #808080) !important;
+}
+
+/* ============================================
+   END OF DARK MODE COMPLETE STYLESHEET
+   ============================================ */
+/* ============================================
+   ACCESSIBILITY FIXES STYLESHEET
+   Version: 1.0.0
+   Date: January 17, 2026
+
+   Fixes WCAG accessibility issues
+   Bugs: V7, V8, V12, V17, V18
+   ============================================ */
+
+/* ============================================
+   V7: SKIP-LINK VISIBILITY ON FOCUS
+   WCAG 2.4.1 (Bypass Blocks)
+   ============================================ */
+
+.skip-link,
+.screen-reader-text {
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    z-index: -999;
+}
+
+.skip-link:focus,
+.skip-link:active {
+    position: fixed !important;
+    left: 50% !important;
+    top: 0 !important;
+    transform: translateX(-50%);
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    z-index: 999999 !important;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white !important;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    outline: none;
+}
+
+.skip-link:focus:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* ============================================
+   V8: FOCUS-VISIBLE STYLES
+   WCAG 2.4.7 (Focus Visible)
+   ============================================ */
+
+/* Global focus-visible outline */
+*:focus-visible {
+    outline: 3px solid #667eea !important;
+    outline-offset: 2px !important;
+}
+
+/* Remove default focus outline (we use focus-visible instead) */
+*:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* Buttons */
+button:focus-visible,
+.btn:focus-visible,
+.header-action-btn:focus-visible,
+.search-button:focus-visible,
+.lang-current-flag:focus-visible,
+.filter-toggle:focus-visible {
+    outline: 3px solid #667eea !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2) !important;
+}
+
+/* Links */
+a:focus-visible {
+    outline: 3px solid #667eea !important;
+    outline-offset: 2px !important;
+    border-radius: 2px;
+}
+
+/* Service cards - make entire card focusable */
+.service-card:focus-within {
+    outline: 3px solid #667eea;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+}
+
+.service-card-title a:focus-visible {
+    outline: none !important;
+    text-decoration: underline;
+}
+
+/* Form inputs */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+.search-input:focus-visible,
+.filter-select:focus-visible,
+.filter-input:focus-visible {
+    outline: 3px solid #667eea !important;
+    outline-offset: 0 !important;
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2) !important;
+}
+
+/* Checkboxes and radios */
+input[type="checkbox"]:focus-visible,
+input[type="radio"]:focus-visible {
+    outline: 3px solid #667eea !important;
+    outline-offset: 2px !important;
+}
+
+/* Dropdown items */
+.lang-dropdown-item:focus-visible,
+.dropdown-item:focus-visible {
+    outline: 2px solid #667eea !important;
+    outline-offset: -2px !important;
+    background-color: rgba(102, 126, 234, 0.1);
+}
+
+/* Favorite button */
+.favorite-btn:focus-visible {
+    outline: 3px solid #667eea !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.3) !important;
+}
+
+/* Category cards */
+.category-card:focus-visible,
+.category-card a:focus-visible {
+    outline: 3px solid #667eea !important;
+    outline-offset: 2px !important;
+}
+
+/* Tag cloud items */
+.tag-cloud-item:focus-visible {
+    outline: 3px solid #667eea !important;
+    outline-offset: 2px !important;
+}
+
+/* Pagination */
+.page-numbers:focus-visible {
+    outline: 3px solid #667eea !important;
+    outline-offset: 2px !important;
+}
+
+/* Modal close button */
+.modal-close:focus-visible,
+.report-modal-close:focus-visible {
+    outline: 3px solid #667eea !important;
+    outline-offset: 2px !important;
+}
+
+/* Tab navigation */
+.dashboard-tab:focus-visible,
+.language-tab:focus-visible {
+    outline: 3px solid #667eea !important;
+    outline-offset: 2px !important;
+}
+
+/* Gallery items */
+.gallery-thumbnail:focus-visible,
+.gallery-item:focus-visible {
+    outline: 3px solid #667eea !important;
+    outline-offset: 2px !important;
+}
+
+/* Dark mode focus adjustments */
+[data-theme="dark"] *:focus-visible {
+    outline-color: #a8b5ff !important;
+}
+
+[data-theme="dark"] button:focus-visible,
+[data-theme="dark"] .btn:focus-visible,
+[data-theme="dark"] .header-action-btn:focus-visible {
+    box-shadow: 0 0 0 4px rgba(168, 181, 255, 0.2) !important;
+}
+
+[data-theme="dark"] input:focus-visible,
+[data-theme="dark"] textarea:focus-visible,
+[data-theme="dark"] select:focus-visible {
+    border-color: #a8b5ff !important;
+    box-shadow: 0 0 0 3px rgba(168, 181, 255, 0.2) !important;
+}
+
+/* ============================================
+   V12: COLOR CONTRAST FIXES
+   WCAG 2.1 Level AA (4.5:1 ratio)
+   Replace #999 with #666 or darker
+   ============================================ */
+
+/* Generic text that was #999 */
+.text-muted,
+.text-secondary {
+    color: #666666 !important; /* Was #999, now meets WCAG AA */
+}
+
+/* Service meta text */
+.service-meta,
+.service-card-meta {
+    color: #666666 !important;
+}
+
+/* Timestamps and dates */
+.post-date,
+.listing-date,
+.service-date {
+    color: #666666 !important;
+}
+
+/* Placeholders - slightly lighter is OK as they're hints */
+::placeholder {
+    color: #757575 !important; /* Meets 4.5:1 on white */
+    opacity: 1;
+}
+
+/* Help text */
+.form-help,
+.help-text,
+.description {
+    color: #666666 !important;
+}
+
+/* Breadcrumb separators */
+.breadcrumb-separator {
+    color: #666666 !important;
+}
+
+/* Empty state text */
+.empty-state-text {
+    color: #666666 !important;
+}
+
+/* Ad labels */
+.ad-label {
+    color: #666666 !important;
+}
+
+/* Character counts */
+.char-count {
+    color: #666666 !important;
+}
+
+/* Footer text */
+.site-info,
+.footer-text {
+    color: #666666 !important;
+}
+
+/* Dark mode contrast adjustments */
+[data-theme="dark"] .text-muted,
+[data-theme="dark"] .text-secondary,
+[data-theme="dark"] .service-meta,
+[data-theme="dark"] .service-card-meta {
+    color: #a0a0a0 !important; /* Meets 4.5:1 on dark backgrounds */
+}
+
+[data-theme="dark"] ::placeholder {
+    color: #909090 !important;
+}
+
+/* ============================================
+   V17: TEXT SELECTION HIGHLIGHT
+   ============================================ */
+
+::selection {
+    background-color: rgba(102, 126, 234, 0.3);
+    color: inherit;
+}
+
+::-moz-selection {
+    background-color: rgba(102, 126, 234, 0.3);
+    color: inherit;
+}
+
+/* Dark mode selection */
+[data-theme="dark"] ::selection {
+    background-color: rgba(102, 126, 234, 0.5);
+    color: white;
+}
+
+[data-theme="dark"] ::-moz-selection {
+    background-color: rgba(102, 126, 234, 0.5);
+    color: white;
+}
+
+/* ============================================
+   V18: PRINT STYLESHEET
+   ============================================ */
+
+@media print {
+    /* Hide non-essential elements */
+    .site-header,
+    .fancy-header,
+    .site-footer,
+    footer,
+    .header-actions,
+    .filter-toggle,
+    .filters-sidebar,
+    .ad-container,
+    .favorite-btn,
+    .report-btn,
+    .lang-switcher,
+    .header-lang-switcher,
+    .search-form,
+    .toast-container,
+    .modal,
+    .skip-link,
+    nav,
+    .pagination,
+    .breadcrumbs,
+    .contact-buttons,
+    .social-share,
+    button:not(.print-btn),
+    .no-print {
+        display: none !important;
+    }
+
+    /* Reset backgrounds and colors */
+    body {
+        background: white !important;
+        color: black !important;
+        font-size: 12pt;
+        line-height: 1.5;
+    }
+
+    * {
+        background: transparent !important;
+        color: black !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    /* Ensure content is full width */
+    .site,
+    .site-main,
+    main,
+    .container,
+    .service-detail-main,
+    .service-content {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Show URLs after links */
+    a[href]::after {
+        content: " (" attr(href) ")";
+        font-size: 0.8em;
+        color: #666;
+    }
+
+    /* Don't show URL for internal links and buttons */
+    a[href^="#"]::after,
+    a[href^="javascript"]::after,
+    .btn::after,
+    button::after {
+        content: "";
+    }
+
+    /* Images */
+    img {
+        max-width: 100% !important;
+        page-break-inside: avoid;
+    }
+
+    /* Headings */
+    h1, h2, h3, h4, h5, h6 {
+        page-break-after: avoid;
+        page-break-inside: avoid;
+    }
+
+    /* Paragraphs */
+    p {
+        orphans: 3;
+        widows: 3;
+    }
+
+    /* Tables */
+    table {
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    /* Service card for print */
+    .service-card {
+        border: 1px solid #ddd !important;
+        margin-bottom: 1rem;
+        page-break-inside: avoid;
+    }
+
+    /* Page breaks */
+    .page-break {
+        page-break-before: always;
+    }
+
+    .avoid-break {
+        page-break-inside: avoid;
+    }
+}
+
+/* ============================================
+   ADDITIONAL ACCESSIBILITY IMPROVEMENTS
+   ============================================ */
+
+/* Ensure sufficient touch target size (44x44px minimum) */
+button,
+a.btn,
+.header-action-btn,
+.favorite-btn,
+.pagination a,
+.page-numbers {
+    min-width: 44px;
+    min-height: 44px;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    * {
+        border-color: currentColor !important;
+    }
+
+    button,
+    .btn,
+    input,
+    textarea,
+    select {
+        border-width: 2px !important;
+    }
+
+    a {
+        text-decoration: underline !important;
+    }
+
+    .service-card {
+        border-width: 2px !important;
+    }
+}
+
+/* Ensure text is resizable */
+html {
+    font-size: 100%; /* Respect user's browser font size */
+}
+
+/* Don't use fixed pixel sizes for text */
+body {
+    font-size: 1rem; /* 16px by default, scales with user preference */
+}
+
+/* Ensure focus is not trapped */
+[tabindex="-1"]:focus {
+    outline: none !important;
+}
+
+/* Screen reader only content */
+.sr-only,
+.visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+/* But show on focus for skip links etc */
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    clip: auto !important;
+    white-space: normal !important;
+}
+
+/* ============================================
+   END OF ACCESSIBILITY FIXES
+   ============================================ */
+/* ===========================
+   PHASE 7: Report Modal Styles
+   =========================== */
+
+/* Report Button */
+.report-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.875rem 1.25rem;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+.report-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #ee5a52 0%, #ff6b6b 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+.report-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.report-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.report-btn .btn-icon {
+    font-size: 1.25rem;
+}
+
+/* Modal Overlay */
+.report-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+}
+
+.report-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+}
+
+/* Modal Content */
+.report-modal-content {
+    position: relative;
+    max-width: 500px;
+    margin: 10vh auto 0;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Modal Header */
+.report-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.report-modal-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.report-modal-close {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    line-height: 1;
+    color: #999;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.report-modal-close:hover {
+    background: #f5f5f5;
+    color: #333;
+}
+
+/* Modal Body */
+.report-modal-body {
+    padding: 2rem;
+}
+
+/* Form Groups */
+.report-modal .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.report-modal .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
+    font-size: 0.9375rem;
+}
+
+.report-modal .required {
+    color: #ff6b6b;
+}
+
+.report-modal select,
+.report-modal textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e5e5e5;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.2s ease;
+}
+
+.report-modal select:focus,
+.report-modal textarea:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.report-modal textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.report-modal .char-count {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #999;
+    text-align: right;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.form-actions .btn {
+    flex: 1;
+    padding: 0.875rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.form-actions .btn-secondary {
+    background: #f5f5f5;
+    color: #333;
+}
+
+.form-actions .btn-secondary:hover {
+    background: #e5e5e5;
+}
+
+.form-actions .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+}
+
+.form-actions .btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.form-actions .btn-primary:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* Messages */
+.report-message {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+}
+
+.report-message-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.report-message-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .report-modal-content {
+        margin: 5vh 1rem 0;
+        max-width: none;
+    }
+
+    .report-modal-header,
+    .report-modal-body {
+        padding: 1.25rem 1.5rem;
+    }
+
+    .report-modal-header h3 {
+        font-size: 1.25rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .report-modal-header,
+    .report-modal-body {
+        padding: 1rem;
+    }
+}
+
+/* ===========================
+   DARK MODE STYLES
+   Critical Fix: P2-02b
+   =========================== */
+
+[data-theme="dark"] .report-modal-overlay {
+    background: rgba(0, 0, 0, 0.85);
+}
+
+[data-theme="dark"] .report-modal-content {
+    background: #1e1e3f;
+    color: #e8e8e8;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .report-modal-header {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .report-modal-header h3 {
+    color: #e8e8e8;
+}
+
+[data-theme="dark"] .report-modal-close {
+    color: #b0b0b0;
+}
+
+[data-theme="dark"] .report-modal-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #e8e8e8;
+}
+
+[data-theme="dark"] .report-modal .form-group label {
+    color: #e8e8e8;
+}
+
+[data-theme="dark"] .report-modal .required {
+    color: #ff6b6b;
+}
+
+[data-theme="dark"] .report-modal select,
+[data-theme="dark"] .report-modal textarea {
+    background: #252545;
+    color: #e8e8e8;
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .report-modal select:focus,
+[data-theme="dark"] .report-modal textarea:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+[data-theme="dark"] .report-modal select option {
+    background: #252545;
+    color: #e8e8e8;
+}
+
+[data-theme="dark"] .report-modal .char-count {
+    color: #999;
+}
+
+[data-theme="dark"] .form-actions .btn-secondary {
+    background: #252545;
+    color: #e8e8e8;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .form-actions .btn-secondary:hover {
+    background: #2a2a4a;
+}
+
+[data-theme="dark"] .report-message-success {
+    background: rgba(76, 175, 80, 0.2);
+    color: #81c784;
+    border-color: rgba(76, 175, 80, 0.3);
+}
+
+[data-theme="dark"] .report-message-error {
+    background: rgba(244, 67, 54, 0.2);
+    color: #ff8a80;
+    border-color: rgba(244, 67, 54, 0.3);
+}
+/**
+ * Poster Promotion UI Styles
+ *
+ * @package Batumi_Theme
+ */
+
+/* Promotion Badge on Listing Cards */
+.promo-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    z-index: 10;
+}
+
+.promo-badge.promo-active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+    animation: promotionPulse 2s ease-in-out infinite;
+}
+
+.promo-badge.promo-pending {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.promo-badge.promo-rejected {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+@keyframes promotionPulse {
+    0%, 100% {
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+    }
+    50% {
+        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.6);
+    }
+}
+
+/* Promoted Listing Card */
+.listing-card.listing-promoted {
+    border: 2px solid #667eea;
+    background: linear-gradient(to bottom, #f8f9ff 0%, #ffffff 100%);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.listing-card.listing-promoted::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Promotion Modal */
+.promotion-modal {
+    display: none;
+    position: fixed;
+    z-index: 100000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.promotion-modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    padding: 30px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 800px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.promotion-modal-close {
+    color: #999;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 20px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.promotion-modal-close:hover,
+.promotion-modal-close:focus {
+    color: #333;
+}
+
+.promotion-modal-title {
+    margin-top: 0;
+    font-size: 26px;
+    line-height: 1.3;
+    color: #333;
+}
+
+.promotion-modal-description {
+    font-size: 15px;
+    color: #666;
+    margin-bottom: 25px;
+}
+
+/* Promotion Packages Grid */
+.promotion-packages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.promotion-package {
+    background: #fff;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.promotion-package:hover {
+    border-color: #667eea;
+    box-shadow: 0 8px 16px rgba(102, 126, 234, 0.2);
+    transform: translateY(-4px);
+}
+
+.package-header {
+    margin-bottom: 15px;
+}
+
+.package-name {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: #333;
+}
+
+.package-price {
+    font-size: 24px;
+    font-weight: 700;
+    color: #667eea;
+    margin-bottom: 12px;
+}
+
+.package-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.package-duration,
+.package-priority {
+    font-size: 14px;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.package-description {
+    font-size: 13px;
+    color: #777;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.promotion-package .btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.promotion-package .btn-primary {
+    background: #667eea;
+    border-color: #667eea;
+    color: #fff;
+}
+
+.promotion-package .btn-primary:hover {
+    background: #5568d3;
+    border-color: #5568d3;
+    transform: scale(1.02);
+}
+
+/* Modal Actions */
+.promotion-modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.promotion-modal-actions .btn {
+    padding: 10px 24px;
+}
+
+/* Modal Loading State */
+.promotion-modal-loading {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.promotion-modal-loading .spinner {
+    font-size: 32px;
+    margin-bottom: 15px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.promotion-modal-loading p {
+    color: #666;
+    font-size: 15px;
+    margin: 0;
+}
+
+/* Dashboard Messages Enhancement */
+.dashboard-messages .message {
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.4;
+    animation: slideDown 0.3s ease-out;
+}
+
+.dashboard-messages .message-success {
+    background: #d4edda;
+    border-left: 4px solid #28a745;
+    color: #155724;
+}
+
+.dashboard-messages .message-error {
+    background: #f8d7da;
+    border-left: 4px solid #dc3545;
+    color: #721c24;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .promotion-modal-content {
+        width: 95%;
+        margin: 10% auto;
+        padding: 20px;
+    }
+
+    .promotion-modal-title {
+        font-size: 22px;
+    }
+
+    .promotion-packages-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .promotion-modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .promotion-modal-actions .btn {
+        width: 100%;
+    }
+
+    .promo-badge {
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .promotion-modal-content {
+        margin: 5% auto;
+        padding: 15px;
+    }
+
+    .package-price {
+        font-size: 20px;
+    }
+
+    .package-name {
+        font-size: 18px;
+    }
+}
+
+/* Button Utilities for Promotion */
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: #fff;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.btn-block {
+    display: block;
+    width: 100%;
+}
+
+/* Listing Card Positioning Context */
+.listing-card {
+    position: relative;
+}
+/**
+ * Sponsored Service Badges - Frontend Public Styles
+ * Phase 8.1 - Frontend Labels Implementation
+ *
+ * @package Batumi_Theme
+ * @since 1.0.0
+ */
+
+/* Sponsored Badge on Service Cards */
+.sponsored-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+    z-index: 10;
+    letter-spacing: 0.5px;
+    animation: sponsoredPulse 3s ease-in-out infinite;
+}
+
+@keyframes sponsoredPulse {
+    0%, 100% {
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+        transform: scale(1.02);
+    }
+}
+
+/* Promoted Service Card Styling */
+.service-card-promoted {
+    border: 2px solid #667eea !important;
+    background: linear-gradient(to bottom, #f8f9ff 0%, #ffffff 100%) !important;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.15) !important;
+    position: relative;
+}
+
+.service-card-promoted::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 4px 4px 0 0;
+}
+
+/* Ensure image wrapper is positioned for badge */
+.service-card-image-wrapper {
+    position: relative;
+}
+
+/* Hover effect for promoted cards */
+.service-card-promoted:hover {
+    border-color: #5568d3 !important;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.25) !important;
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+/* Priority-based visual hierarchy (optional) */
+.service-card-promoted[data-priority="3"] {
+    border-width: 3px;
+}
+
+.service-card-promoted[data-priority="2"] {
+    border-width: 2px;
+}
+
+.service-card-promoted[data-priority="1"] {
+    border-width: 2px;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+    .sponsored-badge {
+        font-size: 10px;
+        padding: 4px 8px;
+        top: 8px;
+        right: 8px;
+    }
+
+    .service-card-promoted {
+        border-width: 2px !important;
+    }
+
+    .service-card-promoted::before {
+        height: 3px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .sponsored-badge {
+        font-size: 9px;
+        padding: 3px 6px;
+    }
+}
+
+/* Accessibility - ensure badge is readable */
+@media (prefers-reduced-motion: reduce) {
+    .sponsored-badge {
+        animation: none;
+    }
+
+    .service-card-promoted:hover {
+        transform: none;
+    }
+}
+
+/* Print styles - maintain sponsored indicator */
+@media print {
+    .sponsored-badge {
+        background: #667eea;
+        box-shadow: none;
+        animation: none;
+    }
+
+    .service-card-promoted {
+        border: 2px solid #667eea !important;
+        box-shadow: none !important;
+    }
+}
+/**
+ * Service Form Styles - Create/Edit Service Pages
+ * Fixes for CSS and color issues
+ * @version 1.0.0
+ */
+
+/* ============================================
+   PAGE LAYOUT
+   ============================================ */
+
+.service-form-page {
+    padding: 2rem 0;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+    min-height: 80vh;
+}
+
+.service-form-page .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* ============================================
+   FORM HEADER
+   ============================================ */
+
+.form-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    color: #2c7fb8;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+}
+
+.back-link:hover {
+    color: #1f5a85;
+    background: rgba(44, 127, 184, 0.1);
+}
+
+.form-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    color: #1a1a2e;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.form-subtitle {
+    color: #666;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+/* ============================================
+   FORM MESSAGES
+   ============================================ */
+
+.form-messages {
+    margin-bottom: 1.5rem;
+}
+
+.message {
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.message-info {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    color: #1565c0;
+    border-left: 4px solid #2196f3;
+}
+
+.message-success {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    color: #2e7d32;
+    border-left: 4px solid #4caf50;
+}
+
+.message-error {
+    background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+    color: #c62828;
+    border-left: 4px solid #f44336;
+}
+
+/* ============================================
+   SERVICE FORM
+   ============================================ */
+
+.service-form {
+    background: white;
+    padding: 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+/* ============================================
+   FORM SECTIONS
+   ============================================ */
+
+.form-section {
+    margin: 0;
+    padding: 2rem;
+    border-bottom: 1px solid #e8eaed;
+    background: white;
+}
+
+.form-section:nth-child(even) {
+    background: #fafbfc;
+}
+
+.form-section:last-child {
+    border-bottom: none;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    color: #1a1a2e;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.section-title::before {
+    content: '';
+    width: 4px;
+    height: 24px;
+    background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+    border-radius: 2px;
+}
+
+.section-help {
+    color: #666;
+    margin: 0 0 1.5rem;
+    font-size: 0.9375rem;
+    padding-left: 1.25rem;
+}
+
+/* ============================================
+   FORM GROUPS & INPUTS
+   ============================================ */
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-size: 0.9375rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid #e0e4e8;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    background: white;
+    color: #333;
+}
+
+.form-input:hover {
+    border-color: #c0c8d0;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+.form-input::placeholder {
+    color: #9ca3af;
+}
+
+/* Select dropdowns - use !important to override any conflicting styles */
+select.form-input {
+    cursor: pointer;
+    background-color: white !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
+    background-position: right 0.75rem center !important;
+    background-repeat: no-repeat !important;
+    background-size: 1.5em 1.5em !important;
+    padding-right: 2.5rem !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+}
+
+select.form-input option {
+    padding: 0.5rem;
+    color: #333;
+    background: white;
+}
+
+select[multiple].form-input {
+    height: auto;
+    min-height: 120px;
+    background-image: none;
+    padding-right: 1rem;
+}
+
+select[multiple].form-input option {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+select[multiple].form-input option:checked {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+textarea.form-input {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.6;
+}
+
+.form-help {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.8125rem;
+    color: #6b7280;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+@media (max-width: 600px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Character Counts */
+.char-count {
+    display: block;
+    text-align: right;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin-top: 0.25rem;
+}
+
+/* ============================================
+   LANGUAGE TABS
+   ============================================ */
+
+.language-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 1.5rem;
+    background: #f5f7fa;
+    border-radius: 8px;
+    padding: 4px;
+}
+
+.lang-tab {
+    flex: 1;
+    padding: 0.875rem 1.5rem;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #666;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.lang-tab:hover {
+    color: #333;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.lang-tab.active {
+    color: white;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Language Status */
+.language-status {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.25rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    border: 1px solid #e8eaed;
+}
+
+.lang-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.lang-indicator strong {
+    color: #333;
+}
+
+.lang-indicator .status-text {
+    color: #9ca3af;
+}
+
+.lang-indicator .status-text.complete {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.lang-indicator .status-text.incomplete {
+    color: #f59e0b;
+    font-weight: 600;
+}
+
+/* Language Content */
+.lang-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.lang-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   RADIO GROUPS
+   ============================================ */
+
+.radio-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+}
+
+@media (max-width: 600px) {
+    .radio-group {
+        grid-template-columns: 1fr;
+    }
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    border: 2px solid #e0e4e8;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.radio-option:hover {
+    border-color: #667eea;
+    background: #fafbff;
+}
+
+.radio-option input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 0.875rem;
+    cursor: pointer;
+    accent-color: #667eea;
+}
+
+.radio-option input[type="radio"]:checked ~ span {
+    font-weight: 600;
+    color: #667eea;
+}
+
+.radio-option:has(input[type="radio"]:checked) {
+    border-color: #667eea;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+}
+
+/* ============================================
+   MAP CONTAINER
+   ============================================ */
+
+.map-container,
+#map {
+    height: 350px;
+    border-radius: 8px;
+    border: 2px solid #e0e4e8;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+.warning-message {
+    padding: 1rem;
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    color: #856404;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+/* ============================================
+   IMAGE UPLOAD
+   ============================================ */
+
+.image-upload-zone {
+    display: block;
+    border: 2px dashed #d0d5dd;
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #fafbfc;
+    position: relative;
+}
+
+/* Ensure the label is fully clickable */
+label.image-upload-zone {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.image-upload-zone:hover {
+    border-color: #667eea;
+    background: #f5f7ff;
+}
+
+.image-upload-zone.drag-over {
+    border-color: #667eea;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    border-style: solid;
+}
+
+.upload-prompt {
+    color: #666;
+}
+
+.upload-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+}
+
+.upload-prompt p {
+    margin: 0 0 0.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.upload-prompt small {
+    color: #9ca3af;
+}
+
+/* Image Gallery */
+.image-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.gallery-item {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    aspect-ratio: 4/3;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.gallery-actions {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+}
+
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon:hover {
+    background: white;
+    transform: scale(1.1);
+}
+
+.btn-icon:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-icon.delete-img:hover {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.image-count {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+/* ============================================
+   TAGS
+   ============================================ */
+
+.tags-input {
+    margin-bottom: 0.5rem;
+}
+
+.tag-suggestions {
+    display: none;
+    position: absolute;
+    z-index: 10;
+    background: white;
+    border: 1px solid #e0e4e8;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-height: 200px;
+    overflow-y: auto;
+    width: calc(100% - 2rem);
+}
+
+.tag-suggestions.active {
+    display: block;
+}
+
+.tag-suggestion {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tag-suggestion:hover {
+    background: #f5f7ff;
+}
+
+.tag-count {
+    font-size: 0.75rem;
+    color: #9ca3af;
+}
+
+.selected-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.selected-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.tag-remove {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    line-height: 1;
+    transition: background 0.2s ease;
+}
+
+.tag-remove:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* ============================================
+   VALIDATION SUMMARY
+   ============================================ */
+
+.validation-summary {
+    margin-bottom: 1.5rem;
+}
+
+.validation-errors {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.validation-errors h3 {
+    color: #dc2626;
+    margin: 0 0 1rem;
+    font-size: 1rem;
+}
+
+.validation-errors ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: #b91c1c;
+}
+
+.validation-errors li {
+    margin-bottom: 0.5rem;
+}
+
+.validation-errors li:last-child {
+    margin-bottom: 0;
+}
+
+/* ============================================
+   FORM ACTIONS / BUTTONS
+   ============================================ */
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    padding-top: 1rem;
+}
+
+.btn {
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+    border: 2px solid #e5e7eb;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: #e5e7eb;
+    border-color: #d1d5db;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+/* ============================================
+   DARK MODE SUPPORT
+   ============================================ */
+
+[data-theme="dark"] .service-form-page {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+[data-theme="dark"] .service-form {
+    background: #1e1e30;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .form-section {
+    background: #1e1e30;
+    border-color: #2d2d44;
+}
+
+[data-theme="dark"] .form-section:nth-child(even) {
+    background: #252538;
+}
+
+[data-theme="dark"] .form-title {
+    -webkit-text-fill-color: unset;
+    background: none;
+    color: #e8e8f0;
+}
+
+[data-theme="dark"] .section-title {
+    color: #e8e8f0;
+}
+
+[data-theme="dark"] .form-label {
+    color: #c8c8d8;
+}
+
+[data-theme="dark"] .form-input {
+    background: #252538;
+    border-color: #3d3d55;
+    color: #e8e8f0;
+}
+
+[data-theme="dark"] .form-input:hover {
+    border-color: #4d4d65;
+}
+
+[data-theme="dark"] .form-input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+[data-theme="dark"] .form-input::placeholder {
+    color: #6b6b7b;
+}
+
+[data-theme="dark"] select.form-input {
+    background-color: #252538 !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
+    background-position: right 0.75rem center !important;
+    background-repeat: no-repeat !important;
+    background-size: 1.5em 1.5em !important;
+}
+
+[data-theme="dark"] select.form-input option {
+    background: #252538;
+    color: #e8e8f0;
+}
+
+[data-theme="dark"] .language-tabs {
+    background: #252538;
+}
+
+[data-theme="dark"] .lang-tab {
+    color: #9ca3af;
+}
+
+[data-theme="dark"] .lang-tab:hover {
+    color: #e8e8f0;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .language-status {
+    background: #252538;
+    border-color: #3d3d55;
+}
+
+[data-theme="dark"] .lang-indicator strong {
+    color: #e8e8f0;
+}
+
+[data-theme="dark"] .radio-option {
+    background: #252538;
+    border-color: #3d3d55;
+}
+
+[data-theme="dark"] .radio-option:hover {
+    border-color: #667eea;
+    background: #2d2d44;
+}
+
+[data-theme="dark"] .radio-option input[type="radio"]:checked ~ span {
+    color: #a78bfa;
+}
+
+[data-theme="dark"] .radio-option:has(input[type="radio"]:checked) {
+    background: rgba(102, 126, 234, 0.1);
+}
+
+[data-theme="dark"] .map-container,
+[data-theme="dark"] #map {
+    border-color: #3d3d55;
+}
+
+[data-theme="dark"] .image-upload-zone {
+    background: #252538;
+    border-color: #3d3d55;
+}
+
+[data-theme="dark"] .image-upload-zone:hover {
+    border-color: #667eea;
+    background: #2d2d44;
+}
+
+[data-theme="dark"] .upload-prompt p {
+    color: #e8e8f0;
+}
+
+[data-theme="dark"] .tag-suggestions {
+    background: #252538;
+    border-color: #3d3d55;
+}
+
+[data-theme="dark"] .tag-suggestion:hover {
+    background: #2d2d44;
+}
+
+[data-theme="dark"] .btn-secondary {
+    background: #2d2d44;
+    color: #e8e8f0;
+    border-color: #3d3d55;
+}
+
+[data-theme="dark"] .btn-secondary:hover:not(:disabled) {
+    background: #3d3d55;
+    border-color: #4d4d65;
+}
+
+[data-theme="dark"] .validation-errors {
+    background: rgba(220, 38, 38, 0.1);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+[data-theme="dark"] .validation-errors h3 {
+    color: #f87171;
+}
+
+[data-theme="dark"] .validation-errors ul {
+    color: #fca5a5;
+}
+
+[data-theme="dark"] .message-info {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #93c5fd;
+}
+
+[data-theme="dark"] .message-success {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.3);
+    color: #86efac;
+}
+
+[data-theme="dark"] .message-error {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .service-form-page {
+        padding: 1rem 0;
+    }
+
+    .form-section {
+        padding: 1.5rem;
+    }
+
+    .form-title {
+        font-size: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1.125rem;
+    }
+
+    .language-tabs {
+        flex-direction: column;
+    }
+
+    .lang-tab {
+        padding: 0.75rem 1rem;
+    }
+
+    .language-status {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    .image-gallery {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
