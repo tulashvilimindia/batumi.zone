@@ -3158,7 +3158,8 @@ select[multiple].form-input {
 /* Hide on desktop */
 .services-grid .service-card .btn-whatsapp,
 .services-grid .service-card a.btn-whatsapp,
-.services-grid article.service-card .btn-whatsapp {
+.services-grid article.service-card .btn-whatsapp,
+[data-theme="dark"] .services-grid .service-card .btn-whatsapp {
     display: none !important;
     visibility: hidden !important;
 }
@@ -3167,7 +3168,9 @@ select[multiple].form-input {
 @media screen and (max-width: 767px) {
     .services-grid .service-card .btn-whatsapp,
     .services-grid .service-card a.btn-whatsapp,
-    .services-grid article.service-card .btn-whatsapp {
+    .services-grid article.service-card .btn-whatsapp,
+    [data-theme="dark"] .services-grid .service-card .btn-whatsapp,
+    [data-theme="dark"] .services-grid .service-card a.btn-whatsapp {
         display: flex !important;
         visibility: visible !important;
         background: #25D366 !important;
@@ -3180,7 +3183,9 @@ select[multiple].form-input {
     }
 
     .services-grid .service-card .btn-whatsapp:hover,
-    .services-grid .service-card a.btn-whatsapp:hover {
+    .services-grid .service-card a.btn-whatsapp:hover,
+    [data-theme="dark"] .services-grid .service-card .btn-whatsapp:hover,
+    [data-theme="dark"] .services-grid .service-card a.btn-whatsapp:hover {
         background: #1ebe5d !important;
         background-color: #1ebe5d !important;
     }
