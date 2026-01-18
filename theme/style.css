@@ -3175,17 +3175,21 @@ select[multiple].form-input {
 
 /* Mobile: show WhatsApp, hide Call */
 /* Desktop: show Call, hide WhatsApp */
+.services-grid .service-card .btn-whatsapp {
+    display: inline-flex;
+}
+
 .services-grid .service-card .btn-call-desktop {
     display: none;
 }
 
 @media (min-width: 768px) {
     .services-grid .service-card .btn-whatsapp {
-        display: none;
+        display: none !important;
     }
 
     .services-grid .service-card .btn-call-desktop {
-        display: inline-flex;
+        display: inline-flex !important;
     }
 }
 
