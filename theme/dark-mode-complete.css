@@ -1930,27 +1930,66 @@
     color: var(--text-primary, #e8e8e8) !important;
 }
 
-[data-theme="dark"] .service-contact-block .contact-btn {
-    background: rgba(138, 92, 246, 0.15) !important;
-    border: 1px solid rgba(138, 92, 246, 0.3) !important;
-    color: var(--text-primary, #e8e8e8) !important;
+/* Contact buttons - keep original colors, enhance for dark mode */
+[data-theme="dark"] .contact-btn.contact-phone {
+    background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%) !important;
+    border: none !important;
+    color: #fff !important;
 }
 
-[data-theme="dark"] .service-contact-block .contact-btn:hover {
-    background: rgba(138, 92, 246, 0.25) !important;
-    border-color: rgba(138, 92, 246, 0.5) !important;
+[data-theme="dark"] .contact-btn.contact-phone:hover {
+    background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%) !important;
 }
 
-[data-theme="dark"] .service-contact-block .contact-btn.btn-primary {
+[data-theme="dark"] .contact-btn.contact-whatsapp {
+    background: linear-gradient(135deg, #25d366 0%, #128c7e 100%) !important;
+    border: none !important;
+    color: #fff !important;
+}
+
+[data-theme="dark"] .contact-btn.contact-whatsapp:hover {
+    background: linear-gradient(135deg, #2edc70 0%, #1da587 100%) !important;
+}
+
+[data-theme="dark"] .contact-btn.contact-email {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
     border: none !important;
     color: #fff !important;
 }
 
-[data-theme="dark"] .service-contact-block .contact-btn.btn-whatsapp {
-    background: #25D366 !important;
-    border: none !important;
-    color: #fff !important;
+[data-theme="dark"] .contact-btn.contact-email:hover {
+    background: linear-gradient(135deg, #7c93ed 0%, #8b5fb5 100%) !important;
+}
+
+/* Contact button icon */
+[data-theme="dark"] .contact-btn .btn-icon {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 8px !important;
+    padding: 0.5rem !important;
+}
+
+/* Report button */
+[data-theme="dark"] .report-btn {
+    background: rgba(220, 53, 69, 0.15) !important;
+    border: 1px solid rgba(220, 53, 69, 0.3) !important;
+    color: #ff6b7a !important;
+}
+
+[data-theme="dark"] .report-btn:hover {
+    background: rgba(220, 53, 69, 0.25) !important;
+    border-color: rgba(220, 53, 69, 0.5) !important;
+}
+
+/* Back to services link */
+[data-theme="dark"] .back-link,
+[data-theme="dark"] .service-back-link,
+[data-theme="dark"] a[href*="services"]:not(.contact-btn):not(.btn) {
+    color: var(--text-link, #667eea) !important;
+}
+
+[data-theme="dark"] .back-link:hover,
+[data-theme="dark"] .service-back-link:hover {
+    color: var(--text-link-hover, #8b9ef0) !important;
 }
 
 /* Service detail wrapper */
