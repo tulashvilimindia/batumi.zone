@@ -72,13 +72,13 @@
                     <span class="favorites-badge" style="display: none;">0</span>
                 </a>
 
-                <!-- Language Switcher -->
+                <!-- Language Switcher - Inline Flags -->
                 <?php if (function_exists('pll_the_languages')) : ?>
-                <div class="header-lang-switcher">
+                <div class="header-lang-switcher inline">
                     <?php
                     $languages = pll_the_languages(array(
                         'show_flags' => 1,
-                        'show_names' => 1,
+                        'show_names' => 0,
                         'hide_if_empty' => 0,
                         'echo' => 0,
                         'raw' => 1
@@ -87,37 +87,19 @@
                     $flag_emojis = array('ka' => '🇬🇪', 'ru' => '🇷🇺', 'en' => '🇬🇧');
                     ?>
                     <?php if (!empty($languages)) :
-                        $current = isset($languages[$current_lang]) ? $languages[$current_lang] : reset($languages);
+                        foreach ($languages as $slug => $lang) :
+                            $class = ($slug === $current_lang) ? 'current-lang' : '';
                     ?>
-                    <button class="lang-current-flag" aria-label="Language" title="<?php echo esc_attr($current['name']); ?>">
-                        <?php if (!empty($current['flag'])) : ?>
-                            <img src="<?php echo esc_url($current['flag']); ?>" alt="<?php echo esc_attr($current['name']); ?>"
-                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                            <span class="flag-emoji" style="display: none;"><?php echo isset($flag_emojis[$current_lang]) ? $flag_emojis[$current_lang] : '🌐'; ?></span>
+                    <a href="<?php echo esc_url($lang['url']); ?>" class="lang-flag <?php echo esc_attr($class); ?>" hreflang="<?php echo esc_attr($slug); ?>" title="<?php echo esc_attr($lang['name']); ?>">
+                        <?php if (!empty($lang['flag'])) : ?>
+                            <img src="<?php echo esc_url($lang['flag']); ?>" alt="<?php echo esc_attr($lang['name']); ?>"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                            <span class="flag-emoji" style="display: none;"><?php echo isset($flag_emojis[$slug]) ? $flag_emojis[$slug] : '🌐'; ?></span>
                         <?php else : ?>
-                            <span class="flag-emoji"><?php echo isset($flag_emojis[$current_lang]) ? $flag_emojis[$current_lang] : '🌐'; ?></span>
+                            <span class="flag-emoji"><?php echo isset($flag_emojis[$slug]) ? $flag_emojis[$slug] : '🌐'; ?></span>
                         <?php endif; ?>
-                        <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-                            <path d="M6 9L1 4h10z"/>
-                        </svg>
-                    </button>
-                    <div class="lang-dropdown">
-                        <?php foreach ($languages as $slug => $lang) :
-                            if ($slug === $current_lang) continue;
-                        ?>
-                        <a href="<?php echo esc_url($lang['url']); ?>" class="lang-dropdown-item" hreflang="<?php echo esc_attr($slug); ?>" title="<?php echo esc_attr($lang['name']); ?>">
-                            <?php if (!empty($lang['flag'])) : ?>
-                                <img src="<?php echo esc_url($lang['flag']); ?>" alt="<?php echo esc_attr($lang['name']); ?>"
-                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
-                                <span class="flag-emoji" style="display: none;"><?php echo isset($flag_emojis[$slug]) ? $flag_emojis[$slug] : '🌐'; ?></span>
-                            <?php else : ?>
-                                <span class="flag-emoji"><?php echo isset($flag_emojis[$slug]) ? $flag_emojis[$slug] : '🌐'; ?></span>
-                            <?php endif; ?>
-                            <span class="lang-name"><?php echo esc_html($lang['name']); ?></span>
-                        </a>
-                        <?php endforeach; ?>
-                    </div>
-                    <?php endif; ?>
+                    </a>
+                    <?php endforeach; endif; ?>
                 </div>
                 <?php endif; ?>
 
