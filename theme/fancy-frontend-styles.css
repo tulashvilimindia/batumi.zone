@@ -398,6 +398,12 @@ body {
     transform: scale(1.05);
 }
 
+/* Hide text names - flags only */
+.lang-dropdown-item .lang-name,
+.lang-dropdown .lang-name {
+    display: none !important;
+}
+
 /* User Dropdown */
 .header-user-menu {
     position: relative;
