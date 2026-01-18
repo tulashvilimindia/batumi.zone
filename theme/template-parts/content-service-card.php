@@ -26,6 +26,9 @@ $currency = get_field('currency', $post_id) ?: 'GEL';
 
 // Get contact info
 $phone = get_field('phone', $post_id);
+$whatsapp = get_field('whatsapp', $post_id);
+// Use phone as fallback for WhatsApp if not set
+$whatsapp_number = $whatsapp ? $whatsapp : $phone;
 
 // Check if service is promoted
 $is_promoted = get_post_meta($post_id, '_is_promoted', true);
@@ -129,8 +132,25 @@ if ($is_promoted) {
                 ?>
             </a>
 
-            <?php if ($phone) : ?>
-                <a href="tel:<?php echo esc_attr($phone); ?>" class="btn btn-primary btn-sm">
+            <?php if ($whatsapp_number) :
+                $wa_clean = preg_replace('/[^0-9]/', '', $whatsapp_number);
+            ?>
+                <!-- WhatsApp button (default on mobile) -->
+                <a href="https://wa.me/<?php echo esc_attr($wa_clean); ?>" class="btn btn-whatsapp btn-sm" target="_blank" rel="noopener">
+                    <span class="btn-icon">💬</span>
+                    <?php
+                    if ($current_lang === 'ru') {
+                        _e('WhatsApp', 'batumi-theme');
+                    } elseif ($current_lang === 'en') {
+                        _e('WhatsApp', 'batumi-theme');
+                    } else {
+                        _e('WhatsApp', 'batumi-theme');
+                    }
+                    ?>
+                </a>
+
+                <!-- Call button (visible on desktop) -->
+                <a href="tel:<?php echo esc_attr($phone ?: $whatsapp_number); ?>" class="btn btn-primary btn-sm btn-call-desktop">
                     <span class="btn-icon">📞</span>
                     <?php
                     if ($current_lang === 'ru') {

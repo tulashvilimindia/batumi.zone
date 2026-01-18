@@ -3154,6 +3154,34 @@ select[multiple].form-input {
     transform: translateY(-1px);
 }
 
+/* WhatsApp button - green gradient */
+.services-grid .service-card .btn-whatsapp {
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    color: white;
+    border: none;
+}
+
+.services-grid .service-card .btn-whatsapp:hover {
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+    transform: translateY(-1px);
+}
+
+/* Mobile: show WhatsApp, hide Call */
+/* Desktop: show Call, hide WhatsApp */
+.services-grid .service-card .btn-call-desktop {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .services-grid .service-card .btn-whatsapp {
+        display: none;
+    }
+
+    .services-grid .service-card .btn-call-desktop {
+        display: inline-flex;
+    }
+}
+
 /* Favorite button */
 .services-grid .service-card .favorite-btn {
     position: absolute;
