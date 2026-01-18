@@ -3154,16 +3154,23 @@ select[multiple].form-input {
     transform: translateY(-1px);
 }
 
-/* WhatsApp button - green gradient */
+/* WhatsApp button - official green */
 .services-grid .service-card .btn-whatsapp {
-    background: linear-gradient(135deg, #25D366, #128C7E);
+    background: #25D366;
     color: white;
     border: none;
 }
 
 .services-grid .service-card .btn-whatsapp:hover {
-    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+    background: #128C7E;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.5);
     transform: translateY(-1px);
+}
+
+.services-grid .service-card .btn-whatsapp .whatsapp-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
 }
 
 /* Mobile: show WhatsApp, hide Call */
