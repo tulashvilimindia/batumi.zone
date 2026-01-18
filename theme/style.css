@@ -3237,28 +3237,6 @@ select[multiple].form-input {
         height: 18px;
         flex-shrink: 0;
     }
-
-    /* Call button on mobile - nice green gradient */
-    .services-grid .service-card .btn-primary,
-    .services-grid .service-card a.btn-primary,
-    [data-theme="dark"] .services-grid .service-card .btn-primary,
-    [data-theme="dark"] .services-grid .service-card a.btn-primary {
-        background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%) !important;
-        color: #ffffff !important;
-        border: none !important;
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-    }
-
-    .services-grid .service-card .btn-primary:hover,
-    .services-grid .service-card a.btn-primary:hover,
-    [data-theme="dark"] .services-grid .service-card .btn-primary:hover,
-    [data-theme="dark"] .services-grid .service-card a.btn-primary:hover {
-        background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%) !important;
-        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4) !important;
-    }
 }
 
 /* Favorite button */

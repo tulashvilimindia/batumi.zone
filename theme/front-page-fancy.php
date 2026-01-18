@@ -99,7 +99,7 @@ $services_query = new WP_Query($args);
 <main id="primary" class="site-main">
 
     <!-- Services Grid -->
-    <div id="services-grid" class="services-grid">
+    <div id="services-grid">
         <?php
         if ($services_query->have_posts()) :
             while ($services_query->have_posts()) : $services_query->the_post();
