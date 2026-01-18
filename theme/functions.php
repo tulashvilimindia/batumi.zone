@@ -52,11 +52,11 @@ add_action('after_setup_theme', 'batumi_theme_setup');
  * CONSOLIDATED: January 18, 2026 - All CSS merged into style-unified.css
  */
 function batumi_theme_scripts() {
-    // === UNIFIED STYLESHEET (Consolidated from 8 files) ===
-    // Contains: style.css, dark-mode-complete.css, fancy-frontend-styles.css,
-    //           HEADER-FIXES.css, accessibility-fixes.css, report-modal.css,
-    //           poster-promotion.css, sponsored-badges.css
-    wp_enqueue_style('batumi-unified', get_template_directory_uri() . '/style-unified.css', array(), '1.0.1');
+    // === UNIFIED STYLESHEET (Consolidated from 9 files) ===
+    // Contains: style.css, fancy-frontend-styles.css, HEADER-FIXES.css,
+    //           dark-mode-complete.css, accessibility-fixes.css, report-modal.css,
+    //           poster-promotion.css, sponsored-badges.css, service-form-styles.css
+    wp_enqueue_style('batumi-unified', get_template_directory_uri() . '/style-unified.css', array(), '1.0.2');
 
     // === JAVASCRIPT FILES ===
     // Mobile menu script
