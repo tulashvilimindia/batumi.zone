@@ -3154,21 +3154,34 @@ select[multiple].form-input {
     transform: translateY(-1px);
 }
 
-/* WhatsApp button - HIDDEN on desktop by default */
-.services-grid .service-card .btn-whatsapp {
+/* WhatsApp button in service cards - MOBILE ONLY */
+/* Hide on desktop */
+.services-grid .service-card .btn-whatsapp,
+.services-grid .service-card a.btn-whatsapp,
+.services-grid article.service-card .btn-whatsapp {
     display: none !important;
+    visibility: hidden !important;
 }
 
-/* WhatsApp button - show only on mobile with green color */
-@media (max-width: 767px) {
-    .services-grid .service-card .btn-whatsapp {
-        display: inline-flex !important;
+/* Show only on mobile (< 768px) with WhatsApp green */
+@media screen and (max-width: 767px) {
+    .services-grid .service-card .btn-whatsapp,
+    .services-grid .service-card a.btn-whatsapp,
+    .services-grid article.service-card .btn-whatsapp {
+        display: flex !important;
+        visibility: visible !important;
+        background: #25D366 !important;
         background-color: #25D366 !important;
-        color: #fff !important;
+        color: #ffffff !important;
         border: none !important;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
     }
 
-    .services-grid .service-card .btn-whatsapp:hover {
+    .services-grid .service-card .btn-whatsapp:hover,
+    .services-grid .service-card a.btn-whatsapp:hover {
+        background: #1ebe5d !important;
         background-color: #1ebe5d !important;
     }
 
