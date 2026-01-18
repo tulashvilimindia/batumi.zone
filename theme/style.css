@@ -3085,27 +3085,9 @@ select[multiple].form-input {
     border: 1px solid rgba(102, 126, 234, 0.2);
 }
 
-/* Service tags */
+/* Service tags - HIDDEN for cleaner cards */
 .services-grid .service-card .service-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem;
-    margin-top: 0.25rem;
-}
-
-.services-grid .service-card .service-tag {
-    font-size: 0.65rem;
-    padding: 0.15rem 0.4rem;
-    border-radius: 4px;
-    background: rgba(255, 255, 255, 0.08);
-    color: #b0b0b0;
-    text-decoration: none;
-    transition: all 0.2s ease;
-}
-
-.services-grid .service-card .service-tag:hover {
-    background: rgba(102, 126, 234, 0.2);
-    color: #a8b5ff;
+    display: none;
 }
 
 /* Card price */
