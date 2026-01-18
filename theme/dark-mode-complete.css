@@ -12,44 +12,52 @@
    ============================================ */
 
 [data-theme="dark"] {
-    /* Background colors */
-    --bg-primary: #1a1a2e;
-    --bg-secondary: #16213e;
-    --bg-tertiary: #0f3460;
-    --bg-card: #1e1e3f;
-    --bg-input: #252545;
-    --bg-hover: #2a2a4a;
+    /* Background colors - Updated January 18, 2026 */
+    --bg-primary: #0a0a1a;
+    --bg-secondary: #0d0d1f;
+    --bg-tertiary: #12122a;
+    --bg-card: #141428;
+    --bg-input: #1a1a35;
+    --bg-hover: #1e1e40;
 
     /* Text colors */
     --text-primary: #e8e8e8;
-    --text-secondary: #b0b0b0;
-    --text-muted: #999999; /* Fixed: was #808080, now WCAG compliant (DM-07) */
-    --text-link: #64b5f6;
-    --text-link-hover: #90caf9;
+    --text-secondary: #a0a0b0;
+    --text-muted: #808090;
+    --text-link: #a78bfa;
+    --text-link-hover: #c4b5fd;
 
     /* Border colors */
-    --border-color: rgba(255, 255, 255, 0.15); /* Fixed: increased from 0.1 (DM-05) */
-    --border-light: rgba(255, 255, 255, 0.08); /* Fixed: increased from 0.05 */
-    --border-focus: #667eea;
+    --border-color: rgba(138, 92, 246, 0.25);
+    --border-light: rgba(138, 92, 246, 0.15);
+    --border-focus: #8b5cf6;
 
-    /* Brand colors (adjusted for dark) */
-    --brand-primary: #667eea;
-    --brand-secondary: #764ba2;
-    --brand-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* Brand colors - Purple/Violet theme */
+    --brand-primary: #8b5cf6;
+    --brand-secondary: #a855f7;
+    --brand-gradient: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+    --brand-cyan: #06b6d4;
 
-    /* Status colors - Fixed for better contrast (DM-02, DM-04) */
-    --success: #66bb6a; /* Fixed: was #4caf50, now better contrast */
-    --success-text: #81c784;
-    --warning: #ffb74d; /* Fixed: was #ff9800 */
-    --warning-text: #ffd54f;
-    --error: #ff6b6b; /* Fixed: was #f44336, now visible on dark bg */
-    --error-text: #ff8a80;
-    --info: #64b5f6; /* Fixed: was #2196f3 */
+    /* Status colors */
+    --success: #10b981;
+    --success-text: #34d399;
+    --warning: #f59e0b;
+    --warning-text: #fbbf24;
+    --error: #ef4444;
+    --error-text: #f87171;
+    --info: #06b6d4;
 
-    /* Shadow */
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
+    /* Price color */
+    --price-color: #10b981;
+
+    /* Favorite heart color */
+    --heart-color: #f472b6;
+
+    /* Shadow - with purple glow */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+    --shadow-glow: 0 0 20px rgba(138, 92, 246, 0.15);
 }
 
 /* ============================================
@@ -1056,11 +1064,11 @@
    DM-02, DM-04, P2-01, LM-02
    ============================================ */
 
-/* DM-02: Service Price - Better Contrast */
+/* DM-02: Service Price - Green color matching design */
 [data-theme="dark"] .service-card-price,
 [data-theme="dark"] .service-price,
 [data-theme="dark"] .price-display {
-    color: var(--success) !important; /* #66bb6a - better contrast */
+    color: var(--price-color) !important; /* #10b981 - teal/emerald green */
 }
 
 /* DM-04: Error Messages - Visible in Dark Mode */
@@ -1562,6 +1570,163 @@
         background: #1ebe5d !important;
         background-color: #1ebe5d !important;
     }
+}
+
+/* ============================================
+   NEW DESIGN - January 18, 2026
+   Green Search Bar, Updated Cards, Pink Hearts
+   ============================================ */
+
+/* --- GREEN PILL SEARCH BAR --- */
+[data-theme="dark"] .header-search .search-form,
+[data-theme="dark"] .search-form {
+    background: #10b981;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+[data-theme="dark"] .header-search .search-input,
+[data-theme="dark"] .search-input {
+    background: transparent !important;
+    border: none !important;
+    color: #ffffff !important;
+    padding-left: 1rem;
+}
+
+[data-theme="dark"] .header-search .search-input::placeholder,
+[data-theme="dark"] .search-input::placeholder {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+[data-theme="dark"] .header-search .search-input:focus,
+[data-theme="dark"] .search-input:focus {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+[data-theme="dark"] .header-search .search-button,
+[data-theme="dark"] .search-button {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .header-search .search-button:hover,
+[data-theme="dark"] .search-button:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Search icon color */
+[data-theme="dark"] .search-button svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+}
+
+/* --- FAVORITE BUTTON - PINK HEART --- */
+[data-theme="dark"] .favorite-btn {
+    background: rgba(0, 0, 0, 0.5) !important;
+    border: none !important;
+}
+
+[data-theme="dark"] .favorite-btn:hover {
+    background: rgba(0, 0, 0, 0.7) !important;
+}
+
+[data-theme="dark"] .favorite-btn .heart-icon {
+    color: #f472b6 !important;
+    stroke: #f472b6 !important;
+}
+
+[data-theme="dark"] .favorite-btn.is-favorited .heart-icon {
+    fill: #f472b6 !important;
+    color: #f472b6 !important;
+    stroke: #f472b6 !important;
+}
+
+/* --- UPDATED SERVICE CARDS --- */
+[data-theme="dark"] .services-grid .service-card {
+    background: linear-gradient(145deg, #141428 0%, #1a1a35 100%) !important;
+    border: 1px solid rgba(138, 92, 246, 0.2) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), var(--shadow-glow) !important;
+}
+
+[data-theme="dark"] .services-grid .service-card:hover {
+    border-color: rgba(138, 92, 246, 0.4) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 30px rgba(138, 92, 246, 0.2) !important;
+}
+
+/* Card title */
+[data-theme="dark"] .services-grid .service-card .service-card-title a {
+    color: #e8e8e8 !important;
+}
+
+[data-theme="dark"] .services-grid .service-card .service-card-title a:hover {
+    color: #c4b5fd !important;
+}
+
+/* Card category/meta tags */
+[data-theme="dark"] .services-grid .service-card .service-category {
+    background: rgba(138, 92, 246, 0.15) !important;
+    color: #c4b5fd !important;
+    border: 1px solid rgba(138, 92, 246, 0.25) !important;
+}
+
+/* Card price */
+[data-theme="dark"] .services-grid .service-card .service-card-price {
+    color: #10b981 !important;
+}
+
+/* Card buttons - Call button with purple gradient */
+[data-theme="dark"] .services-grid .service-card .btn-primary {
+    background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+[data-theme="dark"] .services-grid .service-card .btn-primary:hover {
+    box-shadow: 0 4px 15px rgba(138, 92, 246, 0.4) !important;
+}
+
+/* Card secondary button */
+[data-theme="dark"] .services-grid .service-card .btn-secondary {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #e8e8e8 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+[data-theme="dark"] .services-grid .service-card .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* --- HEADER DARK MODE UPDATE --- */
+[data-theme="dark"] .fancy-header {
+    background: rgba(10, 10, 26, 0.95) !important;
+    border-bottom-color: rgba(138, 92, 246, 0.2) !important;
+}
+
+[data-theme="dark"] .header-action-btn {
+    background: rgba(26, 26, 53, 0.8) !important;
+    color: #e8e8e8 !important;
+    border: 1px solid rgba(138, 92, 246, 0.2) !important;
+}
+
+[data-theme="dark"] .header-action-btn:hover {
+    background: rgba(138, 92, 246, 0.15) !important;
+    border-color: rgba(138, 92, 246, 0.4) !important;
+}
+
+/* --- BODY BACKGROUND --- */
+[data-theme="dark"] body {
+    background: #0a0a1a !important;
+}
+
+[data-theme="dark"] .site-main,
+[data-theme="dark"] main,
+[data-theme="dark"] #main,
+[data-theme="dark"] .services-archive,
+[data-theme="dark"] .services-page {
+    background: #0a0a1a !important;
 }
 
 /* ============================================
