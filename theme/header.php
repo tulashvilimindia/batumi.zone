@@ -1,10 +1,20 @@
 <!DOCTYPE html>
-<html <?php language_attributes(); ?>>
+<html <?php language_attributes(); ?> data-theme="dark">
 <head>
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <meta name="description" content="<?php bloginfo('description'); ?>">
     <link rel="profile" href="https://gmpg.org/xfn/11">
+    <!-- Dark theme by default - prevent flash -->
+    <script>
+        (function() {
+            var theme = localStorage.getItem('batumi_theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="<?php echo get_template_directory_uri(); ?>/assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="<?php echo get_template_directory_uri(); ?>/assets/images/favicon.png">
     <?php wp_head(); ?>
 </head>
 
@@ -30,7 +40,7 @@
             <!-- Logo/Brand -->
             <div class="header-logo">
                 <a href="<?php echo esc_url(home_url('/')); ?>" rel="home">
-                    <?php bloginfo('name'); ?>
+                    <img src="<?php echo get_template_directory_uri(); ?>/assets/images/logo.svg" alt="<?php bloginfo('name'); ?>" class="header-logo-img">
                 </a>
             </div>
 

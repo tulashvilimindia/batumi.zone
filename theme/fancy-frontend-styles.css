@@ -94,15 +94,16 @@ body {
 }
 
 .header-logo a {
-    font-size: 1.5rem;
-    font-weight: 700;
+    display: flex;
+    align-items: center;
     text-decoration: none;
-    background: var(--primary-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
     transition: opacity 0.3s ease;
-    white-space: nowrap;
+}
+
+.header-logo-img {
+    height: 45px;
+    width: auto;
+    object-fit: contain;
 }
 
 .header-logo a:hover {
@@ -602,6 +603,11 @@ body {
         white-space: nowrap;
     }
 
+    .header-logo-img {
+        height: 32px;
+        width: auto;
+    }
+
     /* Header actions in first row */
     .header-actions {
         order: 2;
@@ -737,6 +743,11 @@ body {
 
     .header-logo a {
         font-size: 0.9375rem;
+    }
+
+    .header-logo-img {
+        height: 28px;
+        width: auto;
     }
 
     .header-actions {

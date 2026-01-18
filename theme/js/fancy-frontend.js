@@ -43,7 +43,7 @@
         },
 
         loadTheme() {
-            const savedTheme = localStorage.getItem('batumi_theme') || 'light';
+            const savedTheme = localStorage.getItem('batumi_theme') || 'dark';
             this.applyTheme(savedTheme);
         },
 
