@@ -2985,7 +2985,7 @@ select[multiple].form-input {
 .services-grid .service-card {
     display: flex;
     flex-direction: column;
-    height: 440px;
+    height: 480px;
     background: linear-gradient(145deg, rgba(30, 30, 63, 0.98), rgba(37, 37, 69, 0.95));
     border: 1px solid rgba(102, 126, 234, 0.2);
     border-radius: 16px;
@@ -3042,7 +3042,7 @@ select[multiple].form-input {
     display: flex;
     flex-direction: column;
     padding: 1rem;
-    gap: 0.5rem;
+    gap: 0.4rem;
 }
 
 /* Card title */
@@ -3100,7 +3100,7 @@ select[multiple].form-input {
     font-size: 1.125rem;
     font-weight: 700;
     color: #66bb6a;
-    margin-top: auto;
+    margin-top: 0.5rem;
 }
 
 /* Card footer/actions - stacked vertically */
@@ -3109,7 +3109,8 @@ select[multiple].form-input {
     flex-direction: column-reverse;
     gap: 0.5rem;
     margin-top: auto;
-    padding-top: 0.75rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.25rem;
 }
 
 .services-grid .service-card .service-card-footer .btn {
