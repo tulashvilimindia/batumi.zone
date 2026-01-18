@@ -603,6 +603,11 @@ body {
         white-space: nowrap;
     }
 
+    .header-logo-img {
+        height: 32px;
+        width: auto;
+    }
+
     /* Header actions in first row */
     .header-actions {
         order: 2;
@@ -738,6 +743,11 @@ body {
 
     .header-logo a {
         font-size: 0.9375rem;
+    }
+
+    .header-logo-img {
+        height: 28px;
+        width: auto;
     }
 
     .header-actions {
