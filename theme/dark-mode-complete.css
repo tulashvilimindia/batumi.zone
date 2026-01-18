@@ -1534,5 +1534,36 @@
 }
 
 /* ============================================
+   WHATSAPP BUTTON - MOBILE ONLY, GREEN COLOR
+   ============================================ */
+
+/* DESKTOP: Hide WhatsApp button completely */
+[data-theme="dark"] .services-grid .service-card .btn-whatsapp,
+[data-theme="dark"] .services-grid .btn-whatsapp,
+[data-theme="dark"] .btn-whatsapp {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* MOBILE: Show WhatsApp with green color */
+@media screen and (max-width: 767px) {
+    [data-theme="dark"] .services-grid .service-card .btn-whatsapp,
+    [data-theme="dark"] .services-grid .btn-whatsapp {
+        display: flex !important;
+        visibility: visible !important;
+        background: #25D366 !important;
+        background-color: #25D366 !important;
+        color: #fff !important;
+        border: none !important;
+    }
+
+    [data-theme="dark"] .services-grid .service-card .btn-whatsapp:hover,
+    [data-theme="dark"] .services-grid .btn-whatsapp:hover {
+        background: #1ebe5d !important;
+        background-color: #1ebe5d !important;
+    }
+}
+
+/* ============================================
    END OF DARK MODE COMPLETE STYLESHEET
    ============================================ */

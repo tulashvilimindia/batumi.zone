@@ -2880,3 +2880,478 @@ select[multiple].form-input {
     font-size: 14px;
     padding: 20px;
 }
+
+/* ========================================
+   CSS FIXES - January 18, 2026
+   Archive Page Layout & Dark Mode Fixes
+   ======================================== */
+
+/* --- FILTER SIDEBAR DARK MODE FIXES --- */
+[data-theme="dark"] #filters-panel {
+    background-color: #1e1e3f !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .filters-toggle {
+    background-color: #252545 !important;
+    color: #e8e8e8 !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+[data-theme="dark"] .filters-toggle:hover {
+    background-color: #2a2a4a !important;
+}
+
+[data-theme="dark"] .filter-label {
+    color: #e8e8e8 !important;
+}
+
+[data-theme="dark"] .filter-select,
+[data-theme="dark"] .price-input {
+    background-color: #252545 !important;
+    color: #e8e8e8 !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+[data-theme="dark"] .filter-select:focus,
+[data-theme="dark"] .price-input:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.35) !important;
+}
+
+[data-theme="dark"] .filter-select option {
+    background-color: #1e1e3f;
+    color: #e8e8e8;
+}
+
+[data-theme="dark"] .price-separator {
+    color: #b0b0b0 !important;
+}
+
+/* --- FILTER SELECT DROPDOWN ARROW FIX --- */
+/* Remove broken SVG arrows and use clean CSS triangle */
+.filters-sidebar .filter-select {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    background-image: none !important;
+    padding-right: 2.5rem;
+    position: relative;
+}
+
+/* Clean dropdown arrow using CSS */
+.filter-group {
+    position: relative;
+}
+
+.filter-group select {
+    cursor: pointer;
+}
+
+.filter-group::after {
+    content: '';
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid #b0b0b0;
+    pointer-events: none;
+}
+
+/* Position arrow for filter groups with labels */
+.filter-group:has(label)::after {
+    top: calc(50% + 12px);
+}
+
+[data-theme="dark"] .filter-group::after {
+    border-top-color: #b0b0b0;
+}
+
+/* --- SERVICES GRID LAYOUT - 4 CARDS PER ROW --- */
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    align-items: stretch;
+}
+
+/* Fancy Service Cards with fixed height */
+.services-grid .service-card {
+    display: flex;
+    flex-direction: column;
+    height: 480px;
+    background: linear-gradient(145deg, rgba(30, 30, 63, 0.98), rgba(37, 37, 69, 0.95));
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.services-grid .service-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(102, 126, 234, 0.25);
+    border-color: rgba(102, 126, 234, 0.4);
+}
+
+/* Card image wrapper */
+.services-grid .service-card .service-card-image-wrapper {
+    height: 180px;
+    min-height: 180px;
+    max-height: 180px;
+    overflow: hidden;
+    position: relative;
+}
+
+.services-grid .service-card .service-card-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.services-grid .service-card:hover .service-card-image {
+    transform: scale(1.08);
+}
+
+/* Sponsored badge */
+.services-grid .service-card .sponsored-badge {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Card content */
+.services-grid .service-card .service-card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    gap: 0.4rem;
+}
+
+/* Card title */
+.services-grid .service-card .service-card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.35;
+    margin: 0 0 0.25rem 0;
+}
+
+.services-grid .service-card .service-card-title a {
+    color: #e8e8e8;
+    text-decoration: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.2s ease;
+}
+
+.services-grid .service-card .service-card-title a:hover {
+    color: #a8b5ff;
+}
+
+/* Card meta */
+.services-grid .service-card .service-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin-bottom: 0.5rem;
+}
+
+.services-grid .service-card .service-category,
+.services-grid .service-card .service-area {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    background: rgba(102, 126, 234, 0.15);
+    color: #a8b5ff;
+    border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+/* Service tags - HIDDEN for cleaner cards */
+.services-grid .service-card .service-tags {
+    display: none;
+}
+
+/* Service area/location - HIDDEN for cleaner cards */
+.services-grid .service-card .service-area {
+    display: none;
+}
+
+/* Card price */
+.services-grid .service-card .service-card-price {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #66bb6a;
+    margin-top: 0.5rem;
+}
+
+/* Card footer/actions - stacked vertically */
+.services-grid .service-card .service-card-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 0.5rem;
+    padding-bottom: 0.25rem;
+}
+
+.services-grid .service-card .service-card-footer .btn {
+    width: 100%;
+    padding: 0.625rem 1rem;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.services-grid .service-card .service-card-footer .btn .btn-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.services-grid .service-card .btn-secondary {
+    background: rgba(255, 255, 255, 0.08);
+    color: #e8e8e8;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.services-grid .service-card .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.services-grid .service-card .btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+}
+
+.services-grid .service-card .btn-primary:hover {
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    transform: translateY(-1px);
+}
+
+/* WhatsApp button in service cards - MOBILE ONLY */
+/* Hide on desktop */
+.services-grid .service-card .btn-whatsapp,
+.services-grid .service-card a.btn-whatsapp,
+.services-grid article.service-card .btn-whatsapp,
+[data-theme="dark"] .services-grid .service-card .btn-whatsapp {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* Show only on mobile (< 768px) with WhatsApp green */
+@media screen and (max-width: 767px) {
+    .services-grid .service-card .btn-whatsapp,
+    .services-grid .service-card a.btn-whatsapp,
+    .services-grid article.service-card .btn-whatsapp,
+    [data-theme="dark"] .services-grid .service-card .btn-whatsapp,
+    [data-theme="dark"] .services-grid .service-card a.btn-whatsapp {
+        display: flex !important;
+        visibility: visible !important;
+        background: #25D366 !important;
+        background-color: #25D366 !important;
+        color: #ffffff !important;
+        border: none !important;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .services-grid .service-card .btn-whatsapp:hover,
+    .services-grid .service-card a.btn-whatsapp:hover,
+    [data-theme="dark"] .services-grid .service-card .btn-whatsapp:hover,
+    [data-theme="dark"] .services-grid .service-card a.btn-whatsapp:hover {
+        background: #1ebe5d !important;
+        background-color: #1ebe5d !important;
+    }
+
+    .services-grid .service-card .btn-whatsapp .whatsapp-icon {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+    }
+}
+
+/* Favorite button */
+.services-grid .service-card .favorite-btn {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 10;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.services-grid .service-card .favorite-btn:hover {
+    background: rgba(0, 0, 0, 0.7);
+    transform: scale(1.1);
+}
+
+.services-grid .service-card .favorite-btn .heart-icon {
+    color: white;
+    width: 20px;
+    height: 20px;
+}
+
+.services-grid .service-card .favorite-btn.is-favorited .heart-icon {
+    fill: #ff6b6b;
+    color: #ff6b6b;
+}
+
+/* Responsive grid */
+@media (max-width: 1024px) {
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .services-grid .service-card {
+        height: 420px;
+    }
+}
+
+@media (max-width: 640px) {
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .services-grid .service-card {
+        height: auto;
+        min-height: 400px;
+    }
+}
+
+/* Ad containers within grid - make them span full row */
+.services-grid .ad-container {
+    grid-column: 1 / -1;
+    margin: 1rem 0;
+    padding: 1rem;
+    text-align: center;
+}
+
+/* Fix nested ad containers */
+.services-grid .ad-container .ad-container {
+    grid-column: auto;
+    margin: 0.5rem 0;
+}
+
+/* --- PAGINATION WITH INFINITE SCROLL --- */
+
+/* Hide pagination when infinite scroll sentinel exists */
+.infinite-scroll-active .pagination-nav,
+.services-page:has(.infinite-scroll-sentinel) .pagination-nav {
+    display: none;
+}
+
+/* Fallback for browsers without :has() support */
+.pagination-nav.hidden-by-scroll {
+    display: none;
+}
+
+/* --- AD CONTAINER FIXES --- */
+.ad-container {
+    overflow: hidden;
+    min-height: 0;
+}
+
+.ad-container:empty {
+    display: none;
+}
+
+.ad-container .ad-loading {
+    text-align: center;
+    padding: 1rem;
+}
+
+[data-theme="dark"] .ad-container {
+    background-color: #1e1e3f;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .ad-container .ad-label {
+    color: #999;
+}
+
+[data-theme="dark"] .ad-container .ad-loading {
+    color: #b0b0b0;
+}
+
+/* --- SERVICES PAGE HEADER DARK MODE --- */
+[data-theme="dark"] .page-title {
+    color: #e8e8e8;
+}
+
+[data-theme="dark"] .results-count {
+    color: #b0b0b0;
+}
+
+[data-theme="dark"] .no-results {
+    background-color: #1e1e3f;
+}
+
+[data-theme="dark"] .no-results-text {
+    color: #b0b0b0;
+}
+
+/* --- PAGINATION DARK MODE --- */
+[data-theme="dark"] .pagination-nav a,
+[data-theme="dark"] .pagination-nav span {
+    background-color: #1e1e3f;
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #e8e8e8;
+}
+
+[data-theme="dark"] .pagination-nav a:hover {
+    background-color: #667eea;
+    border-color: #667eea;
+    color: white;
+}
+
+[data-theme="dark"] .pagination-nav .current {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: transparent;
+    color: white;
+}
+
+/* --- RESPONSIVE FIXES --- */
+@media (max-width: 768px) {
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .services-grid .ad-container {
+        padding: 0.75rem;
+    }
+}
