@@ -2972,20 +2972,22 @@ select[multiple].form-input {
     border-top-color: #b0b0b0;
 }
 
-/* --- SERVICES GRID LAYOUT - 4 CARDS PER ROW --- */
+/* --- SERVICES GRID LAYOUT - 3 CARDS PER ROW --- */
 
-.services-grid {
+.services-grid,
+#services-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.25rem;
     align-items: stretch;
 }
 
 /* Fancy Service Cards with fixed height */
-.services-grid .service-card {
+.services-grid .service-card,
+#services-grid .service-card {
     display: flex;
     flex-direction: column;
-    height: 440px;
+    height: 460px;
     background: #ffffff;
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 16px;
@@ -2995,20 +2997,23 @@ select[multiple].form-input {
     position: relative;
 }
 
-.services-grid .service-card:hover {
+.services-grid .service-card:hover,
+#services-grid .service-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
     border-color: rgba(0, 0, 0, 0.15);
 }
 
 /* Dark mode card styling */
-[data-theme="dark"] .services-grid .service-card {
+[data-theme="dark"] .services-grid .service-card,
+[data-theme="dark"] #services-grid .service-card {
     background: linear-gradient(145deg, #141428 0%, #1a1a35 100%);
     border: 1px solid rgba(138, 92, 246, 0.2);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
-[data-theme="dark"] .services-grid .service-card:hover {
+[data-theme="dark"] .services-grid .service-card:hover,
+[data-theme="dark"] #services-grid .service-card:hover {
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(138, 92, 246, 0.15);
     border-color: rgba(138, 92, 246, 0.4);
 }
@@ -3105,9 +3110,13 @@ select[multiple].form-input {
     border: 1px solid rgba(138, 92, 246, 0.25);
 }
 
-/* Service tags - HIDDEN for cleaner cards */
+/* Service tags - HIDDEN for cleaner cards (both .services-grid and #services-grid) */
 .services-grid .service-card .service-tags,
-.services-grid .service-card .service-tag {
+.services-grid .service-card .service-tag,
+#services-grid .service-card .service-tags,
+#services-grid .service-card .service-tag,
+.service-card .service-tags,
+.service-card .service-tag {
     display: none !important;
     visibility: hidden !important;
 }
@@ -3115,8 +3124,10 @@ select[multiple].form-input {
 /* Service area/location - HIDDEN for cleaner cards */
 .services-grid .service-card .service-area,
 .services-grid .service-card .service-location,
-.services-grid .service-card [class*="area"],
-.services-grid .service-card [class*="location"] {
+#services-grid .service-card .service-area,
+#services-grid .service-card .service-location,
+.service-card .service-area,
+.service-card .service-location {
     display: none !important;
     visibility: hidden !important;
 }
@@ -3259,29 +3270,27 @@ select[multiple].form-input {
     stroke: #f472b6;
 }
 
-/* Responsive grid - 4 → 3 → 2 → 1 */
-@media (max-width: 1400px) {
-    .services-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
+/* Responsive grid - 3 → 2 → 1 */
 @media (max-width: 1024px) {
-    .services-grid {
+    .services-grid,
+    #services-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .services-grid .service-card {
+    .services-grid .service-card,
+    #services-grid .service-card {
         height: 420px;
     }
 }
 
 @media (max-width: 640px) {
-    .services-grid {
+    .services-grid,
+    #services-grid {
         grid-template-columns: 1fr;
     }
 
-    .services-grid .service-card {
+    .services-grid .service-card,
+    #services-grid .service-card {
         height: auto;
         min-height: 380px;
     }
