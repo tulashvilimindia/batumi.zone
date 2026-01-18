@@ -3258,6 +3258,30 @@ select[multiple].form-input {
         height: 18px;
         flex-shrink: 0;
     }
+
+    #services-grid .service-card .btn-primary .phone-icon {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+    }
+}
+
+/* Phone icon styling */
+.phone-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+.btn .phone-icon {
+    stroke: currentColor;
+}
+
+.contact-btn .phone-icon {
+    width: 24px;
+    height: 24px;
 }
 
 /* Favorite button */

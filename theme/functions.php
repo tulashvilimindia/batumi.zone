@@ -57,7 +57,7 @@ function batumi_theme_scripts() {
     // Sources: fancy-frontend-styles, HEADER-FIXES, dark-mode-complete,
     //          accessibility-fixes, report-modal, poster-promotion,
     //          sponsored-badges, service-form-styles
-    wp_enqueue_style('batumi-theme-style', get_stylesheet_uri(), array(), '1.0.3');
+    wp_enqueue_style('batumi-theme-style', get_stylesheet_uri(), array(), '1.0.4');
 
     // === JAVASCRIPT FILES ===
     // Mobile menu script
@@ -67,7 +67,7 @@ function batumi_theme_scripts() {
     wp_enqueue_script('batumi-theme-favorites', get_template_directory_uri() . '/js/favorites.js', array('jquery'), '0.3.0', true);
 
     // Fancy Frontend JS
-    wp_enqueue_script('batumi-fancy-frontend', get_template_directory_uri() . '/js/fancy-frontend.js', array('jquery'), '0.4.2', true);
+    wp_enqueue_script('batumi-fancy-frontend', get_template_directory_uri() . '/js/fancy-frontend.js', array('jquery'), '0.4.3', true);
 
     // Report Modal JS (Phase 7)
     wp_enqueue_script('batumi-report-modal', get_template_directory_uri() . '/js/report-modal.js', array(), '0.3.0', true);
