@@ -56,7 +56,7 @@ function batumi_theme_scripts() {
     // Contains: style.css, dark-mode-complete.css, fancy-frontend-styles.css,
     //           HEADER-FIXES.css, accessibility-fixes.css, report-modal.css,
     //           poster-promotion.css, sponsored-badges.css
-    wp_enqueue_style('batumi-unified', get_template_directory_uri() . '/style-unified.css', array(), '1.0.0');
+    wp_enqueue_style('batumi-unified', get_template_directory_uri() . '/style-unified.css', array(), '1.0.1');
 
     // === JAVASCRIPT FILES ===
     // Mobile menu script
