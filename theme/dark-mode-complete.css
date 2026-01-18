@@ -1818,5 +1818,64 @@
 }
 
 /* ============================================
+   HOME TOP AD BANNER - Full width
+   ============================================ */
+/* Make home_top ad container span full width */
+.ad-container[data-placement="home_top"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 1.5rem 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+}
+
+.ad-container[data-placement="home_top"] img,
+.ad-container[data-placement="home_top"] a,
+.ad-container[data-placement="home_top"] .ad-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    display: block !important;
+}
+
+.ad-container[data-placement="home_top"] img {
+    object-fit: cover !important;
+    min-height: 120px !important;
+    max-height: 250px !important;
+    border-radius: 12px !important;
+}
+
+/* Ad label styling for home_top */
+.ad-container[data-placement="home_top"] .ad-label {
+    position: absolute !important;
+    top: 8px !important;
+    left: 8px !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    color: #fff !important;
+    padding: 4px 10px !important;
+    border-radius: 4px !important;
+    font-size: 10px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    z-index: 5 !important;
+}
+
+/* Make container relative for label positioning */
+.ad-container[data-placement="home_top"] {
+    position: relative !important;
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .ad-container[data-placement="home_top"] {
+    background: transparent !important;
+}
+
+[data-theme="dark"] .ad-container[data-placement="home_top"] .ad-label {
+    background: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* ============================================
    END OF DARK MODE COMPLETE STYLESHEET
    ============================================ */
