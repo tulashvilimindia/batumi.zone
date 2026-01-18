@@ -3106,7 +3106,7 @@ select[multiple].form-input {
 /* Card footer/actions - stacked vertically */
 .services-grid .service-card .service-card-footer {
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
     gap: 0.5rem;
     margin-top: auto;
     padding-top: 0.5rem;
@@ -3173,23 +3173,10 @@ select[multiple].form-input {
     flex-shrink: 0;
 }
 
-/* Mobile: show WhatsApp, hide Call */
-/* Desktop: show Call, hide WhatsApp */
-.services-grid .service-card .btn-whatsapp {
-    display: inline-flex;
-}
-
-.services-grid .service-card .btn-call-desktop {
-    display: none;
-}
-
+/* WhatsApp: show on mobile only, hide on desktop */
 @media (min-width: 768px) {
     .services-grid .service-card .btn-whatsapp {
         display: none !important;
-    }
-
-    .services-grid .service-card .btn-call-desktop {
-        display: inline-flex !important;
     }
 }
 
