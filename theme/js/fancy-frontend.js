@@ -503,9 +503,9 @@
                 const serviceId = btn.dataset.serviceId;
                 const serviceTitle = btn.dataset.serviceTitle;
 
-                if (typeof Favorites !== 'undefined') {
-                    Favorites.toggle(serviceId, serviceTitle);
-                    btn.classList.toggle('is-favorited');
+                // Use BatumiFavorites (handles class toggle internally)
+                if (window.BatumiFavorites) {
+                    window.BatumiFavorites.toggle(serviceId, serviceTitle);
                 }
             }
         });

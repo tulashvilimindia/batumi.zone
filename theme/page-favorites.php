@@ -114,17 +114,44 @@ $l = $labels[$current_lang] ?? $labels['ge'];
         loadFavorites() {
             try {
                 const data = localStorage.getItem('batumi_favorites');
+                const metaData = localStorage.getItem('batumi_favorites_meta');
                 this.favorites = data ? JSON.parse(data) : [];
+                this.meta = metaData ? JSON.parse(metaData) : {};
 
                 if (this.favorites.length === 0) {
                     this.showEmpty();
                 } else {
                     this.showLoading();
-                    this.fetchServices();
+                    // Try to render from local meta first, then fetch missing data
+                    this.renderFromLocalOrFetch();
                 }
             } catch (e) {
                 console.error('Error loading favorites:', e);
                 this.showEmpty();
+            }
+        },
+
+        async renderFromLocalOrFetch() {
+            // Check if we have enough local data to render
+            const hasLocalData = this.favorites.every(id => {
+                const meta = this.meta[id];
+                return meta && meta.title && meta.link;
+            });
+
+            if (hasLocalData) {
+                // Render from local metadata (fast)
+                this.services = this.favorites.map(id => ({
+                    id: id,
+                    title: this.meta[id].title,
+                    link: this.meta[id].link,
+                    featured_image: { thumbnail: this.meta[id].image },
+                    price_display: this.meta[id].price,
+                    direction_name: this.meta[id].category
+                }));
+                this.renderServices();
+            } else {
+                // Fetch from API (slower but complete data)
+                await this.fetchServices();
             }
         },
 
@@ -168,15 +195,17 @@ $l = $labels[$current_lang] ?? $labels['ge'];
         },
 
         renderServiceCard(service) {
-            const title = service[`title_${currentLang}`] || service.title_en || service.title_ge || service.title_ru || 'Untitled';
-            const price = this.formatPrice(service.price_model, service.price_value, service.currency);
+            const title = service.title || service[`title_${currentLang}`] || service.title_en || service.title_ge || service.title_ru || 'Untitled';
+            // Use pre-formatted price_display if available (from local storage), otherwise format from API data
+            const price = service.price_display || this.formatPrice(service.price_model, service.price_value, service.currency);
             const thumbnail = service.featured_image?.thumbnail || '';
+            const link = service.link || `/service/${service.id}/`;
 
             return `
                 <article class="service-card">
                     ${thumbnail ? `
                         <div class="service-card-image-wrapper">
-                            <a href="${service.link}" class="service-card-image-link">
+                            <a href="${link}" class="service-card-image-link">
                                 <img src="${thumbnail}" alt="${title}" class="service-card-image">
                             </a>
                             <button
@@ -193,14 +222,14 @@ $l = $labels[$current_lang] ?? $labels['ge'];
                     ` : ''}
                     <div class="service-card-content">
                         <h3 class="service-card-title">
-                            <a href="${service.link}">${title}</a>
+                            <a href="${link}">${title}</a>
                         </h3>
                         <div class="service-card-meta">
                             ${service.direction_name ? `<span class="service-category">${service.direction_name}</span>` : ''}
                         </div>
                         ${price ? `<div class="service-card-price">${price}</div>` : ''}
                         <div class="service-card-footer">
-                            <a href="${service.link}" class="btn btn-secondary btn-sm">View Details</a>
+                            <a href="${link}" class="btn btn-secondary btn-sm">View Details</a>
                         </div>
                     </div>
                 </article>
