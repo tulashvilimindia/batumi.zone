@@ -57,7 +57,7 @@ function batumi_theme_scripts() {
     // Sources: fancy-frontend-styles, HEADER-FIXES, dark-mode-complete,
     //          accessibility-fixes, report-modal, poster-promotion,
     //          sponsored-badges, service-form-styles
-    wp_enqueue_style('batumi-theme-style', get_stylesheet_uri(), array(), '1.0.5');
+    wp_enqueue_style('batumi-theme-style', get_stylesheet_uri(), array(), '1.0.6');
 
     // === JAVASCRIPT FILES ===
     // Mobile menu script

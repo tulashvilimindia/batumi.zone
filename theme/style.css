@@ -3554,7 +3554,7 @@ body {
 }
 
 .header-logo-img {
-    height: 45px;
+    height: 180px;
     width: auto;
     object-fit: contain;
 }
@@ -4139,7 +4139,7 @@ body {
     }
 
     .header-logo-img {
-        height: 32px;
+        height: 64px;
         width: auto;
     }
 
@@ -4281,7 +4281,7 @@ body {
     }
 
     .header-logo-img {
-        height: 28px;
+        height: 56px;
         width: auto;
     }
 
