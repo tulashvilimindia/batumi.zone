@@ -25,45 +25,12 @@
     }
 
     // ======================
-    // DARK/LIGHT MODE TOGGLE
+    // DARK MODE ONLY (Light theme disabled)
     // ======================
     const ThemeToggle = {
         init() {
-            this.toggleBtn = document.querySelector('.theme-toggle');
-            this.sunIcon = document.querySelector('.sun-icon');
-            this.moonIcon = document.querySelector('.moon-icon');
-
-            if (!this.toggleBtn) return;
-
-            // Load saved theme
-            this.loadTheme();
-
-            // Bind click event
-            this.toggleBtn.addEventListener('click', () => this.toggle());
-        },
-
-        loadTheme() {
-            const savedTheme = localStorage.getItem('batumi_theme') || 'dark';
-            this.applyTheme(savedTheme);
-        },
-
-        toggle() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            this.applyTheme(newTheme);
-            localStorage.setItem('batumi_theme', newTheme);
-        },
-
-        applyTheme(theme) {
-            document.documentElement.setAttribute('data-theme', theme);
-
-            if (theme === 'dark') {
-                this.sunIcon.style.display = 'none';
-                this.moonIcon.style.display = 'block';
-            } else {
-                this.sunIcon.style.display = 'block';
-                this.moonIcon.style.display = 'none';
-            }
+            // Always force dark mode
+            document.documentElement.setAttribute('data-theme', 'dark');
         }
     };
 

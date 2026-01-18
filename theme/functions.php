@@ -679,19 +679,11 @@ add_action('wp_head', function() {
 }, 6);
 
 /**
- * BUG FIX V1/V2: Dark mode persistence - inline script in head to prevent flash
+ * Dark mode only - force dark theme on all pages
  */
 add_action('wp_head', function() {
     ?>
-    <script>
-    (function(){
-        var t = localStorage.getItem('batumi-theme');
-        if (t === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            document.body && document.body.setAttribute('data-theme', 'dark');
-        }
-    })();
-    </script>
+    <script>document.documentElement.setAttribute('data-theme','dark');</script>
     <?php
 }, 1); // Priority 1 to run very early
 
@@ -999,41 +991,17 @@ function batumi_remove_favorite($request) {
 }
 
 /**
- * BUG FIX V1/V2 (Part 2): Dark mode toggle function with localStorage persistence
+ * Dark mode enforcement and footer scripts
  */
 add_action('wp_footer', function() {
     ?>
     <script>
     (function(){
-        // Ensure body has dark mode attribute if it was set on html
-        var currentTheme = document.documentElement.getAttribute('data-theme');
-        if (currentTheme === 'dark') {
-            document.body.setAttribute('data-theme', 'dark');
-        }
+        // Force dark mode on both html and body
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.body.setAttribute('data-theme', 'dark');
 
-        // Global toggle function for dark mode
-        window.toggleDarkMode = function() {
-            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            var newTheme = isDark ? 'light' : 'dark';
-
-            document.documentElement.setAttribute('data-theme', newTheme);
-            document.body.setAttribute('data-theme', newTheme);
-            localStorage.setItem('batumi-theme', newTheme);
-
-            // Update toggle button icon if exists
-            var toggleBtn = document.querySelector('.theme-toggle-btn');
-            if (toggleBtn) {
-                toggleBtn.setAttribute('aria-pressed', newTheme === 'dark');
-            }
-        };
-
-        // Initialize toggle button listener if it exists
         document.addEventListener('DOMContentLoaded', function() {
-            var toggleBtn = document.querySelector('.theme-toggle-btn');
-            if (toggleBtn) {
-                toggleBtn.addEventListener('click', window.toggleDarkMode);
-            }
-
             // V4 FIX: Close mobile menu when clicking menu links
             var mobileMenu = document.querySelector('.mobile-menu, .mobile-nav, #mobile-menu');
             var menuToggle = document.querySelector('.mobile-menu-toggle, .hamburger-btn, #menu-toggle');

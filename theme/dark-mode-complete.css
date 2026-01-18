@@ -515,14 +515,14 @@
    ============================================ */
 
 [data-theme="dark"] .btn,
-[data-theme="dark"] button:not(.header-action-btn):not(.theme-toggle) {
+[data-theme="dark"] button:not(.header-action-btn) {
     background-color: var(--bg-input);
     color: var(--text-primary);
     border-color: var(--border-color);
 }
 
 [data-theme="dark"] .btn:hover,
-[data-theme="dark"] button:not(.header-action-btn):not(.theme-toggle):hover {
+[data-theme="dark"] button:not(.header-action-btn):hover {
     background-color: var(--bg-hover);
     border-color: var(--brand-primary);
 }
