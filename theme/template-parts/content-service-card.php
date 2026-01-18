@@ -107,17 +107,26 @@ if ($is_promoted) {
             ?>
         </div>
 
-        <?php if ($price_model && $price_value) : ?>
-            <div class="service-card-price">
-                <?php
+        <div class="service-card-price">
+            <?php
+            if ($price_value && $price_model !== 'negotiable') {
                 if (function_exists('batumi_format_price')) {
                     echo batumi_format_price($price_model, $price_value, $currency);
                 } else {
                     echo esc_html($price_value . ' ' . $currency);
                 }
-                ?>
-            </div>
-        <?php endif; ?>
+            } else {
+                // Negotiable text - multilingual
+                if ($current_lang === 'ru') {
+                    echo 'Договорная';
+                } elseif ($current_lang === 'en') {
+                    echo 'Negotiable';
+                } else {
+                    echo 'შეთანხმებით';
+                }
+            }
+            ?>
+        </div>
 
         <div class="service-card-footer">
             <?php if ($whatsapp_number) :
