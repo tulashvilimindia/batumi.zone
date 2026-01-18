@@ -2032,5 +2032,57 @@
 }
 
 /* ============================================
+   WHATSAPP BUTTON - Mobile only on cards
+   ============================================ */
+/* Hide WhatsApp button on desktop */
+.service-card .btn-whatsapp.mobile-only {
+    display: none !important;
+}
+
+/* Show WhatsApp button on mobile */
+@media (max-width: 768px) {
+    .service-card .btn-whatsapp.mobile-only {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background: #25D366 !important;
+        border: none !important;
+        color: #fff !important;
+        font-weight: 600;
+    }
+
+    .service-card .btn-whatsapp.mobile-only:hover {
+        background: #20ba5a !important;
+    }
+
+    .service-card .btn-whatsapp.mobile-only .whatsapp-icon {
+        width: 18px;
+        height: 18px;
+    }
+
+    /* Ensure consistent button spacing in footer */
+    .service-card-footer {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .service-card-footer .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Dark mode WhatsApp button */
+[data-theme="dark"] .service-card .btn-whatsapp.mobile-only {
+    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%) !important;
+}
+
+[data-theme="dark"] .service-card .btn-whatsapp.mobile-only:hover {
+    background: linear-gradient(135deg, #2edc70 0%, #1da587 100%) !important;
+}
+
+/* ============================================
    END OF DARK MODE COMPLETE STYLESHEET
    ============================================ */
