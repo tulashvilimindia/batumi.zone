@@ -2,50 +2,60 @@
 
 Local services marketplace for Batumi, Georgia.
 
+**Live:** https://batumi.zone | **Dev:** https://dev.batumi.zone
+
 ## Structure
 
 ```
-├── theme/     - WordPress theme (batumi-theme)
-├── plugin/    - Core plugin (batumizone-core)
-├── scripts/   - Deployment scripts
+├── theme/                    # WordPress theme ("flavor")
+│   ├── style.css            # Unified CSS (v1.0.6)
+│   ├── functions.php        # Theme functions
+│   ├── js/                  # JavaScript files
+│   └── assets/images/       # Logo, favicon
+├── plugin/                   # batumizone-core plugin
+├── scripts/                  # Deployment scripts
+├── PROJECT-STATUS.md        # Full project status & handoff
+├── BUG-FIXES-TRACKER.md     # Bug tracking
+└── SERVER-DEPLOYMENT-GUIDE.md # Server deployment guide
 ```
 
-## Branches
+## Documentation
 
-- `main` - Production code (batumi.zone)
-- `dev` - Development code (dev.batumi.zone)
+| Document | Purpose |
+|----------|---------|
+| `PROJECT-STATUS.md` | Complete project status, architecture, and handoff notes |
+| `BUG-FIXES-TRACKER.md` | Bug tracking with phases and change log |
+| `SERVER-DEPLOYMENT-GUIDE.md` | Server setup for deploying batumi.work |
 
-## Workflow
+## Quick Deploy
 
-1. Make changes locally
-2. Commit and push to `dev` branch
-3. Run `scripts/deploy-dev.bat` to deploy to dev server
-4. Test on dev.batumi.zone
-5. When ready: merge `dev` → `main`
-6. Run `scripts/deploy-prod.bat` to deploy to production
-
-## Quick Deploy Commands
-
-**Deploy to DEV:**
+**To Dev:**
 ```bash
-# From Windows
-scripts\deploy-dev.bat
-
-# Or via SSH directly
-ssh root@38.242.143.10 "/var/www/deploy/deploy-dev.sh"
+scp -r theme/* root@38.242.143.10:/var/www/batumi/wp-content/themes/flavor/
 ```
 
-**Deploy to PRODUCTION:**
+**To Prod:**
 ```bash
-# From Windows
-scripts\deploy-prod.bat
-
-# Or via SSH directly
-ssh root@38.242.143.10 "/var/www/deploy/deploy-prod.sh"
+scp -r theme/* root@38.242.143.10:/var/www/batumi-prod/wp-content/themes/flavor/
 ```
 
-## Server Paths
+## Server
 
-- Dev: `/var/www/batumi/wp-content/`
-- Prod: `/var/www/batumi-prod/wp-content/`
-- Deploy repo: `/var/www/deploy/repo/`
+- **IP:** 38.242.143.10
+- **SSH:** `ssh root@38.242.143.10` (passwordless)
+- **Dev Path:** `/var/www/batumi/wp-content/themes/flavor/`
+- **Prod Path:** `/var/www/batumi-prod/wp-content/themes/flavor/`
+
+## Tech Stack
+
+- WordPress with custom theme
+- Polylang (multilingual: GE/RU/EN)
+- ACF Pro (custom fields)
+- Dark mode only (no light theme)
+- Mobile-first responsive design
+
+## Current Version
+
+- **Theme:** flavor v1.0.6
+- **CSS:** Unified single file (10,401 lines)
+- **Last Deploy:** 2026-01-22

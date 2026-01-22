@@ -102,6 +102,42 @@
 - Fixed broken nested ad container HTML structure (was improperly nested)
 - Cleaned up ad container markup
 
+### CSS Consolidation (2026-01-22)
+
+**theme/style.css:**
+- Consolidated ALL 9 CSS source files into single unified stylesheet (10,401 lines)
+- Source files merged: base, header, cards, filters, forms, service-detail, responsive, pages, utilities
+- Removed all old CSS files from theme
+- Version bumped to 1.0.6
+
+### Phone Icon Fix (2026-01-22)
+
+**theme/template-parts/content-service-card.php:**
+- Replaced phone emoji (📞) with SVG icon to fix white background issue
+
+**theme/single-service_listing.php:**
+- Replaced phone emoji with SVG icon in contact section
+
+**theme/js/fancy-frontend.js:**
+- Updated dynamic card generation to use SVG phone icon
+
+**theme/style.css:**
+- Added `.phone-icon` styling with explicit white stroke color
+
+### Logo Update (2026-01-22)
+
+**theme/assets/images/logo.png:**
+- New Batumi.zone logo with transparent background (400x267px)
+
+**theme/assets/images/favicon.png:**
+- New favicon with transparent background (64x43px)
+
+**theme/header.php:**
+- Changed from logo.svg to logo.png
+
+**theme/style.css:**
+- Logo sizing: 180px height on desktop (4x bigger), 64px on tablet, 56px on mobile (2x bigger)
+
 ### Phase 2 Changes
 *(To be filled after fixes)*
 
