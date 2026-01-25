@@ -182,50 +182,42 @@ jQuery(document).ready(function($) {
     // ============================================
 
     function setupImageUpload() {
-        var $zone = $('#image-upload-zone');
-        var $input = $('#image-input');
+        // Click to upload
+        $('#image-upload-zone').on('click', function() {
+            $('#image-input').click();
+        });
 
-        // File input change - this handles both label click and drag/drop
-        $input.on('change', function() {
+        // File input change
+        $('#image-input').on('change', function() {
             var files = this.files;
-            if (files && files.length > 0) {
+            handleFiles(files);
+        });
+
+        // Drag and drop
+        var zone = $('#image-upload-zone')[0];
+        if (zone) {
+            zone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                $(this).addClass('drag-over');
+            });
+
+            zone.addEventListener('dragleave', function(e) {
+                $(this).removeClass('drag-over');
+            });
+
+            zone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                $(this).removeClass('drag-over');
+
+                var files = e.dataTransfer.files;
                 handleFiles(files);
-            }
-            // Reset input so same file can be selected again
-            this.value = '';
-        });
-
-        // Drag and drop support
-        $zone.on('dragover', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            $(this).addClass('drag-over');
-        });
-
-        $zone.on('dragleave', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            $(this).removeClass('drag-over');
-        });
-
-        $zone.on('drop', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            $(this).removeClass('drag-over');
-
-            var files = e.originalEvent.dataTransfer.files;
-            if (files && files.length > 0) {
-                handleFiles(files);
-            }
-        });
-
-        // Debug: log when click happens
-        console.log('Image upload initialized. Zone found:', $zone.length > 0, 'Input found:', $input.length > 0);
+            });
+        }
     }
 
     function handleFiles(files) {
-        // Check max images (limit: 5)
-        if (uploadedImages.length + files.length > 5) {
+        // Check max images
+        if (uploadedImages.length + files.length > 10) {
             showMessage('error', translations.maxImages);
             return;
         }
@@ -237,31 +229,27 @@ jQuery(document).ready(function($) {
     }
 
     function uploadImage(file) {
-        console.log('uploadImage called:', file.name, file.type, file.size);
-
         // Validate file type
         if (!file.type.match('image.*')) {
             showMessage('error', 'Invalid file type. Only images allowed.');
             return;
         }
 
-        // Validate file size (2MB)
-        if (file.size > 2 * 1024 * 1024) {
-            showMessage('error', 'Image too large. Maximum 2MB.');
+        // Validate file size (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            showMessage('error', 'Image too large. Maximum 5MB.');
             return;
         }
 
         // Need service ID first
         if (!serviceId) {
-            console.log('No serviceId, creating draft first...');
             // Create draft first
             showMessage('info', translations.saving);
             createDraft(function(id) {
-                console.log('Draft created, uploading image to service:', id);
+                serviceId = id;
                 uploadImageToService(file);
             });
         } else {
-            console.log('ServiceId exists:', serviceId, 'uploading directly');
             uploadImageToService(file);
         }
     }
@@ -269,9 +257,6 @@ jQuery(document).ready(function($) {
     function uploadImageToService(file) {
         var formData = new FormData();
         formData.append('file', file);
-
-        console.log('uploadImageToService called for service:', serviceId);
-        console.log('File:', file.name, 'Size:', file.size);
 
         // Show uploading indicator
         showMessage('info', translations.uploading);
@@ -284,14 +269,12 @@ jQuery(document).ready(function($) {
             contentType: false,
             beforeSend: function(xhr) {
                 xhr.setRequestHeader('X-WP-Nonce', wpNonce);
-                console.log('Uploading to:', '/wp-json/batumizone/v1/my/services/' + serviceId + '/media');
             },
             success: function(response) {
-                console.log('Upload success:', response);
                 // Add to uploaded images
                 uploadedImages.push({
                     id: response.attachment_id,
-                    url: response.urls ? response.urls.thumbnail : response.thumbnail
+                    url: response.thumbnail
                 });
 
                 // Update gallery display
@@ -300,8 +283,7 @@ jQuery(document).ready(function($) {
 
                 showMessage('success', translations.uploadSuccess);
             },
-            error: function(xhr, status, error) {
-                console.error('Upload failed:', status, error, xhr.responseJSON);
+            error: function(xhr) {
                 var errMsg = xhr.responseJSON ? xhr.responseJSON.message : 'Unknown error';
                 showMessage('error', translations.uploadFailed + ': ' + errMsg);
             }
@@ -352,9 +334,6 @@ jQuery(document).ready(function($) {
         });
     }
 
-    // Expose renderGallery globally for edit mode
-    window.renderGallery = renderGallery;
-
     function deleteImage(imageId, index) {
         if (!confirm(translations.deleteConfirm)) return;
 
@@ -392,11 +371,8 @@ jQuery(document).ready(function($) {
 
     function updateImageCount() {
         var count = uploadedImages.length;
-        $('#image-count-text').text(count + ' / 5 images uploaded');
+        $('#image-count-text').text(count + ' / 10 images uploaded');
     }
-
-    // Expose updateImageCount globally for edit mode
-    window.updateImageCount = updateImageCount;
 
     // ============================================
     // FORM DATA COLLECTION
@@ -520,13 +496,7 @@ jQuery(document).ready(function($) {
             },
             success: function(response) {
                 serviceId = response.id;
-                console.log('Draft created with ID:', serviceId);
                 if (callback) callback(serviceId);
-            },
-            error: function(xhr) {
-                var errMsg = xhr.responseJSON ? xhr.responseJSON.message : 'Failed to create draft';
-                console.error('Draft creation failed:', errMsg);
-                showMessage('error', errMsg);
             }
         });
     }

@@ -31,7 +31,7 @@ $current_user = wp_get_current_user();
     <div class="container">
 
         <div class="form-header">
-            <a href="<?php echo home_url('/my-listings/'); ?>" class="back-link">&larr; <?php
+            <a href="<?php echo home_url('/my-listings/'); ?>" class="back-link">← <?php
                 if ($current_lang === 'ru') {
                     echo 'Назад к панели';
                 } elseif ($current_lang === 'en') {
@@ -68,13 +68,15 @@ $current_user = wp_get_current_user();
         <div id="auto-save-status" class="auto-save-status"></div>
 
         <div id="loading-indicator" class="loading-indicator">
-            <div class="spinner">&#8987;</div>
+            <div class="spinner">⏳</div>
             <p><?php echo $current_lang === 'ru' ? 'Загрузка...' : ($current_lang === 'en' ? 'Loading...' : 'იტვირთება...'); ?></p>
         </div>
 
+        <!-- Form will be populated by JavaScript -->
         <form id="service-form" class="service-form" method="post" style="display: none;">
 
-            <!-- Section 1: Category & Tags -->
+            <!-- Same structure as create form -->
+            <!-- Section 1: Category -->
             <div class="form-section">
                 <h2 class="section-title">
                     1. <?php echo $current_lang === 'ru' ? 'Категория' : ($current_lang === 'en' ? 'Category' : 'კატეგორია'); ?> *
@@ -99,6 +101,7 @@ $current_user = wp_get_current_user();
                         <?php echo $current_lang === 'ru' ? 'Удерживайте Ctrl для выбора нескольких районов' : ($current_lang === 'en' ? 'Hold Ctrl to select multiple areas' : 'დააჭირეთ Ctrl-ს რამდენიმე ზონის ასარჩევად'); ?>
                     </small>
                 </div>
+            </div>
 
                 <div class="form-group">
                     <label for="service-tags" class="form-label">
@@ -106,14 +109,13 @@ $current_user = wp_get_current_user();
                     </label>
                     <input type="text" id="service-tags" name="service_tags" class="form-input tags-input" placeholder="<?php echo $current_lang === 'ru' ? 'Введите теги через запятую...' : ($current_lang === 'en' ? 'Enter tags separated by commas...' : 'შეიყვანეთ თეგები მძიმით გამოყოფილი...'); ?>">
                     <small class="form-help">
-                        <?php echo $current_lang === 'ru' ? 'Добавьте ключевые слова для лучшего поиска' : ($current_lang === 'en' ? 'Add keywords for better search' : 'დაამატეთ საკვანძო სიტყვები უკეთესი ძიებისთვის'); ?>
+                        <?php echo $current_lang === 'ru' ? 'Добавьте ключевые слова для лучшего поиска (например: ремонт, сантехника, срочно)' : ($current_lang === 'en' ? 'Add keywords for better search (e.g.: repair, plumbing, urgent)' : 'დაამატეთ საკვანძო სიტყვები უკეთესი ძიებისთვის (მაგ.: რემონტი, სანტექნიკა, სასწრაფო)'); ?>
                     </small>
                     <div id="tag-suggestions" class="tag-suggestions"></div>
                     <div id="selected-tags" class="selected-tags"></div>
                 </div>
-            </div>
 
-            <!-- Section 2: Multilingual Content -->
+            <!-- Section 2: Multilingual Content (same as create) -->
             <div class="form-section">
                 <h2 class="section-title">
                     2. <?php echo $current_lang === 'ru' ? 'Название и описание' : ($current_lang === 'en' ? 'Title & Description' : 'სახელი და აღწერა'); ?> *
@@ -123,15 +125,15 @@ $current_user = wp_get_current_user();
                 </p>
 
                 <div class="language-tabs">
-                    <button type="button" class="lang-tab active" data-lang="ge">&#x1F1EC;&#x1F1EA; ქართული</button>
-                    <button type="button" class="lang-tab" data-lang="ru">&#x1F1F7;&#x1F1FA; Русский</button>
-                    <button type="button" class="lang-tab" data-lang="en">&#x1F1EC;&#x1F1E7; English</button>
+                    <button type="button" class="lang-tab active" data-lang="ge">🇬🇪 ქართული</button>
+                    <button type="button" class="lang-tab" data-lang="ru">🇷🇺 Русский</button>
+                    <button type="button" class="lang-tab" data-lang="en">🇬🇧 English</button>
                 </div>
 
                 <div class="language-status" id="language-status">
-                    <span class="lang-indicator" data-lang="ge"><strong>GE:</strong> <span class="status-text">&times; <?php echo $current_lang === 'ru' ? 'Пусто' : ($current_lang === 'en' ? 'Empty' : 'ცარიელი'); ?></span></span>
-                    <span class="lang-indicator" data-lang="ru"><strong>RU:</strong> <span class="status-text">&times; <?php echo $current_lang === 'ru' ? 'Пусто' : ($current_lang === 'en' ? 'Empty' : 'ცარიელი'); ?></span></span>
-                    <span class="lang-indicator" data-lang="en"><strong>EN:</strong> <span class="status-text">&times; <?php echo $current_lang === 'ru' ? 'Пусто' : ($current_lang === 'en' ? 'Empty' : 'ცარიელი'); ?></span></span>
+                    <span class="lang-indicator" data-lang="ge"><strong>GE:</strong> <span class="status-text">✗ Empty</span></span>
+                    <span class="lang-indicator" data-lang="ru"><strong>RU:</strong> <span class="status-text">✗ Empty</span></span>
+                    <span class="lang-indicator" data-lang="en"><strong>EN:</strong> <span class="status-text">✗ Empty</span></span>
                 </div>
 
                 <!-- Georgian -->
@@ -177,7 +179,7 @@ $current_user = wp_get_current_user();
                 </div>
             </div>
 
-            <!-- Section 3: Pricing -->
+            <!-- Section 3: Pricing (same as create) -->
             <div class="form-section">
                 <h2 class="section-title">
                     3. <?php echo $current_lang === 'ru' ? 'Цена' : ($current_lang === 'en' ? 'Pricing' : 'ფასი'); ?> *
@@ -189,7 +191,7 @@ $current_user = wp_get_current_user();
                     </label>
                     <div class="radio-group">
                         <label class="radio-option">
-                            <input type="radio" name="price_model" value="fixed" checked>
+                            <input type="radio" name="price_model" value="fixed">
                             <span><?php echo $current_lang === 'ru' ? 'Фиксированная цена' : ($current_lang === 'en' ? 'Fixed Price' : 'ფიქსირებული ფასი'); ?></span>
                         </label>
                         <label class="radio-option">
@@ -212,29 +214,26 @@ $current_user = wp_get_current_user();
                         <label for="price-value" class="form-label">
                             <?php echo $current_lang === 'ru' ? 'Цена' : ($current_lang === 'en' ? 'Price' : 'ფასი'); ?> *
                         </label>
-                        <input type="number" id="price-value" name="price_value" class="form-input" min="0" step="0.01" placeholder="0.00" required>
+                        <input type="number" id="price-value" name="price_value" class="form-input" min="0" step="0.01" required>
                     </div>
                     <div class="form-group">
                         <label for="currency" class="form-label">
                             <?php echo $current_lang === 'ru' ? 'Валюта' : ($current_lang === 'en' ? 'Currency' : 'ვალუტა'); ?> *
                         </label>
                         <select id="currency" name="currency" class="form-input" required>
-                            <option value="GEL" selected>GEL (&lari;)</option>
+                            <option value="GEL">GEL (₾)</option>
                             <option value="USD">USD ($)</option>
-                            <option value="EUR">EUR (&euro;)</option>
+                            <option value="EUR">EUR (€)</option>
                         </select>
                     </div>
                 </div>
             </div>
 
-            <!-- Section 4: Location -->
+            <!-- Section 4: Location (same as create) -->
             <div class="form-section">
                 <h2 class="section-title">
                     4. <?php echo $current_lang === 'ru' ? 'Местоположение' : ($current_lang === 'en' ? 'Location' : 'ადგილმდებარეობა'); ?> *
                 </h2>
-                <p class="section-help">
-                    <?php echo $current_lang === 'ru' ? 'Нажмите на карту, чтобы изменить местоположение' : ($current_lang === 'en' ? 'Click on the map to change location' : 'დააწკაპუნეთ რუკაზე ადგილის შესაცვლელად'); ?>
-                </p>
 
                 <div id="map" class="map-container"></div>
 
@@ -243,29 +242,29 @@ $current_user = wp_get_current_user();
                         <label for="latitude" class="form-label">
                             <?php echo $current_lang === 'ru' ? 'Широта' : ($current_lang === 'en' ? 'Latitude' : 'განედი'); ?> *
                         </label>
-                        <input type="number" id="latitude" name="latitude" class="form-input" step="0.000001" placeholder="41.642167" required readonly>
+                        <input type="number" id="latitude" name="latitude" class="form-input" step="0.000001" required readonly>
                     </div>
                     <div class="form-group">
                         <label for="longitude" class="form-label">
                             <?php echo $current_lang === 'ru' ? 'Долгота' : ($current_lang === 'en' ? 'Longitude' : 'გრძედი'); ?> *
                         </label>
-                        <input type="number" id="longitude" name="longitude" class="form-input" step="0.000001" placeholder="41.633028" required readonly>
+                        <input type="number" id="longitude" name="longitude" class="form-input" step="0.000001" required readonly>
                     </div>
                 </div>
 
                 <div id="bounds-warning" class="warning-message" style="display: none;">
-                    &#9888; <?php echo $current_lang === 'ru' ? 'Местоположение за пределами Батуми. Услуга может не быть опубликована.' : ($current_lang === 'en' ? 'Location is outside Batumi bounds. Service may not be published.' : 'მდებარეობა ბათუმის საზღვრებს გარეთაა. სერვისი შეიძლება ვერ გამოქვეყნდეს.'); ?>
+                    ⚠️ <?php echo $current_lang === 'ru' ? 'Местоположение за пределами Батуми' : ($current_lang === 'en' ? 'Location is outside Batumi bounds' : 'მდებარეობა ბათუმის საზღვრებს გარეთაა'); ?>
                 </div>
 
                 <div class="form-group">
                     <label for="neighborhood" class="form-label">
                         <?php echo $current_lang === 'ru' ? 'Район (необязательно)' : ($current_lang === 'en' ? 'Neighborhood (optional)' : 'უბანი (არასავალდებულო)'); ?>
                     </label>
-                    <input type="text" id="neighborhood" name="neighborhood" class="form-input" placeholder="<?php echo $current_lang === 'ru' ? 'Например: Старый Батуми' : ($current_lang === 'en' ? 'E.g.: Old Batumi' : 'მაგ.: ძველი ბათუმი'); ?>">
+                    <input type="text" id="neighborhood" name="neighborhood" class="form-input">
                 </div>
             </div>
 
-            <!-- Section 5: Contact Information -->
+            <!-- Section 5: Contact Information (same as create) -->
             <div class="form-section">
                 <h2 class="section-title">
                     5. <?php echo $current_lang === 'ru' ? 'Контактная информация' : ($current_lang === 'en' ? 'Contact Information' : 'საკონტაქტო ინფორმაცია'); ?> *
@@ -275,45 +274,42 @@ $current_user = wp_get_current_user();
                     <label for="phone" class="form-label">
                         <?php echo $current_lang === 'ru' ? 'Телефон' : ($current_lang === 'en' ? 'Phone' : 'ტელეფონი'); ?> *
                     </label>
-                    <input type="tel" id="phone" name="phone" class="form-input" pattern="[0-9+\-\s()]+" placeholder="+995 555 12 34 56" required>
+                    <input type="tel" id="phone" name="phone" class="form-input" pattern="[0-9+\-\s()]+" required>
                 </div>
 
                 <div class="form-group">
                     <label for="whatsapp" class="form-label">
                         <?php echo $current_lang === 'ru' ? 'WhatsApp (необязательно)' : ($current_lang === 'en' ? 'WhatsApp (optional)' : 'WhatsApp (არასავალდებულო)'); ?>
                     </label>
-                    <input type="tel" id="whatsapp" name="whatsapp" class="form-input" pattern="[0-9+\-\s()]+" placeholder="+995 555 12 34 56">
+                    <input type="tel" id="whatsapp" name="whatsapp" class="form-input" pattern="[0-9+\-\s()]+">
                 </div>
 
                 <div class="form-group">
                     <label for="email" class="form-label">
                         <?php echo $current_lang === 'ru' ? 'Email (необязательно)' : ($current_lang === 'en' ? 'Email (optional)' : 'ელფოსტა (არასავალდებულო)'); ?>
                     </label>
-                    <input type="email" id="email" name="email" class="form-input" placeholder="contact@example.com">
+                    <input type="email" id="email" name="email" class="form-input">
                 </div>
             </div>
 
-            <!-- Section 6: Images -->
+            <!-- Section 6: Images (same as create) -->
             <div class="form-section">
                 <h2 class="section-title">
-                    6. <?php echo $current_lang === 'ru' ? 'Фотографии' : ($current_lang === 'en' ? 'Images' : 'სურათები'); ?> (<?php echo $current_lang === 'ru' ? 'макс. 5' : ($current_lang === 'en' ? 'max 5' : 'მაქს. 5'); ?>)
+                    6. <?php echo $current_lang === 'ru' ? 'Фотографии' : ($current_lang === 'en' ? 'Images' : 'სურათები'); ?> (<?php echo $current_lang === 'ru' ? 'макс. 10' : ($current_lang === 'en' ? 'max 10' : 'მაქს. 10'); ?>)
                 </h2>
 
-                <!-- Hidden file input - placed outside the zone for better browser compatibility -->
-                <input type="file" id="image-input" name="images" accept="image/jpeg,image/png,image/gif,image/webp" multiple style="position: absolute; left: -9999px; opacity: 0;">
-
-                <label for="image-input" class="image-upload-zone" id="image-upload-zone">
+                <div class="image-upload-zone" id="image-upload-zone">
                     <div class="upload-prompt">
-                        <span class="upload-icon">&#128247;</span>
-                        <p><?php echo $current_lang === 'ru' ? 'Нажмите или перетащите изображения сюда' : ($current_lang === 'en' ? 'Click or drag images here' : 'დააწკაპუნეთ ან გადაიტანეთ სურათები აქ'); ?></p>
-                        <small><?php echo $current_lang === 'ru' ? 'JPEG, PNG, GIF, WebP - Максимум 2MB на изображение' : ($current_lang === 'en' ? 'JPEG, PNG, GIF, WebP - Max 2MB per image' : 'JPEG, PNG, GIF, WebP - მაქს. 2MB სურათზე'); ?></small>
+                        <span class="upload-icon">📷</span>
+                        <p><?php echo $current_lang === 'ru' ? 'Нажмите или перетащите изображения' : ($current_lang === 'en' ? 'Click or drag images here' : 'დააწკაპუნეთ ან გადაიტანეთ სურათები'); ?></p>
                     </div>
-                </label>
+                    <input type="file" id="image-input" accept="image/*" multiple style="display: none;">
+                </div>
 
                 <div id="image-gallery" class="image-gallery"></div>
 
                 <div id="image-count" class="image-count">
-                    <span id="image-count-text">0 / 5 <?php echo $current_lang === 'ru' ? 'изображений загружено' : ($current_lang === 'en' ? 'images uploaded' : 'სურათი აიტვირთა'); ?></span>
+                    <span id="image-count-text">0 / 10 images</span>
                 </div>
             </div>
 
@@ -327,7 +323,7 @@ $current_user = wp_get_current_user();
 
                 <div class="form-actions">
                     <button type="button" id="save-draft-btn" class="btn btn-secondary">
-                        <?php echo $current_lang === 'ru' ? 'Сохранить как черновик' : ($current_lang === 'en' ? 'Save as Draft' : 'შენახვა მონახაზად'); ?>
+                        <?php echo $current_lang === 'ru' ? 'Сохранить изменения' : ($current_lang === 'en' ? 'Save Changes' : 'ცვლილებების შენახვა'); ?>
                     </button>
                     <button type="submit" id="publish-btn" class="btn btn-primary">
                         <?php echo $current_lang === 'ru' ? 'Сохранить и опубликовать' : ($current_lang === 'en' ? 'Save & Publish' : 'შენახვა და გამოქვეყნება'); ?>
@@ -350,7 +346,6 @@ var wpNonce = '<?php echo wp_create_nonce('wp_rest'); ?>';
 var serviceId = <?php echo $service_id; ?>;
 var uploadedImages = [];
 var map, marker;
-var isEditMode = true;
 
 var translations = {
     saving: '<?php echo $current_lang === 'ru' ? 'Сохранение...' : ($current_lang === 'en' ? 'Saving...' : 'ინახება...'); ?>',
@@ -358,10 +353,10 @@ var translations = {
     saveFailed: '<?php echo $current_lang === 'ru' ? 'Не удалось сохранить' : ($current_lang === 'en' ? 'Failed to save' : 'შენახვა ვერ მოხერხდა'); ?>',
     uploading: '<?php echo $current_lang === 'ru' ? 'Загрузка...' : ($current_lang === 'en' ? 'Uploading...' : 'იტვირთება...'); ?>',
     uploadSuccess: '<?php echo $current_lang === 'ru' ? 'Изображение загружено' : ($current_lang === 'en' ? 'Image uploaded' : 'სურათი აიტვირთა'); ?>',
-    uploadFailed: '<?php echo $current_lang === 'ru' ? 'Не удалось загрузить изображение' : ($current_lang === 'en' ? 'Failed to upload image' : 'სურათის ატვირთვა ვერ მოხერხდა'); ?>',
-    maxImages: '<?php echo $current_lang === 'ru' ? 'Максимум 5 изображений' : ($current_lang === 'en' ? 'Maximum 5 images' : 'მაქსიმუმ 5 სურათი'); ?>',
+    uploadFailed: '<?php echo $current_lang === 'ru' ? 'Не удалось загрузить' : ($current_lang === 'en' ? 'Failed to upload' : 'ატვირთვა ვერ მოხერხდა'); ?>',
+    maxImages: '<?php echo $current_lang === 'ru' ? 'Максимум 10 изображений' : ($current_lang === 'en' ? 'Maximum 10 images' : 'მაქსიმუმ 10 სურათი'); ?>',
     deleteConfirm: '<?php echo $current_lang === 'ru' ? 'Удалить это изображение?' : ($current_lang === 'en' ? 'Delete this image?' : 'წაშალოთ ეს სურათი?'); ?>',
-    publishSuccess: '<?php echo $current_lang === 'ru' ? 'Изменения сохранены!' : ($current_lang === 'en' ? 'Changes saved successfully!' : 'ცვლილებები წარმატებით შენახულია!'); ?>',
+    publishSuccess: '<?php echo $current_lang === 'ru' ? 'Изменения сохранены!' : ($current_lang === 'en' ? 'Changes saved successfully!' : 'ცვლილებები შენახულია!'); ?>',
     publishFailed: '<?php echo $current_lang === 'ru' ? 'Не удалось сохранить' : ($current_lang === 'en' ? 'Failed to save' : 'შენახვა ვერ მოხერხდა'); ?>',
     validationErrors: '<?php echo $current_lang === 'ru' ? 'Исправьте следующие ошибки:' : ($current_lang === 'en' ? 'Please fix the following errors:' : 'გამოასწორეთ შემდეგი შეცდომები:'); ?>',
     complete: '<?php echo $current_lang === 'ru' ? 'Завершено' : ($current_lang === 'en' ? 'Complete' : 'დასრულებული'); ?>',
@@ -370,10 +365,7 @@ var translations = {
     loadFailed: '<?php echo $current_lang === 'ru' ? 'Не удалось загрузить объявление' : ($current_lang === 'en' ? 'Failed to load listing' : 'განცხადების ჩატვირთვა ვერ მოხერხდა'); ?>'
 };
 
-// Include the service form functionality
-<?php include get_template_directory() . '/js/service-form-inline.js'; ?>
-
-// Load existing service data after form is initialized
+// Load existing service data on page load
 jQuery(document).ready(function($) {
     loadServiceData();
 });
@@ -381,27 +373,25 @@ jQuery(document).ready(function($) {
 function loadServiceData() {
     var $ = jQuery;
 
-    console.log('Loading service data for ID:', serviceId);
-
     $.ajax({
-        url: '/wp-json/batumizone/v1/my/services/' + serviceId,
+        url: `/wp-json/batumizone/v1/my/services/${serviceId}`,
         type: 'GET',
         beforeSend: function(xhr) {
             xhr.setRequestHeader('X-WP-Nonce', wpNonce);
         },
         success: function(service) {
-            console.log('Service data loaded:', service);
-
             // Hide loading, show form
             $('#loading-indicator').hide();
             $('#service-form').show();
 
             // Populate form fields
             populateForm(service);
+
+            // Initialize form functionality (from service-form-inline.js)
+            initializeEditForm();
         },
         error: function(xhr) {
-            console.error('Failed to load service:', xhr.responseJSON);
-            $('#loading-indicator').html('<div class="message message-error">' + translations.loadFailed + '</div>');
+            $('#loading-indicator').html(`<div class="message message-error">${translations.loadFailed}</div>`);
 
             // Redirect to dashboard after 3 seconds
             setTimeout(function() {
@@ -414,63 +404,41 @@ function loadServiceData() {
 function populateForm(service) {
     var $ = jQuery;
 
-    console.log('Populating form with service data:', service);
-
-    // API returns nested objects: title.ge, price.model, location.latitude, contact.phone
-    // Extract nested values with fallbacks
-    var title = service.title || {};
-    var description = service.description || {};
-    var price = service.price || {};
-    var location = service.location || {};
-    var contact = service.contact || {};
-
-    // Taxonomies (wait for dropdowns to load first)
+    // Taxonomies (will be selected after loading)
     setTimeout(function() {
-        // service_category is an array of objects: [{term_id: 25, name: "...", slug: "..."}]
-        if (service.service_category && service.service_category.length > 0) {
-            var catId = service.service_category[0].term_id || service.service_category[0];
-            $('#service-category').val(catId);
-            console.log('Set category:', catId, 'from', service.service_category);
+        if (service.service_category) {
+            $('#service-category').val(service.service_category.term_id);
         }
 
-        // coverage_area is also an array of objects
         if (service.coverage_area && service.coverage_area.length > 0) {
-            var areaIds = service.coverage_area.map(function(area) {
-                return area.term_id || area;
-            });
+            var areaIds = service.coverage_area.map(area => area.term_id);
             $('#coverage-area').val(areaIds);
-            console.log('Set coverage areas:', areaIds);
         }
-    }, 1000);
+    }, 500); // Wait for taxonomy dropdowns to load
 
-    // Multilingual content (handle both nested and flat formats)
-    $('#title-ge').val(title.ge || service.title_ge || '');
-    $('#title-ru').val(title.ru || service.title_ru || '');
-    $('#title-en').val(title.en || service.title_en || '');
-    $('#desc-ge').val(description.ge || service.desc_ge || '');
-    $('#desc-ru').val(description.ru || service.desc_ru || '');
-    $('#desc-en').val(description.en || service.desc_en || '');
+    // Multilingual content
+    $('#title-ge').val(service.title_ge || '');
+    $('#title-ru').val(service.title_ru || '');
+    $('#title-en').val(service.title_en || '');
+    $('#desc-ge').val(service.desc_ge || '');
+    $('#desc-ru').val(service.desc_ru || '');
+    $('#desc-en').val(service.desc_en || '');
 
-    // Pricing (handle both nested and flat formats)
-    var priceModel = price.model || service.price_model;
-    if (priceModel) {
-        $('input[name="price_model"][value="' + priceModel + '"]').prop('checked', true);
-    }
-    $('#price-value').val(price.value || service.price_value || 0);
-    $('#currency').val(price.currency || service.currency || 'GEL');
+    // Pricing
+    $(`input[name="price_model"][value="${service.price_model}"]`).prop('checked', true);
+    $('#price-value').val(service.price_value || 0);
+    $('#currency').val(service.currency || 'GEL');
 
-    // Location (handle both nested and flat formats)
-    var lat = location.latitude || service.latitude || '';
-    var lng = location.longitude || service.longitude || '';
-    $('#latitude').val(lat);
-    $('#longitude').val(lng);
-    $('#neighborhood').val(location.neighborhood || service.neighborhood || '');
+    // Location
+    $('#latitude').val(service.latitude || '');
+    $('#longitude').val(service.longitude || '');
+    $('#neighborhood').val(service.neighborhood || '');
 
     // Place marker on map
-    if (lat && lng) {
+    if (service.latitude && service.longitude) {
         setTimeout(function() {
-            if (typeof map !== 'undefined' && map) {
-                var latLng = L.latLng(lat, lng);
+            if (map) {
+                var latLng = L.latLng(service.latitude, service.longitude);
                 if (marker) {
                     marker.setLatLng(latLng);
                 } else {
@@ -481,33 +449,33 @@ function populateForm(service) {
         }, 1000);
     }
 
-    // Contact (handle both nested and flat formats)
-    $('#phone').val(contact.phone || service.phone || '');
-    $('#whatsapp').val(contact.whatsapp || service.whatsapp || '');
-    $('#email').val(contact.email || service.email || '');
+    // Contact
+    $('#phone').val(service.contact?.phone || '');
+    $('#whatsapp').val(service.contact?.whatsapp || '');
+    $('#email').val(service.contact?.email || '');
 
     // Images - load gallery
     if (service.gallery && service.gallery.length > 0) {
-        uploadedImages = service.gallery.map(function(img) {
-            return {
-                id: img.id,
-                url: img.thumbnail || img.medium || img.full
-            };
-        });
+        uploadedImages = service.gallery.map(img => ({
+            id: img.id,
+            url: img.thumbnail
+        }));
 
-        console.log('Loaded images:', uploadedImages);
-
-        // Render gallery
-        if (typeof renderGallery === 'function') {
-            renderGallery();
-            updateImageCount();
-        }
+        setTimeout(function() {
+            if (typeof renderGallery === 'function') {
+                renderGallery();
+                updateImageCount();
+            }
+        }, 500);
     }
 
     // Trigger character counts and language status
     $('#title-ge, #title-ru, #title-en, #desc-ge, #desc-ru, #desc-en').trigger('input');
+}
 
-    console.log('Form populated successfully');
+function initializeEditForm() {
+    // Include the same service-form-inline.js functionality
+    <?php include get_template_directory() . '/js/service-form-inline.js'; ?>
 }
 </script>
 

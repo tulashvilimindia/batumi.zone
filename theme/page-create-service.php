@@ -289,24 +289,22 @@ $user_phone = get_user_meta($current_user->ID, 'phone', true);
             <!-- Section 6: Images -->
             <div class="form-section">
                 <h2 class="section-title">
-                    6. <?php echo $current_lang === 'ru' ? 'Фотографии' : ($current_lang === 'en' ? 'Images' : 'სურათები'); ?> (<?php echo $current_lang === 'ru' ? 'необязательно, макс. 5' : ($current_lang === 'en' ? 'optional, max 5' : 'არასავალდებულო, მაქს. 5'); ?>)
+                    6. <?php echo $current_lang === 'ru' ? 'Фотографии' : ($current_lang === 'en' ? 'Images' : 'სურათები'); ?> (<?php echo $current_lang === 'ru' ? 'необязательно, макс. 10' : ($current_lang === 'en' ? 'optional, max 10' : 'არასავალდებულო, მაქს. 10'); ?>)
                 </h2>
 
-                <!-- Hidden file input - placed outside the zone for better browser compatibility -->
-                <input type="file" id="image-input" name="images" accept="image/jpeg,image/png,image/gif,image/webp" multiple style="position: absolute; left: -9999px; opacity: 0;">
-
-                <label for="image-input" class="image-upload-zone" id="image-upload-zone">
+                <div class="image-upload-zone" id="image-upload-zone">
                     <div class="upload-prompt">
                         <span class="upload-icon">&#128247;</span>
                         <p><?php echo $current_lang === 'ru' ? 'Нажмите или перетащите изображения сюда' : ($current_lang === 'en' ? 'Click or drag images here' : 'დააწკაპუნეთ ან გადაიტანეთ სურათები აქ'); ?></p>
-                        <small><?php echo $current_lang === 'ru' ? 'JPEG, PNG, GIF, WebP - Максимум 2MB на изображение' : ($current_lang === 'en' ? 'JPEG, PNG, GIF, WebP - Max 2MB per image' : 'JPEG, PNG, GIF, WebP - მაქს. 2MB სურათზე'); ?></small>
+                        <small><?php echo $current_lang === 'ru' ? 'JPEG, PNG, GIF, WebP - Максимум 5MB на изображение' : ($current_lang === 'en' ? 'JPEG, PNG, GIF, WebP - Max 5MB per image' : 'JPEG, PNG, GIF, WebP - მაქს. 5MB სურათზე'); ?></small>
                     </div>
-                </label>
+                    <input type="file" id="image-input" accept="image/*" multiple style="display: none;">
+                </div>
 
                 <div id="image-gallery" class="image-gallery"></div>
 
                 <div id="image-count" class="image-count">
-                    <span id="image-count-text">0 / 5 <?php echo $current_lang === 'ru' ? 'изображений загружено' : ($current_lang === 'en' ? 'images uploaded' : 'სურათი აიტვირთა'); ?></span>
+                    <span id="image-count-text">0 / 10 <?php echo $current_lang === 'ru' ? 'изображений загружено' : ($current_lang === 'en' ? 'images uploaded' : 'სურათი აიტვირთა'); ?></span>
                 </div>
             </div>
 
@@ -353,7 +351,7 @@ var translations = {
     uploading: '<?php echo $current_lang === 'ru' ? 'Загрузка...' : ($current_lang === 'en' ? 'Uploading...' : 'იტვირთება...'); ?>',
     uploadSuccess: '<?php echo $current_lang === 'ru' ? 'Изображение загружено' : ($current_lang === 'en' ? 'Image uploaded' : 'სურათი აიტვირთა'); ?>',
     uploadFailed: '<?php echo $current_lang === 'ru' ? 'Не удалось загрузить изображение' : ($current_lang === 'en' ? 'Failed to upload image' : 'სურათის ატვირთვა ვერ მოხერხდა'); ?>',
-    maxImages: '<?php echo $current_lang === 'ru' ? 'Максимум 5 изображений' : ($current_lang === 'en' ? 'Maximum 5 images' : 'მაქსიმუმ 5 სურათი'); ?>',
+    maxImages: '<?php echo $current_lang === 'ru' ? 'Максимум 10 изображений' : ($current_lang === 'en' ? 'Maximum 10 images' : 'მაქსიმუმ 10 სურათი'); ?>',
     deleteConfirm: '<?php echo $current_lang === 'ru' ? 'Удалить это изображение?' : ($current_lang === 'en' ? 'Delete this image?' : 'წაშალოთ ეს სურათი?'); ?>',
     publishSuccess: '<?php echo $current_lang === 'ru' ? 'Объявление опубликовано успешно!' : ($current_lang === 'en' ? 'Listing published successfully!' : 'განცხადება წარმატებით გამოქვეყნდა!'); ?>',
     publishFailed: '<?php echo $current_lang === 'ru' ? 'Не удалось опубликовать' : ($current_lang === 'en' ? 'Failed to publish' : 'გამოქვეყნება ვერ მოხერხდა'); ?>',

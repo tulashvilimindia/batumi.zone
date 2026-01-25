@@ -58,24 +58,6 @@ add_action('after_setup_theme', function() {
 });
 
 /**
- * Security: Only allow logout action on wp-login.php
- * All other actions (login, register, lostpassword) are blocked
- * Users should use custom frontend pages for those actions
- */
-add_action('login_init', function() {
-    $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : 'login';
-
-    // Only allow logout and confirm_admin_email actions
-    $allowed_actions = array('logout', 'confirmaction');
-
-    if (!in_array($action, $allowed_actions)) {
-        // Redirect to home page for any non-logout action
-        wp_redirect(home_url('/'));
-        exit;
-    }
-});
-
-/**
  * Redirect users to home page after logout
  * Fix: FB-02 - Prevents 403 error since wp-login.php is blocked by Nginx
  */
@@ -85,14 +67,15 @@ add_filter('logout_redirect', function($redirect_to, $requested_redirect_to, $us
 
 /**
  * Custom Favicon - Override WordPress default
- * Uses SVG favicon for modern browsers (supported by Chrome, Firefox, Edge, Safari 15+)
+ * Outputs SVG favicon for modern browsers with PNG fallback
  */
 add_action('wp_head', function() {
-    $favicon_svg = get_template_directory_uri() . '/favicon.svg';
+    $favicon_url = get_template_directory_uri() . '/favicon.svg';
+    $favicon_png = get_template_directory_uri() . '/favicon.png';
     ?>
-    <link rel="icon" type="image/svg+xml" href="<?php echo esc_url($favicon_svg); ?>">
-    <link rel="icon" href="<?php echo esc_url($favicon_svg); ?>">
-    <link rel="apple-touch-icon" href="<?php echo esc_url($favicon_svg); ?>">
+    <link rel="icon" type="image/svg+xml" href="<?php echo esc_url($favicon_url); ?>">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?php echo esc_url($favicon_png); ?>">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?php echo esc_url($favicon_png); ?>">
     <?php
 }, 1);
 
@@ -122,8 +105,6 @@ function batumi_theme_scripts() {
     wp_enqueue_style('batumi-dark-mode', get_template_directory_uri() . '/dark-mode-complete.css', array('batumi-header-fixes'), '1.0.0');
     // Accessibility fixes (V7, V8, V12, V17, V18)
     wp_enqueue_style('batumi-accessibility', get_template_directory_uri() . '/accessibility-fixes.css', array('batumi-dark-mode'), '1.0.0');
-    // Service Form Styles (Create/Edit Service pages)
-    wp_enqueue_style("batumi-service-form", get_template_directory_uri() . "/service-form-styles.css", array("batumi-accessibility"), "1.0.0");
 
     // Report Modal (Phase 7)
     wp_enqueue_style('batumi-report-modal', get_template_directory_uri() . '/report-modal.css', array(), '0.3.0');

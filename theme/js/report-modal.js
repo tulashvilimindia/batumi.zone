@@ -176,23 +176,12 @@
             submitBtn.disabled = true;
             submitBtn.textContent = t.submitting;
 
-            // Bug #11 Fix: Build headers with CSRF nonce for security
-            const headers = {
-                'Content-Type': 'application/json'
-            };
-
-            // Add WordPress REST API nonce if available (prevents CSRF attacks)
-            if (typeof wpApiSettings !== 'undefined' && wpApiSettings.nonce) {
-                headers['X-WP-Nonce'] = wpApiSettings.nonce;
-            } else if (typeof batumiSettings !== 'undefined' && batumiSettings.nonce) {
-                headers['X-WP-Nonce'] = batumiSettings.nonce;
-            }
-
             // Make API request
             const response = await fetch('/wp-json/batumizone/v1/reports', {
                 method: 'POST',
-                headers: headers,
-                credentials: 'same-origin', // Include cookies for authentication
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify(formData)
             });
 

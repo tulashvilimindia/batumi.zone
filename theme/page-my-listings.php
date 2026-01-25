@@ -337,10 +337,7 @@ jQuery(document).ready(function($) {
 
     function renderListings(listings) {
         return listings.map(listing => {
-            // Handle both nested (API format: title.ge) and flat (title_ge) formats
-            var titleObj = listing.title || {};
-            var title = titleObj[currentLang] || titleObj.en || titleObj.ge ||
-                        listing['title_' + currentLang] || listing.title_en || listing.title_ge || 'Untitled';
+            var title = listing['title_' + currentLang] || listing.title_en || listing.title_ge || 'Untitled';
             var status = listing.status;
             var statusLabel = translations[status] || status;
             var canPublish = listing.validation && listing.validation.can_publish;
@@ -386,7 +383,7 @@ jQuery(document).ready(function($) {
                     <h3 class="listing-title">${title}</h3>
                     <div class="listing-meta">
                         <span>ID: ${listing.id}</span>
-                        <span>${listing.date ? new Date(listing.date).toLocaleDateString() : ''}</span>
+                        <span>${new Date(listing.created).toLocaleDateString()}</span>
                     </div>
                     <div class="listing-actions">
                         ${actions}
