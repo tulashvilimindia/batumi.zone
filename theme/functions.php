@@ -48,92 +48,29 @@ function batumi_theme_setup() {
 add_action('after_setup_theme', 'batumi_theme_setup');
 
 /**
- * Hide WordPress admin bar for non-administrator users
- * Fix: FB-03 - Admin bar should not be visible to regular users
- */
-add_action('after_setup_theme', function() {
-    if (!current_user_can('manage_options')) {
-        show_admin_bar(false);
-    }
-});
-
-/**
- * Security: Only allow logout action on wp-login.php
- * All other actions (login, register, lostpassword) are blocked
- * Users should use custom frontend pages for those actions
- */
-add_action('login_init', function() {
-    $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : 'login';
-
-    // Only allow logout and confirm_admin_email actions
-    $allowed_actions = array('logout', 'confirmaction');
-
-    if (!in_array($action, $allowed_actions)) {
-        // Redirect to home page for any non-logout action
-        wp_redirect(home_url('/'));
-        exit;
-    }
-});
-
-/**
- * Redirect users to home page after logout
- * Fix: FB-02 - Prevents 403 error since wp-login.php is blocked by Nginx
- */
-add_filter('logout_redirect', function($redirect_to, $requested_redirect_to, $user) {
-    return home_url('/');
-}, 10, 3);
-
-/**
- * Custom Favicon - Override WordPress default
- * Uses SVG favicon for modern browsers (supported by Chrome, Firefox, Edge, Safari 15+)
- */
-add_action('wp_head', function() {
-    $favicon_svg = get_template_directory_uri() . '/favicon.svg';
-    ?>
-    <link rel="icon" type="image/svg+xml" href="<?php echo esc_url($favicon_svg); ?>">
-    <link rel="icon" href="<?php echo esc_url($favicon_svg); ?>">
-    <link rel="apple-touch-icon" href="<?php echo esc_url($favicon_svg); ?>">
-    <?php
-}, 1);
-
-// Remove WordPress default favicon/site icon
-add_filter('get_site_icon_url', '__return_false');
-
-/**
  * Enqueue scripts and styles
+ * CONSOLIDATED: January 18, 2026 - All CSS merged into style.css (10,374 lines)
  */
 function batumi_theme_scripts() {
-    // Main stylesheet
-    wp_enqueue_style('batumi-theme-style', get_stylesheet_uri(), array(), '0.3.0');
+    // === MAIN STYLESHEET (Consolidated from 9 source files) ===
+    // All CSS merged into single style.css - January 18, 2026
+    // Sources: fancy-frontend-styles, HEADER-FIXES, dark-mode-complete,
+    //          accessibility-fixes, report-modal, poster-promotion,
+    //          sponsored-badges, service-form-styles
+    wp_enqueue_style('batumi-theme-style', get_stylesheet_uri(), array(), '1.0.6');
 
+    // === JAVASCRIPT FILES ===
     // Mobile menu script
     wp_enqueue_script('batumi-theme-navigation', get_template_directory_uri() . '/js/navigation.js', array(), '0.2.0', true);
 
     // Favorites system
     wp_enqueue_script('batumi-theme-favorites', get_template_directory_uri() . '/js/favorites.js', array('jquery'), '0.3.0', true);
 
-    // Fancy Frontend styles and scripts
-    wp_enqueue_style('batumi-fancy-styles', get_template_directory_uri() . '/fancy-frontend-styles.css', array(), '0.5.0');
-    wp_enqueue_style('batumi-header-fixes', get_template_directory_uri() . '/HEADER-FIXES.css', array('batumi-fancy-styles'), '1.1.0');
-    wp_enqueue_script('batumi-fancy-frontend', get_template_directory_uri() . '/js/fancy-frontend.js', array('jquery'), '0.4.2', true);
+    // Fancy Frontend JS
+    wp_enqueue_script('batumi-fancy-frontend', get_template_directory_uri() . '/js/fancy-frontend.js', array('jquery'), '0.4.3', true);
 
-    // === BUG FIX CSS FILES (v0.3.0) ===
-    // Dark mode complete (V1-V16)
-    wp_enqueue_style('batumi-dark-mode', get_template_directory_uri() . '/dark-mode-complete.css', array('batumi-header-fixes'), '1.0.0');
-    // Accessibility fixes (V7, V8, V12, V17, V18)
-    wp_enqueue_style('batumi-accessibility', get_template_directory_uri() . '/accessibility-fixes.css', array('batumi-dark-mode'), '1.0.0');
-    // Service Form Styles (Create/Edit Service pages)
-    wp_enqueue_style("batumi-service-form", get_template_directory_uri() . "/service-form-styles.css", array("batumi-accessibility"), "1.0.0");
-
-    // Report Modal (Phase 7)
-    wp_enqueue_style('batumi-report-modal', get_template_directory_uri() . '/report-modal.css', array(), '0.3.0');
+    // Report Modal JS (Phase 7)
     wp_enqueue_script('batumi-report-modal', get_template_directory_uri() . '/js/report-modal.js', array(), '0.3.0', true);
-
-    // Poster Promotion CSS (Phase 8.1 - Poster Dashboard)
-    wp_enqueue_style('batumi-poster-promotion', get_template_directory_uri() . '/assets/css/poster-promotion.css', array(), '1.0.0');
-
-    // Sponsored Badges CSS (Phase 8.1 - Frontend Labels)
-    wp_enqueue_style('batumi-sponsored-badges', get_template_directory_uri() . '/assets/css/sponsored-badges.css', array(), '1.0.0');
 }
 add_action('wp_enqueue_scripts', 'batumi_theme_scripts');
 
@@ -733,19 +670,11 @@ add_action('wp_head', function() {
 }, 6);
 
 /**
- * BUG FIX V1/V2: Dark mode persistence - inline script in head to prevent flash
+ * Dark mode only - force dark theme on all pages
  */
 add_action('wp_head', function() {
     ?>
-    <script>
-    (function(){
-        var t = localStorage.getItem('batumi-theme');
-        if (t === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            document.body && document.body.setAttribute('data-theme', 'dark');
-        }
-    })();
-    </script>
+    <script>document.documentElement.setAttribute('data-theme','dark');</script>
     <?php
 }, 1); // Priority 1 to run very early
 
@@ -956,54 +885,6 @@ add_action('wp', function() {
 });
 
 /**
- * BUG FIX DM-01: Add flat title properties to services API response
- * Fixes "Untitled" issue on favorites page where JS expects service.title_ge
- * but API returns service.title.ge
- */
-add_filter('rest_post_dispatch', function($result, $server, $request) {
-    $route = $request->get_route();
-
-    // Only modify batumizone services API responses
-    if (strpos($route, '/batumizone/v1/services') === false) {
-        return $result;
-    }
-
-    $data = $result->get_data();
-
-    // Function to add flat title properties
-    $add_flat_titles = function(&$service) {
-        if (isset($service['title']) && is_array($service['title'])) {
-            // Add flat properties for JavaScript compatibility
-            $service['title_ge'] = $service['title']['ge'] ?? '';
-            $service['title_ka'] = $service['title']['ge'] ?? ''; // Alias
-            $service['title_ru'] = $service['title']['ru'] ?? '';
-            $service['title_en'] = $service['title']['en'] ?? '';
-        }
-        if (isset($service['description']) && is_array($service['description'])) {
-            $service['desc_ge'] = $service['description']['ge'] ?? '';
-            $service['desc_ka'] = $service['description']['ge'] ?? '';
-            $service['desc_ru'] = $service['description']['ru'] ?? '';
-            $service['desc_en'] = $service['description']['en'] ?? '';
-        }
-    };
-
-    // Handle single service response
-    if (isset($data['id']) && isset($data['title'])) {
-        $add_flat_titles($data);
-        $result->set_data($data);
-    }
-    // Handle services list response
-    elseif (isset($data['services']) && is_array($data['services'])) {
-        foreach ($data['services'] as &$service) {
-            $add_flat_titles($service);
-        }
-        $result->set_data($data);
-    }
-
-    return $result;
-}, 10, 3);
-
-/**
  * BUG FIX B4: Favorites REST API for logged-in users
  * Enables cross-device favorites sync for authenticated users
  */
@@ -1034,96 +915,19 @@ add_action('rest_api_init', function() {
         'callback' => 'batumi_remove_favorite',
         'permission_callback' => 'is_user_logged_in',
     ));
-
-    // Profile Management Endpoints (FB-04)
-    // PUT /me - Update user profile
-    register_rest_route('batumizone/v1', '/me', array(
-        'methods' => 'PUT',
-        'callback' => 'batumi_update_profile',
-        'permission_callback' => 'is_user_logged_in',
-    ));
-
-    // DELETE /me - Delete user account
-    register_rest_route('batumizone/v1', '/me', array(
-        'methods' => 'DELETE',
-        'callback' => 'batumi_delete_account',
-        'permission_callback' => 'is_user_logged_in',
-    ));
-
-    // GET /my/services - Get user's services (for profile stats)
-    register_rest_route('batumizone/v1', '/my/services', array(
-        'methods' => 'GET',
-        'callback' => 'batumi_get_my_services',
-        'permission_callback' => 'is_user_logged_in',
-    ));
 });
 
 function batumi_get_favorites($request) {
     $user_id = get_current_user_id();
-    $favorite_ids = get_user_meta($user_id, 'batumi_favorites', true);
+    $favorites = get_user_meta($user_id, 'batumi_favorites', true);
 
-    if (!is_array($favorite_ids)) {
-        $favorite_ids = array();
-    }
-
-    // Return full service data, not just IDs
-    $services = array();
-    foreach ($favorite_ids as $service_id) {
-        $service = get_post($service_id);
-        if (!$service || $service->post_type !== 'service_listing' || $service->post_status !== 'publish') {
-            continue;
-        }
-
-        // Get multilingual titles
-        $title_ge = get_field('title_ge', $service_id) ?: '';
-        $title_ru = get_field('title_ru', $service_id) ?: '';
-        $title_en = get_field('title_en', $service_id) ?: '';
-
-        // Get multilingual descriptions
-        $desc_ge = get_field('desc_ge', $service_id) ?: '';
-        $desc_ru = get_field('desc_ru', $service_id) ?: '';
-        $desc_en = get_field('desc_en', $service_id) ?: '';
-
-        // Get other service data
-        $price_value = get_field('price_value', $service_id);
-        $price_model = get_field('price_model', $service_id);
-        $price_currency = get_field('price_currency', $service_id) ?: 'GEL';
-        $phone = get_field('phone', $service_id);
-        $thumbnail = get_the_post_thumbnail_url($service_id, 'service-thumbnail');
-
-        // Get category
-        $categories = get_the_terms($service_id, 'service_category');
-        $category_name = '';
-        $category_slug = '';
-        if ($categories && !is_wp_error($categories)) {
-            $category_name = $categories[0]->name;
-            $category_slug = $categories[0]->slug;
-        }
-
-        $services[] = array(
-            'id' => $service_id,
-            'slug' => $service->post_name,
-            'link' => get_permalink($service_id),
-            'title_ge' => $title_ge,
-            'title_ru' => $title_ru,
-            'title_en' => $title_en,
-            'desc_ge' => wp_trim_words(wp_strip_all_tags($desc_ge), 20, '...'),
-            'desc_ru' => wp_trim_words(wp_strip_all_tags($desc_ru), 20, '...'),
-            'desc_en' => wp_trim_words(wp_strip_all_tags($desc_en), 20, '...'),
-            'price_value' => $price_value,
-            'price_model' => $price_model,
-            'price_currency' => $price_currency,
-            'phone' => $phone,
-            'thumbnail' => $thumbnail ?: '',
-            'category' => $category_name,
-            'category_slug' => $category_slug,
-            'date_added' => get_post_meta($service_id, 'batumi_favorited_' . $user_id, true) ?: $service->post_date,
-        );
+    if (!is_array($favorites)) {
+        $favorites = array();
     }
 
     return rest_ensure_response(array(
-        'favorites' => $services,
-        'count' => count($services),
+        'favorites' => $favorites,
+        'count' => count($favorites),
     ));
 }
 
@@ -1147,31 +951,10 @@ function batumi_add_favorite($request) {
         update_user_meta($user_id, 'batumi_favorites', $favorites);
     }
 
-    // Return the service data that was added
-    $title_ge = get_field('title_ge', $service_id) ?: '';
-    $title_ru = get_field('title_ru', $service_id) ?: '';
-    $title_en = get_field('title_en', $service_id) ?: '';
-    $thumbnail = get_the_post_thumbnail_url($service_id, 'service-thumbnail');
-
-    $categories = get_the_terms($service_id, 'service_category');
-    $category_name = '';
-    if ($categories && !is_wp_error($categories)) {
-        $category_name = $categories[0]->name;
-    }
-
     return rest_ensure_response(array(
         'success' => true,
         'message' => 'Service added to favorites',
-        'service' => array(
-            'id' => $service_id,
-            'link' => get_permalink($service_id),
-            'title_ge' => $title_ge,
-            'title_ru' => $title_ru,
-            'title_en' => $title_en,
-            'thumbnail' => $thumbnail ?: '',
-            'category' => $category_name,
-        ),
-        'count' => count($favorites),
+        'favorites' => $favorites,
     ));
 }
 
@@ -1199,241 +982,17 @@ function batumi_remove_favorite($request) {
 }
 
 /**
- * FB-04: Update user profile via REST API
- * Allows users to update their profile without accessing wp-admin
- */
-function batumi_update_profile($request) {
-    $user_id = get_current_user_id();
-    $params = $request->get_json_params();
-
-    $updated = array();
-
-    // Update email if provided
-    if (!empty($params['email'])) {
-        $email = sanitize_email($params['email']);
-        if (is_email($email)) {
-            // Check if email is already in use by another user
-            $existing = email_exists($email);
-            if ($existing && $existing !== $user_id) {
-                return new WP_Error('email_exists', 'Email is already in use', array('status' => 400));
-            }
-            wp_update_user(array('ID' => $user_id, 'user_email' => $email));
-            $updated[] = 'email';
-        }
-    }
-
-    // Update phone if provided
-    if (isset($params['phone'])) {
-        $phone = sanitize_text_field($params['phone']);
-        update_user_meta($user_id, 'phone', $phone);
-        $updated[] = 'phone';
-    }
-
-    // Update WhatsApp if provided
-    if (isset($params['whatsapp'])) {
-        $whatsapp = sanitize_text_field($params['whatsapp']);
-        update_user_meta($user_id, 'whatsapp', $whatsapp);
-        $updated[] = 'whatsapp';
-    }
-
-    // Update password if provided
-    if (!empty($params['password'])) {
-        if (strlen($params['password']) < 8) {
-            return new WP_Error('password_short', 'Password must be at least 8 characters', array('status' => 400));
-        }
-        wp_set_password($params['password'], $user_id);
-        $updated[] = 'password';
-    }
-
-    return rest_ensure_response(array(
-        'success' => true,
-        'message' => 'Profile updated successfully',
-        'updated' => $updated,
-    ));
-}
-
-/**
- * FB-04: Delete user account via REST API
- * Allows users to delete their account from the frontend
- */
-function batumi_delete_account($request) {
-    $user_id = get_current_user_id();
-
-    // Prevent admin deletion via this endpoint
-    if (user_can($user_id, 'manage_options')) {
-        return new WP_Error('admin_protected', 'Administrator accounts cannot be deleted this way', array('status' => 403));
-    }
-
-    // Delete all user's service listings
-    $user_services = get_posts(array(
-        'post_type' => 'service_listing',
-        'author' => $user_id,
-        'posts_per_page' => -1,
-        'post_status' => 'any',
-        'fields' => 'ids',
-    ));
-
-    foreach ($user_services as $service_id) {
-        wp_delete_post($service_id, true);
-    }
-
-    // Delete the user
-    require_once(ABSPATH . 'wp-admin/includes/user.php');
-    wp_delete_user($user_id);
-
-    return rest_ensure_response(array(
-        'success' => true,
-        'message' => 'Account deleted successfully',
-    ));
-}
-
-/**
- * FB-04: Get user's services for profile stats
- */
-function batumi_get_my_services($request) {
-    $user_id = get_current_user_id();
-
-    $services = get_posts(array(
-        'post_type' => 'service_listing',
-        'author' => $user_id,
-        'posts_per_page' => -1,
-        'post_status' => array('publish', 'draft', 'pending', 'inactive'),
-    ));
-
-    $result = array();
-    foreach ($services as $service) {
-        $result[] = array(
-            'id' => $service->ID,
-            'title' => $service->post_title,
-            'status' => $service->post_status,
-            'date' => $service->post_date,
-        );
-    }
-
-    return rest_ensure_response($result);
-}
-
-/**
- * BUG FIX DM-01 (Part 2): JavaScript fix for favorites page title extraction
- * Patches the FavoritesPage.renderServiceCard to handle nested title format
- */
-add_action('wp_footer', function() {
-    if (is_page('favorites') || is_page_template('page-favorites.php')) {
-        ?>
-        <script>
-        (function(){
-            // Wait for FavoritesPage to be defined, then patch it
-            var checkInterval = setInterval(function() {
-                if (typeof FavoritesPage !== 'undefined' && FavoritesPage.renderServiceCard) {
-                    clearInterval(checkInterval);
-
-                    // Store original function
-                    var originalRender = FavoritesPage.renderServiceCard.bind(FavoritesPage);
-
-                    // Helper to get title from either format
-                    function getTitle(service, lang) {
-                        // Map ka to ge for Georgian
-                        var geLang = (lang === 'ka') ? 'ge' : lang;
-
-                        // Try flat format first
-                        var flatKey = 'title_' + geLang;
-                        if (service[flatKey]) return service[flatKey];
-                        if (service.title_en) return service.title_en;
-                        if (service.title_ge) return service.title_ge;
-                        if (service.title_ru) return service.title_ru;
-
-                        // Try nested format
-                        if (service.title && typeof service.title === 'object') {
-                            return service.title[geLang] || service.title.en || service.title.ge || service.title.ru || 'Untitled';
-                        }
-
-                        // String title
-                        if (typeof service.title === 'string') return service.title;
-
-                        return 'Untitled';
-                    }
-
-                    // Patch renderServiceCard
-                    FavoritesPage.renderServiceCard = function(service) {
-                        var currentLang = document.documentElement.lang?.split('-')[0] || 'ka';
-                        var title = getTitle(service, currentLang);
-                        var price = this.formatPrice(service.price_model || (service.price && service.price.model), service.price_value || (service.price && service.price.value), service.currency || (service.price && service.price.currency));
-                        var thumbnail = service.featured_image?.thumbnail || service.featured_image || '';
-                        var link = service.link || service.url || '#';
-                        var category = service.direction_name || (service.direction && service.direction[0]) || '';
-
-                        return '<article class="service-card">' +
-                            (thumbnail ? '<div class="service-card-image-wrapper">' +
-                                '<a href="' + link + '" class="service-card-image-link">' +
-                                    '<img src="' + thumbnail + '" alt="' + title + '" class="service-card-image">' +
-                                '</a>' +
-                                '<button class="favorite-btn is-favorited" data-service-id="' + service.id + '" data-service-title="' + title + '" aria-label="Remove from favorites" title="Remove from favorites">' +
-                                    '<svg class="heart-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
-                                        '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>' +
-                                    '</svg>' +
-                                '</button>' +
-                            '</div>' : '') +
-                            '<div class="service-card-content">' +
-                                '<h3 class="service-card-title"><a href="' + link + '">' + title + '</a></h3>' +
-                                '<div class="service-card-meta">' +
-                                    (category ? '<span class="service-category">' + category + '</span>' : '') +
-                                '</div>' +
-                                (price ? '<div class="service-card-price">' + price + '</div>' : '') +
-                                '<div class="service-card-footer">' +
-                                    '<a href="' + link + '" class="btn btn-secondary btn-sm">View Details</a>' +
-                                '</div>' +
-                            '</div>' +
-                        '</article>';
-                    };
-
-                    console.log('FavoritesPage.renderServiceCard patched for nested title support');
-                }
-            }, 100);
-
-            // Stop checking after 5 seconds
-            setTimeout(function() { clearInterval(checkInterval); }, 5000);
-        })();
-        </script>
-        <?php
-    }
-}, 99); // Priority 99 to run after FavoritesPage is defined
-
-/**
- * BUG FIX V1/V2 (Part 2): Dark mode toggle function with localStorage persistence
+ * Dark mode enforcement and footer scripts
  */
 add_action('wp_footer', function() {
     ?>
     <script>
     (function(){
-        // Ensure body has dark mode attribute if it was set on html
-        var currentTheme = document.documentElement.getAttribute('data-theme');
-        if (currentTheme === 'dark') {
-            document.body.setAttribute('data-theme', 'dark');
-        }
+        // Force dark mode on both html and body
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.body.setAttribute('data-theme', 'dark');
 
-        // Global toggle function for dark mode
-        window.toggleDarkMode = function() {
-            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            var newTheme = isDark ? 'light' : 'dark';
-
-            document.documentElement.setAttribute('data-theme', newTheme);
-            document.body.setAttribute('data-theme', newTheme);
-            localStorage.setItem('batumi-theme', newTheme);
-
-            // Update toggle button icon if exists
-            var toggleBtn = document.querySelector('.theme-toggle-btn');
-            if (toggleBtn) {
-                toggleBtn.setAttribute('aria-pressed', newTheme === 'dark');
-            }
-        };
-
-        // Initialize toggle button listener if it exists
         document.addEventListener('DOMContentLoaded', function() {
-            var toggleBtn = document.querySelector('.theme-toggle-btn');
-            if (toggleBtn) {
-                toggleBtn.addEventListener('click', window.toggleDarkMode);
-            }
-
             // V4 FIX: Close mobile menu when clicking menu links
             var mobileMenu = document.querySelector('.mobile-menu, .mobile-nav, #mobile-menu');
             var menuToggle = document.querySelector('.mobile-menu-toggle, .hamburger-btn, #menu-toggle');
@@ -1495,3 +1054,8 @@ add_action('wp_footer', function() {
     </script>
     <?php
 }, 20);
+
+/**
+ * Hide WordPress admin bar on frontend for all users
+ */
+add_filter("show_admin_bar", "__return_false");

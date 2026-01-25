@@ -1,52 +1,36 @@
 /**
  * Fancy Frontend - Glassmorphism Header with Filters & Infinite Scroll
  * @package Batumi_Theme
- * @since 0.4.2
+ * @since 0.4.3
+ * @updated 2026-01-18 - Bug fixes: API endpoint, XSS prevention, error handling
  */
 
 (function($) {
     'use strict';
 
     // ======================
-    // DARK/LIGHT MODE TOGGLE
+    // UTILITY FUNCTIONS
+    // ======================
+
+    /**
+     * Escape HTML to prevent XSS attacks
+     * @param {string} str - String to escape
+     * @returns {string} - Escaped string
+     */
+    function escapeHtml(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    // ======================
+    // DARK MODE ONLY (Light theme disabled)
     // ======================
     const ThemeToggle = {
         init() {
-            this.toggleBtn = document.querySelector('.theme-toggle');
-            this.sunIcon = document.querySelector('.sun-icon');
-            this.moonIcon = document.querySelector('.moon-icon');
-
-            if (!this.toggleBtn) return;
-
-            // Load saved theme
-            this.loadTheme();
-
-            // Bind click event
-            this.toggleBtn.addEventListener('click', () => this.toggle());
-        },
-
-        loadTheme() {
-            const savedTheme = localStorage.getItem('batumi_theme') || 'light';
-            this.applyTheme(savedTheme);
-        },
-
-        toggle() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            this.applyTheme(newTheme);
-            localStorage.setItem('batumi_theme', newTheme);
-        },
-
-        applyTheme(theme) {
-            document.documentElement.setAttribute('data-theme', theme);
-
-            if (theme === 'dark') {
-                this.sunIcon.style.display = 'none';
-                this.moonIcon.style.display = 'block';
-            } else {
-                this.sunIcon.style.display = 'block';
-                this.moonIcon.style.display = 'none';
-            }
+            // Always force dark mode
+            document.documentElement.setAttribute('data-theme', 'dark');
         }
     };
 
@@ -222,6 +206,17 @@
             this.sentinel.className = 'infinite-scroll-sentinel';
             this.container.parentElement.appendChild(this.sentinel);
 
+            // Hide pagination when infinite scroll is active (CSS fallback for :has())
+            const pagination = document.querySelector('.pagination-nav');
+            if (pagination) {
+                pagination.classList.add('hidden-by-scroll');
+            }
+            // Also add class to parent for CSS :has() fallback
+            const servicesPage = document.querySelector('.services-page');
+            if (servicesPage) {
+                servicesPage.classList.add('infinite-scroll-active');
+            }
+
             // Intersection Observer
             this.observer = new IntersectionObserver(
                 (entries) => {
@@ -262,29 +257,48 @@
             urlParams.set('per_page', '20');
 
             try {
-                const response = await fetch(`/wp-json/batumi-api/v1/services?${urlParams.toString()}`);
+                // Bug #1 Fix: Correct API endpoint (was batumi-api, should be batumizone)
+                const response = await fetch(`/wp-json/batumizone/v1/services?${urlParams.toString()}`);
+
+                // Bug #3 Fix: Check response.ok before parsing JSON
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
                 const data = await response.json();
 
-                if (data && Array.isArray(data)) {
-                    if (data.length === 0) {
-                        this.hasMore = false;
-                        this.hideLoading();
-                        return;
-                    }
+                // Bug #3 Fix: Validate response is an array
+                if (!data || !Array.isArray(data)) {
+                    console.warn('Invalid API response format');
+                    this.hasMore = false;
+                    return;
+                }
 
-                    // Render new service cards
-                    data.forEach(service => {
-                        this.container.appendChild(this.createServiceCard(service));
-                    });
+                if (data.length === 0) {
+                    this.hasMore = false;
+                    this.hideLoading();
+                    return;
+                }
 
-                    // If less than 20 returned, no more pages
-                    if (data.length < 20) {
-                        this.hasMore = false;
-                    }
+                // Render new service cards
+                data.forEach(service => {
+                    this.container.appendChild(this.createServiceCard(service));
+                });
+
+                // If less than 20 returned, no more pages
+                if (data.length < 20) {
+                    this.hasMore = false;
                 }
             } catch (error) {
+                // Bug #10 Fix: Properly handle errors and stop infinite scroll
                 console.error('Failed to load more services:', error);
                 this.hasMore = false;
+                // Optionally show user-friendly error message
+                if (this.loadingIndicator) {
+                    this.loadingIndicator.textContent = 'Unable to load more services';
+                    this.loadingIndicator.style.display = 'block';
+                    setTimeout(() => this.hideLoading(), 3000);
+                }
             } finally {
                 this.loading = false;
                 this.hideLoading();
@@ -307,18 +321,28 @@
             const currentLang = document.documentElement.lang.split('-')[0] || 'ge';
             const title = service[`title_${currentLang}`] || service.title_en || service.title_ge || service.title_ru || 'Untitled';
 
-            // Build card HTML
+            // Bug #2 Fix: Escape all user-supplied data to prevent XSS
+            const safeTitle = escapeHtml(title);
+            const safeCategory = escapeHtml(service.service_direction || '');
+            const safeArea = escapeHtml(service.coverage_area || '');
+            const safePrice = escapeHtml(String(service.price_value || ''));
+            const safeCurrency = escapeHtml(service.currency || 'GEL');
+            const safePhone = escapeHtml(service.phone || '');
+            const safeImageUrl = service.featured_image ? escapeHtml(service.featured_image.thumbnail) : '';
+            const serviceId = parseInt(service.id, 10) || 0; // Ensure ID is numeric
+
+            // Build card HTML with escaped values
             card.innerHTML = `
-                <button class="favorite-btn" data-service-id="${service.id}" data-service-title="${title}" aria-label="Add to favorites" style="position: absolute; top: 0.75rem; right: 0.75rem; z-index: 10;">
+                <button class="favorite-btn" data-service-id="${serviceId}" data-service-title="${safeTitle}" aria-label="Add to favorites" style="position: absolute; top: 0.75rem; right: 0.75rem; z-index: 10;">
                     <svg class="heart-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                     </svg>
                 </button>
 
-                ${service.featured_image ? `
+                ${safeImageUrl ? `
                     <div class="service-card-image-wrapper" style="position: relative;">
-                        <a href="/service/${service.id}/" class="service-card-image-link">
-                            <img src="${service.featured_image.thumbnail}" alt="${title}" class="service-card-image" loading="lazy">
+                        <a href="/service/${serviceId}/" class="service-card-image-link">
+                            <img src="${safeImageUrl}" alt="${safeTitle}" class="service-card-image" loading="lazy">
                         </a>
                         ${isPromoted ? '<span class="sponsored-badge">Sponsored</span>' : ''}
                     </div>
@@ -326,23 +350,23 @@
 
                 <div class="service-card-content">
                     <h3 class="service-card-title">
-                        <a href="/service/${service.id}/">${title}</a>
+                        <a href="/service/${serviceId}/">${safeTitle}</a>
                     </h3>
 
                     <div class="service-card-meta">
-                        ${service.service_direction ? `<span class="service-category">${service.service_direction}</span>` : ''}
-                        ${service.coverage_area ? `<span class="service-area">${service.coverage_area}</span>` : ''}
+                        ${safeCategory ? `<span class="service-category">${safeCategory}</span>` : ''}
+                        ${safeArea ? `<span class="service-area">${safeArea}</span>` : ''}
                     </div>
 
-                    ${service.price_value ? `
+                    ${safePrice ? `
                         <div class="service-card-price">
-                            ${service.price_value} ${service.currency || 'GEL'}
+                            ${safePrice} ${safeCurrency}
                         </div>
                     ` : ''}
 
                     <div class="service-card-footer">
-                        <a href="/service/${service.id}/" class="btn btn-secondary btn-sm">View Details</a>
-                        ${service.phone ? `<a href="tel:${service.phone}" class="btn btn-primary btn-sm"><span class="btn-icon">📞</span> Call</a>` : ''}
+                        <a href="/service/${serviceId}/" class="btn btn-secondary btn-sm">View Details</a>
+                        ${safePhone ? `<a href="tel:${safePhone}" class="btn btn-primary btn-sm"><svg class="phone-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> Call</a>` : ''}
                     </div>
                 </div>
             `;
@@ -446,9 +470,9 @@
                 const serviceId = btn.dataset.serviceId;
                 const serviceTitle = btn.dataset.serviceTitle;
 
-                if (typeof Favorites !== 'undefined') {
-                    Favorites.toggle(serviceId, serviceTitle);
-                    btn.classList.toggle('is-favorited');
+                // Use BatumiFavorites (handles class toggle internally)
+                if (window.BatumiFavorites) {
+                    window.BatumiFavorites.toggle(serviceId, serviceTitle);
                 }
             }
         });

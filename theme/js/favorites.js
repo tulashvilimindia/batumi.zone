@@ -97,18 +97,26 @@
         },
 
         // Add service to favorites
-        add(serviceId, serviceTitle = '') {
+        add(serviceId, serviceTitle = '', serviceData = null) {
             const favorites = this.getAll();
             const id = parseInt(serviceId);
 
             if (!favorites.includes(id)) {
                 favorites.push(id);
 
-                // Save metadata
+                // Save metadata with more complete service data
                 const meta = this.getMeta();
+                const btn = document.querySelector(`[data-service-id="${serviceId}"].favorite-btn`);
+                const card = btn ? btn.closest('.service-card') : null;
+
                 meta[id] = {
                     added: new Date().toISOString(),
-                    title: serviceTitle
+                    title: serviceTitle,
+                    // Try to extract more data from the card if available
+                    link: card ? (card.querySelector('.service-card-title a')?.href || '') : '',
+                    image: card ? (card.querySelector('.service-card-image')?.src || '') : '',
+                    price: card ? (card.querySelector('.service-card-price')?.textContent?.trim() || '') : '',
+                    category: card ? (card.querySelector('.service-category')?.textContent?.trim() || '') : ''
                 };
 
                 if (this.save(favorites) && this.saveMeta(meta)) {
@@ -243,5 +251,6 @@
 
     // Expose Favorites globally for use in other scripts or console
     window.BatumiFavorites = Favorites;
+    window.Favorites = Favorites; // Alias for backwards compatibility
 
 })();

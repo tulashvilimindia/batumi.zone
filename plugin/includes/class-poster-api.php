@@ -6,6 +6,7 @@
  *
  * @package Batumi_Zone_Core
  * @since 0.2.0
+ * @updated 0.9.0-alpha - Added multilingual tag support
  */
 
 if (!defined('ABSPATH')) {
@@ -412,10 +413,10 @@ class Batumi_Poster_API {
         $current_gallery = get_post_meta($service_id, '_gallery_image_ids', true);
         $current_ids = !empty($current_gallery) ? explode(',', $current_gallery) : array();
 
-        if (count($current_ids) >= 10) {
+        if (count($current_ids) >= 5) {
             return new WP_Error(
                 'max_images',
-                __('Maximum 10 images allowed per listing.', 'batumizone-core'),
+                __('Maximum 5 images allowed per listing.', 'batumizone-core'),
                 array('status' => 400)
             );
         }
@@ -445,6 +446,11 @@ class Batumi_Poster_API {
                 $attachment_id->get_error_message(),
                 array('status' => 500)
             );
+        }
+
+        // Set first image as featured image if none exists
+        if (!has_post_thumbnail($service_id)) {
+            set_post_thumbnail($service_id, $attachment_id);
         }
 
         // Add to gallery
@@ -554,7 +560,7 @@ class Batumi_Poster_API {
     }
 
     /**
-     * Update service taxonomies
+     * Update service taxonomies (with multilingual tag support)
      */
     private function update_service_taxonomies($post_id, $request) {
         if (isset($request['service_category'])) {
@@ -566,6 +572,84 @@ class Batumi_Poster_API {
             $term_ids = is_array($request['coverage_area']) ? $request['coverage_area'] : array($request['coverage_area']);
             wp_set_object_terms($post_id, array_map('intval', $term_ids), 'coverage_area');
         }
+
+        // Handle service tags (can be IDs or names - supports multilingual tag lookup)
+        if (isset($request['service_tags'])) {
+            $tags = $request['service_tags'];
+            if (!is_array($tags)) {
+                $tags = array_map('trim', explode(',', $tags));
+            }
+            $term_ids = array();
+            foreach ($tags as $tag) {
+                if (is_numeric($tag)) {
+                    $term_ids[] = intval($tag);
+                } else {
+                    // Find or create tag (with multilingual support)
+                    $tag_name = sanitize_text_field($tag);
+                    if (!empty($tag_name)) {
+                        $term_id = $this->find_or_create_tag($tag_name);
+                        if ($term_id) {
+                            $term_ids[] = $term_id;
+                        }
+                    }
+                }
+            }
+            if (!empty($term_ids)) {
+                wp_set_object_terms($post_id, array_unique($term_ids), 'service_tag');
+            } else {
+                wp_set_object_terms($post_id, array(), 'service_tag');
+            }
+        }
+    }
+
+    /**
+     * Find existing tag by name (including translations) or create new one
+     *
+     * @param string $tag_name Tag name to search for
+     * @return int|null Term ID if found or created, null on failure
+     */
+    private function find_or_create_tag($tag_name) {
+        $tag_name_lower = strtolower($tag_name);
+
+        // First, try to find by original name
+        $existing = get_term_by('name', $tag_name, 'service_tag');
+        if ($existing) {
+            return $existing->term_id;
+        }
+
+        // Search in translated names (case-insensitive)
+        $all_tags = get_terms(array(
+            'taxonomy'   => 'service_tag',
+            'hide_empty' => false,
+        ));
+
+        if (!is_wp_error($all_tags)) {
+            foreach ($all_tags as $tag) {
+                // Check original name (case-insensitive)
+                if (strtolower($tag->name) === $tag_name_lower) {
+                    return $tag->term_id;
+                }
+
+                // Check translated names
+                $name_ka = get_term_meta($tag->term_id, 'name_ka', true);
+                $name_ru = get_term_meta($tag->term_id, 'name_ru', true);
+                $name_en = get_term_meta($tag->term_id, 'name_en', true);
+
+                if (($name_ka && strtolower($name_ka) === $tag_name_lower) ||
+                    ($name_ru && strtolower($name_ru) === $tag_name_lower) ||
+                    ($name_en && strtolower($name_en) === $tag_name_lower)) {
+                    return $tag->term_id;
+                }
+            }
+        }
+
+        // Tag not found, create new one
+        $new_term = wp_insert_term($tag_name, 'service_tag');
+        if (!is_wp_error($new_term)) {
+            return $new_term['term_id'];
+        }
+
+        return null;
     }
 
     /**
@@ -622,6 +706,9 @@ class Batumi_Poster_API {
                 'email'    => get_field('email', $post_id),
             ),
             'can_publish'       => $validation_result['valid'],
+            'gallery'           => $this->get_gallery_images($post_id),
+            'service_category'  => $this->get_service_taxonomy($post_id, 'service_category'),
+            'coverage_area'     => $this->get_service_taxonomy($post_id, 'coverage_area'),
             'validation_errors' => $validation_result['errors'],
         );
     }
@@ -648,6 +735,7 @@ class Batumi_Poster_API {
             'email'             => array('sanitize_callback' => 'sanitize_email'),
             'service_category' => array('type' => 'array'),
             'coverage_area'     => array('type' => 'array'),
+            'service_tags'      => array('type' => 'array'),
         );
     }
 
@@ -669,6 +757,54 @@ class Batumi_Poster_API {
      */
     public function is_authenticated() {
         return is_user_logged_in();
+    }
+
+
+    /**
+     * Get gallery images for a service
+     */
+    private function get_gallery_images($post_id) {
+        $gallery_ids = get_post_meta($post_id, '_gallery_image_ids', true);
+        if (empty($gallery_ids)) {
+            return array();
+        }
+
+        $ids = explode(',', $gallery_ids);
+        $images = array();
+
+        foreach ($ids as $id) {
+            $id = intval(trim($id));
+            if ($id > 0) {
+                $images[] = array(
+                    'id'        => $id,
+                    'thumbnail' => wp_get_attachment_image_url($id, 'thumbnail'),
+                    'medium'    => wp_get_attachment_image_url($id, 'medium'),
+                    'full'      => wp_get_attachment_image_url($id, 'full'),
+                );
+            }
+        }
+
+        return $images;
+    }
+
+    /**
+     * Get taxonomy terms for a service
+     */
+    private function get_service_taxonomy($post_id, $taxonomy) {
+        $terms = wp_get_post_terms($post_id, $taxonomy);
+        if (is_wp_error($terms) || empty($terms)) {
+            return array();
+        }
+
+        $result = array();
+        foreach ($terms as $term) {
+            $result[] = array(
+                'term_id' => $term->term_id,
+                'name'    => $term->name,
+                'slug'    => $term->slug,
+            );
+        }
+        return $result;
     }
 
     /**

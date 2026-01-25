@@ -3,12 +3,12 @@
  * Plugin Name: Batumi.zone Core
  * Plugin URI: https://batumi.zone
  * Description: Core functionality for Batumi.zone Services MVP
- * Version: 0.6.0
+ * Version: 0.5.0
  */
 
 if (!defined('ABSPATH')) { exit; }
 
-define('BATUMIZONE_VERSION', '0.6.0');
+define('BATUMIZONE_VERSION', '0.5.0');
 define('BATUMIZONE_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('BATUMIZONE_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('BATUMIZONE_PLUGIN_FILE', __FILE__);
@@ -70,7 +70,7 @@ class Batumi_Zone_Core {
 
     public function enqueue_frontend() {
         wp_enqueue_script('batumizone-ads-frontend', BATUMIZONE_PLUGIN_URL . 'assets/js/ads-frontend.js', array(), '1.0.0', true);
-        wp_enqueue_style('batumizone-ads-frontend', BATUMIZONE_PLUGIN_URL . 'assets/css/ads-frontend.css', array(), '1.0.0');
+        wp_enqueue_style('batumizone-ads-frontend', BATUMIZONE_PLUGIN_URL . 'assets/css/ads-frontend.css', array(), '1.2.0');
     }
 
     public function init() {
@@ -83,7 +83,7 @@ class Batumi_Zone_Core {
     }
 
     public function admin_notice() {
-        echo '<div class="notice notice-success is-dismissible"><p><strong>Batumi.zone Core v0.6.0:</strong> Phase 8.2 Ads System Active!</p></div>';
+        echo '<div class="notice notice-success is-dismissible"><p><strong>Batumi.zone Core v0.5.0:</strong> Phase 8.2 Ads System Active!</p></div>';
     }
 }
 

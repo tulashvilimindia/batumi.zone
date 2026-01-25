@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html <?php language_attributes(); ?>>
+<html <?php language_attributes(); ?> data-theme="dark">
 <head>
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
     <meta name="description" content="<?php bloginfo('description'); ?>">
     <link rel="profile" href="https://gmpg.org/xfn/11">
+    <!-- Dark theme only - no light mode -->
+    <script>document.documentElement.setAttribute('data-theme', 'dark');</script>
     <?php wp_head(); ?>
 </head>
 
@@ -24,14 +26,21 @@
                 </a>
             </div>
 
+            <!-- Header Ad Space -->
+            <div class="header-ad-space">
+                <div class="ad-container" data-placement="header_banner" data-api-url="/wp-json/batumizone/v1/ads/placement/header_banner">
+                    <!-- Ad will be loaded via JavaScript -->
+                </div>
+            </div>
+
             <!-- Search Bar -->
             <div class="header-search">
                 <form role="search" method="get" class="search-form" action="<?php echo esc_url(home_url('/services/')); ?>">
                     <input type="search"
                            class="search-input"
                            placeholder="<?php esc_attr_e('Search services...', 'batumi-theme'); ?>"
-                           value="<?php echo get_search_query(); ?>"
-                           name="s" />
+                           value="<?php echo isset($_GET['query']) ? esc_attr($_GET['query']) : ''; ?>"
+                           name="query" />
                     <button type="submit" class="search-button">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                             <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM19 19l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -57,8 +66,10 @@
                     <span class="favorites-badge" style="display: none;">0</span>
                 </a>
 
-                <!-- Language Switcher (Flags Only) -->
-                <?php if (function_exists('pll_the_languages')) :
+                <!-- Language Switcher -->
+                <?php if (function_exists('pll_the_languages')) : ?>
+                <div class="header-lang-switcher inline">
+                    <?php
                     $languages = pll_the_languages(array(
                         'show_flags' => 1,
                         'show_names' => 0,
@@ -66,23 +77,22 @@
                         'echo' => 0,
                         'raw' => 1
                     ));
-
-                    if (!empty($languages)) : ?>
-                        <div class="header-lang-switcher">
-                            <?php foreach ($languages as $lang) :
-                                $class = $lang['current_lang'] ? 'current-lang' : '';
-                                ?>
-                                <a href="<?php echo esc_url($lang['url']); ?>"
-                                   class="lang-flag <?php echo esc_attr($class); ?>"
-                                   hreflang="<?php echo esc_attr($lang['slug']); ?>"
-                                   title="<?php echo esc_attr($lang['name']); ?>">
-                                    <?php if (!empty($lang['flag'])) : ?>
-                                        <img src="<?php echo esc_url($lang['flag']); ?>" alt="<?php echo esc_attr($lang['name']); ?>">
-                                    <?php endif; ?>
-                                </a>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
+                    $current_lang = function_exists('pll_current_language') ? pll_current_language() : 'ka';
+                    $flag_emojis = array('ka' => '🇬🇪', 'ru' => '🇷🇺', 'en' => '🇬🇧');
+                    ?>
+                    <?php if (!empty($languages)) :
+                        foreach ($languages as $slug => $lang) :
+                            $class = ($slug === $current_lang) ? 'current-lang' : '';
+                    ?>
+                    <a href="<?php echo esc_url($lang['url']); ?>" class="lang-flag <?php echo esc_attr($class); ?>" hreflang="<?php echo esc_attr($slug); ?>" title="<?php echo esc_attr($lang['name']); ?>">
+                        <?php if (!empty($lang['flag'])) : ?>
+                            <img src="<?php echo esc_url($lang['flag']); ?>" alt="<?php echo esc_attr($lang['name']); ?>">
+                        <?php else : ?>
+                            <span class="flag-emoji"><?php echo isset($flag_emojis[$slug]) ? $flag_emojis[$slug] : '🌐'; ?></span>
+                        <?php endif; ?>
+                    </a>
+                    <?php endforeach; endif; ?>
+                </div>
                 <?php endif; ?>
 
                 <!-- User Menu (if logged in) -->
@@ -94,14 +104,28 @@
                             </svg>
                         </button>
                         <div class="user-dropdown">
-                            <a href="<?php echo esc_url(home_url('/profile/')); ?>"><?php _e('Profile', 'batumi-theme'); ?></a>
-                            <a href="<?php echo esc_url(home_url('/my-listings/')); ?>"><?php _e('My Listings', 'batumi-theme'); ?></a>
-                            <a href="<?php echo esc_url(home_url('/create-service/')); ?>"><?php _e('Add Listing', 'batumi-theme'); ?></a>
+                            <?php
+                            // Get language-aware page URLs using Polylang
+                            $profile_page = get_page_by_path('profile');
+                            $my_listings_page = get_page_by_path('my-listings');
+                            $create_service_page = get_page_by_path('create-service');
+
+                            $profile_url = $profile_page ? get_permalink($profile_page->ID) : home_url('/profile/');
+                            $my_listings_url = $my_listings_page ? get_permalink($my_listings_page->ID) : home_url('/my-listings/');
+                            $create_service_url = $create_service_page ? get_permalink($create_service_page->ID) : home_url('/create-service/');
+                            ?>
+                            <a href="<?php echo esc_url($profile_url); ?>"><?php _e('Profile', 'batumi-theme'); ?></a>
+                            <a href="<?php echo esc_url($my_listings_url); ?>"><?php _e('My Listings', 'batumi-theme'); ?></a>
+                            <a href="<?php echo esc_url($create_service_url); ?>"><?php _e('Add Listing', 'batumi-theme'); ?></a>
                             <a href="<?php echo wp_logout_url(home_url('/')); ?>"><?php _e('Logout', 'batumi-theme'); ?></a>
                         </div>
                     </div>
                 <?php else : ?>
-                    <a href="<?php echo esc_url(home_url('/login/')); ?>" class="header-action-btn" title="Login">
+                    <?php
+                    $login_page = get_page_by_path('login');
+                    $login_url = $login_page ? get_permalink($login_page->ID) : home_url('/login/');
+                    ?>
+                    <a href="<?php echo esc_url($login_url); ?>" class="header-action-btn" title="Login">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/>
                         </svg>
